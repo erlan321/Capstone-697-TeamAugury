@@ -37,3 +37,15 @@ if st.button("Submit"):
     # Output prediction
     st.text(f"{names} just won {a} dollars!!!")
     # Note that print() will not appear on a Streamlit app.
+
+
+# st.code renders single-line as well as multi-line code blocks. There is also an option to specify the programming language.
+st.code("""
+@st.cache
+def Team_Augury_feature_functions(df):
+    df = df.copy
+    df['column'] = df['old_column'].apply(lambda x: 1 if True else 0, axis1)
+    return None
+""", language="python")
+
+
