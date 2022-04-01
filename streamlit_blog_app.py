@@ -6,7 +6,10 @@ import streamlit as st
 
 # Title
 st.header("Team Augury Capstone Project")
+st.markdown("Welcome a sample of the blog space for our project.")
 
+st.header("Testing Interactivity")
+st.markdown("> Just for fun, enter a number and choose a team member to see what happens...")
 
 #  This is equivalent to <input type = "number"> in HTML.
 # Input bar 1
@@ -40,7 +43,17 @@ if st.button("Submit"):
     st.markdown(f"{names} just won {a} dollars!!!")
 
 
+#st.markdown renders any string written using Github-flavored Markdown. It also supports HTML but Streamlit advises against allowing it due to potential user security concerns.
 
+st.header("Project Start")
+st.subheader("In Introduction to our Project")
+st.markdown("But seriously, we're here to talke about our blog.  This might be how text will appear in our blog.")
+
+
+
+
+
+st.subheader("A Code Block")
 # st.code renders single-line as well as multi-line code blocks. There is also an option to specify the programming language.
 st.code("""
 def Team_Augury_feature_functions(df):
