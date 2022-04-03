@@ -105,30 +105,30 @@ parameters = [{'post_basic': True, 'post_temporal': True, 'comment_basic': True,
 
 
 ##add intelligence to code here to not have to manually manipulate the csv files
-lsr = pd.read_csv(csv_folder + "last_successful.csv").iloc[:, 1:] #last successful run
-
+#lsr = pd.read_csv(csv_folder + "last_successful.csv").iloc[:, 1:] #last successful run
+#lsr = pd.DataFrame()
 results = []
 for target in targets:
   print("target: {}".format(target))
   for increment in increments:
     print("increment: {}".format(increment))
     for params in tqdm(parameters):
-      filter = lsr[(lsr['target'] == target) & (lsr['increment'] == increment) & (lsr['post_basic'] == params["post_basic"]) & (lsr['post_temporal'] == params["post_temporal"])
+      """ filter = lsr[(lsr['target'] == target) & (lsr['increment'] == increment) & (lsr['post_basic'] == params["post_basic"]) & (lsr['post_temporal'] == params["post_temporal"])
                     & (lsr['comment_basic'] == params["comment_basic"]) & (lsr['post_sent'] == params["post_sent"]) & (lsr['comment_sent'] == params["comment_sent"])
                     & (lsr['post_sBERT'] == params["post_sBERT"]) & (lsr['comment_sBERT'] == params["comment_sBERT"])]
-  
-      if filter.shape[0] == 0:
-        X_train, X_test, y_train, y_test = generate_X_y(feature_df, target=target, increment=increment, post_basic=params["post_basic"], post_temporal=params["post_temporal"], comment_basic=params["comment_basic"],
-                    post_sent=params["post_sent"], comment_sent=params["comment_sent"], post_sBERT=params["post_sBERT"], comment_sBERT=params["comment_sBERT"])
-        
-        classifier_tests = test_classifiers(X_train, X_test, y_train, y_test)
-
-        dic_results = {"target":target, "increment":increment}
-        dic_results.update(params)
-        dic_results.update(classifier_tests)
-        results.append(dic_results)
+   """
+      #if filter.shape[0] == 0:
+      X_train, X_test, y_train, y_test = generate_X_y(feature_df, target=target, increment=increment, post_basic=params["post_basic"], post_temporal=params["post_temporal"], comment_basic=params["comment_basic"],
+                  post_sent=params["post_sent"], comment_sent=params["comment_sent"], post_sBERT=params["post_sBERT"], comment_sBERT=params["comment_sBERT"])
       
-        temp_df = pd.DataFrame.from_records(results)
-        temp_df.to_csv(csv_folder + "temp.csv")
+      classifier_tests = test_classifiers(X_train, X_test, y_train, y_test)
+
+      dic_results = {"target":target, "increment":increment}
+      dic_results.update(params)
+      dic_results.update(classifier_tests)
+      results.append(dic_results)
+    
+      temp_df = pd.DataFrame.from_records(results)
+      temp_df.to_csv(csv_folder + "temp.csv")
 
         #code to adjust the csv files with results
