@@ -3,12 +3,6 @@ import numpy as np
 from datetime import datetime
 import psycopg2 
 import altair as alt
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer ###Vader Sentiment
-
-from sentence_transformers import SentenceTransformer  ### SBERT
-
-# from detoxify import Detoxify  ### detoxify
-from profanity_filter import ProfanityFilter
 
 from functions import Team_Augury_SQL_func
 from functions import Team_Augury_feature_functions
@@ -18,6 +12,7 @@ import itertools
 from tqdm import tqdm
 
 # connect to database
+print("Connecting to database and loading posts/comments...")
 conn = psycopg2.connect(
     host = 'capstone697.czsaza7am68b.us-east-1.rds.amazonaws.com' ,
     port = '5432',
@@ -33,11 +28,8 @@ upper_timestamp = '2022-03-28 08:00:00'  #batch 900	2022-03-28 07:21:27
 
 #get data
 post_data, comments_data = Team_Augury_SQL_func.sql_by_timestamp(conn,sr_id,lower_timestamp,upper_timestamp)
-print(post_data.batch_id.min(),post_data.batch_id.max())
-print(post_data.sr.unique())
-print(len(post_data.post_id.unique()))
-
-
+print("Loaded {} posts".format(len(post_data.post_id.unique())))
+print("Loaded {} comments".format(len(comments_data.post_id.unique())))
 
 ##### MOVE TO A FUNCTION #####
 # ### Featurization comes from stored functions imported from .py files above.  Comment out any part we don't want.
@@ -81,9 +73,13 @@ print(len(post_data.post_id.unique()))
 # #print('-- raw feature table --')
 # display(feature_df)
 
-feature_df = pd.read_csv("saved_work/backup_features_data.csv")
-
 csv_folder = "saved_work/"
+
+feature_df = Team_Augury_feature_functions.generate_features_csv(post_data,comments_data, csv_folder + "backup_features_data.csv")
+#feature_df = pd.read_csv("saved_work/backup_features_data.csv")
+
+print (feature_df.head())
+
 
 targets = ['popular_hr_3', 'popular_hr_6','popular_hr_24'] #, 'popular_max']
 increments = [0, 3, 6]

@@ -132,12 +132,12 @@ def test_classifiers(X_train, X_test, y_train, y_test):
   classifiers = [
                 DummyClassifier(strategy = 'constant', random_state=42, constant=0),
                 LogisticRegression(random_state = 42),
-                KNeighborsClassifier(3),
+                KNeighborsClassifier(),
                 SVC(kernel="rbf", C=0.025, probability=True),   #literature review will need to check against winners of iteration against SVC
-                DecisionTreeClassifier(),
-                RandomForestClassifier(),
-                AdaBoostClassifier(),
-                GradientBoostingClassifier(),
+                DecisionTreeClassifier(random_state=42),
+                RandomForestClassifier(random_state=42),
+                AdaBoostClassifier(random_state=42),
+                GradientBoostingClassifier(random_state=42),
                 GaussianNB()
                 ]
 
