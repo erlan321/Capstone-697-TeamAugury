@@ -117,8 +117,7 @@ def test_classifiers(dataframe, target="popular_hr_3", post_basic=True, post_tem
                 DecisionTreeClassifier(random_state=42),
                 RandomForestClassifier(random_state=42),
                 AdaBoostClassifier(random_state=42),
-                GradientBoostingClassifier(random_state=42),
-                GaussianNB()
+                GradientBoostingClassifier(random_state=42)
                 ]
 
   
@@ -171,6 +170,5 @@ def test_classifiers(dataframe, target="popular_hr_3", post_basic=True, post_tem
     dic_test_results[classifier.__class__.__name__ + "_test_acc"] = round(np.mean(scores["test_acc"]),3)
     dic_test_results[classifier.__class__.__name__ + "_train_f1"] = round(np.mean(scores["train_f1"]),3)
     dic_test_results[classifier.__class__.__name__ + "_test_f1"] = round(np.mean(scores["test_f1"]),3)
-    print(dic_test_results)
-    
+
   return dic_test_results
