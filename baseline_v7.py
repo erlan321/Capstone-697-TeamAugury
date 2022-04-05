@@ -76,7 +76,6 @@ for target in targets:
       #if filter.shape[0] == 0:
       classifier_tests = test_classifiers(feature_df, target=target, increment=increment, post_basic=params["post_basic"], post_temporal=params["post_temporal"], comment_basic=params["comment_basic"],
                   post_sent=params["post_sent"], comment_sent=params["comment_sent"], post_sBERT=params["post_sBERT"], comment_sBERT=params["comment_sBERT"])
-      print(classifier_tests)
       dic_results = {"target":target, "increment":increment}
       dic_results.update(params)
       dic_results.update(classifier_tests)
