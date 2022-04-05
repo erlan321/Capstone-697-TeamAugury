@@ -57,9 +57,17 @@ st.markdown('''
         -  Before we stored the data onto our AWS RDS (a postgresql instance) our code did a lot of the early cleaning work for us.  Initially our requests backed libraries wrote large JSON files to our database, when we went into production we had developed code that extracted and formatted the data we wanted from the subreddit’s, making downstream processing of the data much slicker.  For example XXXX 
     - Load the data
         - Our database design/schema of tables is shown below.  This design was to optimize the functioning of the RDS and minimize storage, by reducing duplication to a minimum.
-
+    - Extracting and cleaning the data
+    - Feature Engineering
+        - placeholder
+    - modeling
+        - placeholder
+    - prediction / production
+        - placeholder
 
     ''')
+
+    
 
 
 
