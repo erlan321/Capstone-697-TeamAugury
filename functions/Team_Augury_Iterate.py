@@ -1,9 +1,9 @@
-
-
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.model_selection import KFold, cross_validate, StratifiedKFold
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -12,16 +12,16 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
-
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
+import pandas as pd
 from functions import Team_Augury_feature_functions
 
-def generate_X_y(dataframe, target="popular_hr_3", post_basic=True, post_temporal=True, comment_basic=True, post_sent=True,
-                 comment_sent=True, post_sBERT=True, comment_sBERT=True, increment=3):
+def test_classifiers(dataframe, target="popular_hr_3", post_basic=True, post_temporal=True, comment_basic=True, post_sent=True,
+                 comment_sent=True, post_sBERT=True, comment_sBERT=True, increment=0):
                 # targets: 'popular_hr_3', 'popular_hr_6','popular_hr_24', 'popular_max'
                 # increments = 0, 3, 6
-  from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-  from sklearn.decomposition import LatentDirichletAllocation
-  import pandas as pd
+  
 
   df = dataframe.copy()
   
@@ -71,9 +71,15 @@ def generate_X_y(dataframe, target="popular_hr_3", post_basic=True, post_tempora
   X_col_comment_sbert = [f'avg_comment_sbert_{"{:03d}".format(i)}' for i in range(1, 385)]
 
   ### columns that will need a standard scaler
-  standardize_columns = []
-  if post_basic == True: standardize_columns.extend(['number_comments_vs_hrs','post_author_karma'])
-  if comment_basic == True: standardize_columns.extend(['avg_comment_upvotes_vs_hrs','avg_comment_author_karma'])
+  numeric_features = []
+  if post_basic == True: numeric_features.extend(['number_comments_vs_hrs','post_author_karma'])
+  if comment_basic == True: numeric_features.extend(['avg_comment_upvotes_vs_hrs','avg_comment_author_karma'])
+
+  ### Apply one hot encoding prior to split (keeping column count equal)
+  if post_temporal==True:
+    ### columns that will need a onehotencode scaler
+    categorical_features = X_col_post_temporal
+
 
   ### concat the X_value feature columns we want from the above categories
   X_columns = []
@@ -97,37 +103,11 @@ def generate_X_y(dataframe, target="popular_hr_3", post_basic=True, post_tempora
     print("increment not in options, returning None")
     return None
 
-
   ### Create table
-
   df = df.copy()[X_columns + y_column]
-
-  ### Apply one hot encoding prior to split (keeping column count equal)
-  if post_temporal==True:
-    df_dummies = pd.get_dummies(data=df, columns=X_col_post_temporal)
-    added_cols = list(set(df_dummies.columns)-set(df.columns))
-    X_columns = X_columns + added_cols
-    for col in X_col_post_temporal:
-      X_columns.remove(col)
-    df = df_dummies
-
-
-  ### train/test split
-  X_train, X_test, y_train, y_test = train_test_split(df[X_columns], df[y_column], random_state = 42, test_size=0.2)
-
-  ### apply standard scaling to select columns
-  if standardize_columns == []:
-    pass
-  else:
-    X_train, X_test = Team_Augury_feature_functions.standard_scale_column(X_train, X_test, standardize_columns)
+  X = df[X_columns]
+  y = df[y_column].values.ravel()
   
-  return X_train, X_test, y_train, y_test
-
-
-def test_classifiers(X_train, X_test, y_train, y_test):
-
-    #Pipeline approach taken from https://medium.com/vickdata/a-simple-guide-to-scikit-learn-pipelines-4ac0d974bdcf
-
   # Set classifiers
   classifiers = [
                 DummyClassifier(strategy = 'constant', random_state=42, constant=0),
@@ -145,16 +125,52 @@ def test_classifiers(X_train, X_test, y_train, y_test):
   import warnings
   warnings.filterwarnings('ignore')  ### BE CAREFUL USING THIS :) Supressing the warning that y_values coming in as dataframe
 
+  numeric_transformer = Pipeline(
+      steps=[("scaler", StandardScaler())]
+  )
+
+  categorical_transformer = Pipeline(steps=[
+          ('onehot', OneHotEncoder(handle_unknown='ignore', categories='auto'))])
+
+  if numeric_features != [] and categorical_features != []:
+    preprocessor = ColumnTransformer(
+            transformers=[
+                ('numerical', numeric_transformer, numeric_features),
+                ('categorical', categorical_transformer, categorical_features)])
+  elif numeric_features != [] and categorical_features == []:
+    preprocessor = Pipeline(steps=[
+        ('numerical', numeric_transformer, numeric_features)])
+  elif numeric_features == [] and categorical_features != []:
+    preprocessor = Pipeline(steps=[
+        ('categorical', categorical_transformer, categorical_features)])
+  else:
+    preprocessor = None
+
+  # Setup kfold cross validation
+  #cv = KFold(n_splits=5, shuffle=True, random_state=42)
+
+  # Moved to StratifiedKFold due to imbalanced dataset https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/
+  cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+  
+
+  #Scoring metrics
+  scoring = {'acc': 'accuracy', 'f1': 'f1'}
+  
   # Evaluate each classifier only on training data
   dic_test_results = {}
   for classifier in classifiers:
-    clf = classifier
-    clf.fit(X_train, y_train.values)
-    y_pred = clf.predict(X_test)
-    dic_test_results[clf.__class__.__name__] = round(accuracy_score(y_test, y_pred),3)
-    dic_test_results[clf.__class__.__name__ + '_f1'] = round(f1_score(y_test, y_pred),3)
-    dic_test_results[clf.__class__.__name__ + '_precision'] = round(precision_score(y_test, y_pred),3)
-    dic_test_results[clf.__class__.__name__ + '_recall'] = round(recall_score(y_test, y_pred),3)
-    dic_test_results[clf.__class__.__name__ + '_roc_auc'] = round(roc_auc_score(y_test, y_pred),3)
+    if preprocessor != None:
+      clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
+    else:
+      clf = Pipeline(steps=[('classifier', classifier)])
+    
+    # Perform cross validation
+    scores = cross_validate(clf, X, y, scoring=scoring, return_train_score=True, cv=cv, n_jobs=-1)
 
+    dic_test_results[classifier.__class__.__name__ + "_train_acc"] = round(np.mean(scores["train_acc"]),3)
+    dic_test_results[classifier.__class__.__name__ + "_test_acc"] = round(np.mean(scores["test_acc"]),3)
+    dic_test_results[classifier.__class__.__name__ + "_train_f1"] = round(np.mean(scores["train_f1"]),3)
+    dic_test_results[classifier.__class__.__name__ + "_test_f1"] = round(np.mean(scores["test_f1"]),3)
+    print(dic_test_results)
+    
   return dic_test_results
