@@ -3,6 +3,7 @@ from torch import hann_window
 #import pandas as pd
 #import joblib
 #from sklearn.linear_model import LogisticRegression
+from PIL import Image
 
 
 # Title
@@ -44,7 +45,8 @@ Another consideration is the free and open nature of online social media, and Re
 
 st.header("Our Approach")
 st.subheader("Project Pipeline")
-st.markdown("_image placeholder_")
+project_pipeline_image = Image.open('blog_assets/project_pipeline.png')
+st.image(project_pipeline_image, caption='Augury Project Pipeline')
 st.write('''
     The data scrape we finally put into use called upon the PRAW library to make efficient requests to Reddit’s API.  Our approach to scraping was informed by the following article’s XXXX and the code which we eventually used can be found on the project repo, linked at the head of this page. We knew that we wanted to capture the evolution of a posts popularity over time in order to see how and when popular posts developed, so we designed a pipeline that:
     ''')
@@ -57,6 +59,12 @@ st.markdown('''
         -  Before we stored the data onto our AWS RDS (a postgresql instance) our code did a lot of the early cleaning work for us.  Initially our requests backed libraries wrote large JSON files to our database, when we went into production we had developed code that extracted and formatted the data we wanted from the subreddit’s, making downstream processing of the data much slicker.  For example XXXX 
     - Load the data
         - Our database design/schema of tables is shown below.  This design was to optimize the functioning of the RDS and minimize storage, by reducing duplication to a minimum.
+
+
+    ''')
+db_schema_image = Image.open('blog_assets/db_schema.png')
+st.image(db_schema_image, caption='Augury Database Schema (created with website_credit)')
+st.markdown('''
     - Extracting and cleaning the data
     - Feature Engineering
         - placeholder
@@ -67,22 +75,13 @@ st.markdown('''
 
     ''')
 
-    
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
+st.title("End Blog Post Draft")
 
 
 
