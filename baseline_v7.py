@@ -25,7 +25,7 @@ if choice == 'N':
   ### NEW SQL Variables
   sr_id = '(4, 31760, 31764, 31766)'   #[(4, '2qhhq', 'investing'), (16, 'mouw', 'science'), (130, '2qh1i', 'AskReddit'), (18162, '2qh3l', 'news'), (31760, '2qjuv', 'StockMarket'), (31764, '2qjfk', 'stocks'), (31766, '2th52', 'wallstreetbets')]
   lower_timestamp = '2022-03-01 14:30:00'  #batch 260 3/1/2022 14:37:31
-  upper_timestamp = '2022-03-28 08:00:00'  #batch 900	2022-03-28 07:21:27
+  upper_timestamp = '2022-04-04 08:00:00'  #batch 900	2022-03-28 07:21:27
 
   #get data
   post_data, comments_data = Team_Augury_SQL_func.sql_by_timestamp(conn,sr_id,lower_timestamp,upper_timestamp)
@@ -76,7 +76,6 @@ for target in targets:
       #if filter.shape[0] == 0:
       classifier_tests = test_classifiers(feature_df, target=target, increment=increment, post_basic=params["post_basic"], post_temporal=params["post_temporal"], comment_basic=params["comment_basic"],
                   post_sent=params["post_sent"], comment_sent=params["comment_sent"], post_sBERT=params["post_sBERT"], comment_sBERT=params["comment_sBERT"])
-      print(classifier_tests)
       dic_results = {"target":target, "increment":increment}
       dic_results.update(params)
       dic_results.update(classifier_tests)
