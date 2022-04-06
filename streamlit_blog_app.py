@@ -32,8 +32,25 @@ st.write('''
     ''')
 st.subheader("Related Work")
 st.write('''
-    placeholder
+    placeholder text introducing the following tables of work we reviewed
     ''')
+c = st.container()
+st.write("this will show last")
+c.write("paper 1")
+c.write("paper 2")
+
+col1, col2, col3 = st.columns(3)
+col1.write("**Paper Title**")
+col2.write("**Topic**")
+col3.write("**Relevance to project**")
+col1.write("[3] Reddit predictions")
+col2.write("Supervised Learning approaches to predict popularity")
+col3.write("This is a prediction task on similar data.")
+c.write("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
+
+
+
+
 st.subheader("Ethical Considerations")
 st.write('''
     There are clearly ethical implications relating from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work.  To some extent this research has already been investigated in XXX   . Therefore we have made no further mitigations in our project related to market ethics.
