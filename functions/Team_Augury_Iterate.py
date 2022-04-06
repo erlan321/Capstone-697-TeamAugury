@@ -113,7 +113,7 @@ def test_classifiers(dataframe, target="popular_hr_3", post_basic=True, post_tem
                 DummyClassifier(strategy = 'constant', random_state=42, constant=0),
                 LogisticRegression(random_state = 42),
                 KNeighborsClassifier(),
-                SVC(kernel="rbf", C=0.025, probability=True),   #literature review will need to check against winners of iteration against SVC
+                SVC(random_state=42),   #literature review will need to check against winners of iteration against SVC
                 DecisionTreeClassifier(random_state=42),
                 RandomForestClassifier(random_state=42),
                 AdaBoostClassifier(random_state=42),
