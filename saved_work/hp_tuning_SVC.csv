@@ -1,0 +1,17 @@
+,param_C,param_gamma,param_kernel,Score,Result,model_param,type,C
+0,0.001,1,linear,Accuracy,0.5533652870821397,linear 1,train,0.001
+1,0.001,0.1,linear,Accuracy,0.5533652870821397,linear 0.1,train,0.001
+2,0.01,1,linear,Accuracy,0.388758931258569,linear 1,train,0.01
+3,0.01,0.1,linear,Accuracy,0.388758931258569,linear 0.1,train,0.01
+4,0.001,1,linear,Accuracy,0.5523764411475558,linear 1,test,0.001
+5,0.001,0.1,linear,Accuracy,0.5523764411475558,linear 0.1,test,0.001
+6,0.01,1,linear,Accuracy,0.3935865582268299,linear 1,test,0.01
+7,0.01,0.1,linear,Accuracy,0.3935865582268299,linear 0.1,test,0.01
+8,0.001,1,linear,F1,0.1892383232296598,linear 1,train,0.001
+9,0.001,0.1,linear,F1,0.1892383232296598,linear 0.1,train,0.001
+10,0.01,1,linear,F1,0.22063102154330747,linear 1,train,0.01
+11,0.01,0.1,linear,F1,0.22063102154330747,linear 0.1,train,0.01
+12,0.001,1,linear,F1,0.1731089648265221,linear 1,test,0.001
+13,0.001,0.1,linear,F1,0.1731089648265221,linear 0.1,test,0.001
+14,0.01,1,linear,F1,0.2032899114655315,linear 1,test,0.01
+15,0.01,0.1,linear,F1,0.2032899114655315,linear 0.1,test,0.01
