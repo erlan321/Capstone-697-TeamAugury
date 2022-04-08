@@ -30,16 +30,31 @@ st.write('''
 
     Project Augury is focussed on exploring what makes a post on these subreddits to be popular. We are looking at a group of four subreddits as each subreddit itself has relatively low volumes of posts each day, when compared to the biggest subreddit’s like AskReddit, and our background research confirmed that predictive tasks on social media work better in thematic subreddits and do not necessarily generalize from one theme or subreddit to another.
     ''')
-st.subheader("Related Work")
+# st.subheader("Related Work")
+# st.write('''
+#     placeholder text introducing the following tables of work we reviewed
+#     ''')
+# c = st.container()
+# st.write("this will show last")
+# c.write("paper 1")
+# c.write("paper 2")
+
+# col1, col2, col3 = st.columns(3)
+# col1.write("**Paper Title**")
+# col2.write("**Topic**")
+# col3.write("**Relevance to project**")
+# col1.write("[3] Reddit predictions")
+# col2.write("Supervised Learning approaches to predict popularity")
+# col3.write("This is a prediction task on similar data.")
+# c.write("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
+
+st.header("") #create blank space
+st.subheader("Related Work v2")
 st.write('''
     placeholder text introducing the following tables of work we reviewed
     ''')
 c = st.container()
-st.write("this will show last")
-c.write("paper 1")
-c.write("paper 2")
-
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = c.columns(3)
 col1.write("**Paper Title**")
 col2.write("**Topic**")
 col3.write("**Relevance to project**")
@@ -47,6 +62,73 @@ col1.write("[3] Reddit predictions")
 col2.write("Supervised Learning approaches to predict popularity")
 col3.write("This is a prediction task on similar data.")
 c.write("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
+st.write("placeholder for text at the end of the literature review")
+st.header("") #create blank space
+st.write('''
+    placeholder text introducing the following tables of work we reviewed
+    ''')
+c = st.container()
+col1, col2, col3 = c.columns(3)
+with c:
+    col1.info("**Paper Title**")
+    col2.info("**Topic**")
+    col3.info("**Relevance to project**")
+
+    col1.info("[3] Reddit predictions")
+    col2.info("Supervised Learning approaches to predict popularity")
+    col3.info("This is a prediction task on similar data.")
+    c.info("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse) ")
+    with c.expander("See implications for our project"):
+        st.warning("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
+
+
+
+
+
+st.header("") #create blank space
+st.subheader("Related Work v3")
+st.write('''
+    placeholder text introducing the following tables of work we reviewed
+    ''')
+c = st.container()
+#col1, col2, col3 = c.columns(3)
+with c:
+    c.info("text")
+    c.info("text")
+    #c.write("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse) ")
+    with c.markdown("**test**").expander('''
+        Title: full text of paper title  \n
+        Topic: text text  \n
+        (Click for implications for our project)
+        '''):
+        st.write("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
+
+st.write("placeholder for text at the end of the literature review")
+
+
+st.header("") #create blank space
+st.subheader("Related Work v4")
+st.write('''
+    placeholder text introducing the following tables of work we reviewed
+    ''')
+c = st.container()
+with c:
+    c.markdown("").info('''
+        *Title:* paper's full title 1 the title of the paper  
+        *Topic:* short topic description    
+        *Implication for our project:* The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse)  
+        ''')
+    c.markdown("").info('''
+        *Title:* paper's full title 2 the title of the paper  
+        *Topic:* short topic description    
+        *Implication for our project:* The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse)  
+        ''')
+
+
+
+st.write("placeholder for text at the end of the literature review")
+
+
 
 
 
