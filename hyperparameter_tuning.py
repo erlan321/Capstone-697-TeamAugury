@@ -100,17 +100,32 @@ classifiers = [
             GradientBoostingClassifier(random_state=42)
             ]
 
-lr_params = {"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
-             "max_iter":[100], #****** CHANGE THIS FOR FINAL RUN, 2000 seems good
+lr_params = [
+            {"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
+            'hidden_layer_size': [64,128,256],
+            'activation': ['sigmoid', 'relu', 'tanh']},
+            {"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
+            'hidden_layer_size': [64],
+            'activation': ['sigmoid', 'relu', 'tanh']}
+            ]
+
+
+{"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
+             "max_iter":[4000], #****** CHANGE THIS FOR FINAL RUN to 4000 
              "solver":["liblinear", "lbfgs"],
              "penalty":["l1", "l2"]        
              }
 
+# After results of the above, picked C = 0.01, while the C = 1000 gives slightly better results, keeping C lower helps with regularization
+# liblinear gave the better result for the solver, especially on the F1 score
+# finaly L2 penality was chosen, because L1 ramped up to over fitting the data as soon as C was greater than 0.1
+# With these settings the baseline is Accuracy = 0.789 and F1 = 0.306
+
 svc_params = {
     "C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
     "kernel":["linear", "rbf", "poly", "sigmoid"],
-    'gamma': [1,0.1,0.01,0.001],
-    "max_iter":[100]  #****** CHANGE THIS FOR FINAL RUN >20000 seems good
+    'gamma': ["scale", "auto"], #changed from 0.001, 0.01, 0.1, 1
+    "max_iter":[-1],  # started with 1000, got a lot of convergence warnings, moved to 20k still had quite a few, then 50k****** CHANGE THIS FOR FINAL RUN >50000 provides better results
 }
 
 gbc_params = {
@@ -169,7 +184,7 @@ results.to_csv("saved_work/hp_tuning_" + classifiers[1].__class__.__name__ + ".c
 # Gradient Boosting Tree Classifier
 # guided by https://machinelearningmastery.com/configure-gradient-boosting-algorithm/ and it's references for tuning
 
-print("Initiating grid search on " + classifiers[2].__class__.__name__ + "...")
+""" print("Initiating grid search on " + classifiers[2].__class__.__name__ + "...")
 pipe_grid = GridSearchCV(estimator=classifiers[2], param_grid=parameters[2], cv=cv, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1).fit(X, y)
 results = pd.DataFrame(pipe_grid.cv_results_)
 results = results[results['split0_train_f1'].notna()] #remove the runs that could not run: lbfgs with l1 which don't work together
@@ -186,5 +201,5 @@ g = sns.FacetGrid(data=results, row="model_param", col="Score").map_dataframe(sn
 g.add_legend()
 plt.savefig("saved_work/hp_tuning_" + classifiers[2].__class__.__name__ + ".png")
 plt.clf()
-results.to_csv("saved_work/hp_tuning_" + classifiers[2].__class__.__name__ + ".csv")
+results.to_csv("saved_work/hp_tuning_" + classifiers[2].__class__.__name__ + ".csv") """
 
