@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')  ### BE CAREFUL USING THIS :) Supressing the warning that some LR are NaN
 
-
+rnd_state = 42
 # This file should be generated from the baseline features csv file
 print("Loading features...")
 feature_df = pd.read_csv("saved_work/backup_features_data.csv")
@@ -88,16 +88,16 @@ preprocessor = ColumnTransformer(
                 ('categorical', categorical_transformer, categorical_features)])
 
 # Moved to StratifiedKFold due to imbalanced dataset https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state= rnd_state)
 
 #Scoring metrics
 scoring = {'acc': 'accuracy', 'f1': 'f1'}
 
 # Set classifiers
 classifiers = [
-            LogisticRegression(random_state = 42),
-            SVC(random_state=42),
-            GradientBoostingClassifier(random_state=42)
+            LogisticRegression(random_state = rnd_state),
+            SVC(random_state=rnd_state),
+            GradientBoostingClassifier(random_state=rnd_state)
             ]
 
 lr_params = [
