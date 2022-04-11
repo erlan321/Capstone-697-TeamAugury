@@ -71,7 +71,7 @@ def load_and_preprocess():
                     ('numerical', numeric_transformer, numeric_features),
                     ('categorical', categorical_transformer, categorical_features)])
 
-    X = preprocessor.fit_transform(X)
+    preprocessor.fit_transform(X)
     
     print ('data loaded and pre_processed')
 
