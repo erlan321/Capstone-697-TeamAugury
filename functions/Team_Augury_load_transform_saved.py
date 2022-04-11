@@ -72,7 +72,6 @@ def load_and_preprocess():
                     ('categorical', categorical_transformer, categorical_features)])
 
     X = preprocessor.fit_transform(X)
-    y = preprocessor.transform(y)
     
     print ('data loaded and pre_processed')
 
