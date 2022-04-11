@@ -1,9 +1,6 @@
-# This program was built to run an exhaustive GridSearchCV on the 2 selected models: LogisticRegression, SVC. GradientBoostingClassifier is tuned in the GBT specific file
+# This program was built to run an exhaustive GridSearchCV on the first of the selected models: LogisticRegression. SVC and GradientBoostingClassifier are tuned in their specific files
 # All features will be used for the models.
 
-import psycopg2
-from functions.Team_Augury_feature_functions import generate_features_csv
-import functions.Team_Augury_SQL_func
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -11,8 +8,6 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.ensemble import GradientBoostingClassifier
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -96,11 +91,6 @@ scoring = {'acc': 'accuracy', 'f1': 'f1'}
 # Set classifiers
 classifiers = [
             LogisticRegression(random_state = rnd_state),
-            SVC(random_state=rnd_state),
-            SVC(random_state=rnd_state),
-            SVC(random_state=rnd_state),
-            SVC(random_state=rnd_state)#,
-            #GradientBoostingClassifier(random_state=rnd_state) #moved to another py file for clarity (and slightly different approach)
             ]
 
 lr_params = [
@@ -123,41 +113,49 @@ lr_params = [
 # After results of the above, picked C = 0.01, while the C = 1000 gives slightly better results, keeping C lower helps with regularization
 # With these settings the baseline is Accuracy = 0.789 and F1 = 0.306
 
-svc_params = [
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["linear"],
-            'gamma': ["scale", "auto"],
-            "max_iter":[-1],
-            "cache_size":[1000]}, #increased cache size to speed-up algorithm
-            # *** saved a copy of the csv will merge
 
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["rbf"],
-            'gamma': ["scale", "auto"], # saw limited effect with [0.001, 0.01, 0.1, 1, 10]
-            "max_iter":[-1],
-            "cache_size":[1000]}, #increased cache size to speed-up algorithm
+pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", LogisticRegression(random_state = rnd_state, max_iter=10000, multi_class="ovr"))])
+parameters = [
+            {"clf__C":np.logspace(-5, 10, num=16, base=2),
+            "clf__solver":["liblinear"],
+            "clf__penalty":["l1", "l2"],
+            },
 
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["poly"],
-            'gamma': ["scale", "auto"], # saw limited effect with [0.001, 0.01, 0.1, 1, 10]
-            "coef0":[0, 0.1, 1],    #limited information on this parameter. 0 is the default.
-            "degree":[3, 4, 5],
-            "max_iter":[-1],
-            "cache_size":[1000]}, #increased cache size to speed-up algorithm
-            
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["sigmoid"],
-            'gamma': ["scale", "auto"], # saw limited effect with [0.001, 0.01, 0.1, 1, 10]
-            "coef0":[0, 0.1, 1],    #limited information on this parameter. 0 is the default.
-            "max_iter":[-1],
-            "cache_size":[1000]} #increased cache size to speed-up algorithm
+            {"clf__C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
+            "clf__solver":["lbfgs"],
+            "clf__penalty":["l2"],
+            }
             ]
 
+results = GridSearchCV(estimator=pipe, param_grid=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1).fit(X, y)          
+results = pd.DataFrame(results.cv_results_)
+results.columns = [col.replace('param_clf__', '') for col in results.columns]
+results.to_csv("saved_work/hp_tuning_RAW_LogReg.csv", index=False)
+# clean up
+it_params = ["C", "penalty", "solver"]
+it_params_noC = ["gamma", "penalty", "solver"]
+tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
+results = results[tot_params]
+results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
+results["model_param"] = results["penalty"] + " / " + results["solver"]
+results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
+results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
+results = results[["Result", "model_param", "Score", "type", "C", "penalty","solver"]]
+#remove overfitting
+ovr_fit = results[(results["Result"]>=0.99) & (results["type"]=="train")]
+ovr_fit = list(set(ovr_fit['model_param']))
+#remove dismal f1 score (<0.2)
+undr_fit = results[(results["Result"]<0.2) & (results["Score"]=="F1")]
+undr_fit = list(set(undr_fit['model_param']))
+remove_params = list(undr_fit + ovr_fit)
+results = results.drop(results[results.model_param.isin(remove_params)].index)
+#save
+results.to_csv("saved_work/hp_tuning_LogReg.csv", index=False)
 
 
-parameters = [lr_params, svc_params[0], svc_params[1], svc_params[2], svc_params[3]]
+"""
 
-for i in range(0, len(parameters)):
+
     print("Initiating grid search on " + classifiers[i].__class__.__name__ + "...")
     pipe_grid = GridSearchCV(estimator=classifiers[i], param_grid=parameters[i], cv=cv, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2).fit(X, y)  
     results = pd.DataFrame(pipe_grid.cv_results_)
@@ -166,28 +164,13 @@ for i in range(0, len(parameters)):
     if i == 0: #logistic regression
         it_params = ["param_C", "param_penalty", "param_solver"] 
         it_params_noC = ["param_penalty", "param_solver"]
-    elif i == 1 or i == 2: #svc linear or rbf
-        it_params = ["param_C", "param_gamma", "param_kernel"]
-        it_params_noC = ["param_gamma", "param_kernel"]
-    elif i == 3: #svc poly
-        it_params = ["param_C", "param_gamma", "param_kernel", "param_coef0", "param_degree"]
-        it_params_noC = ["param_gamma", "param_kernel", "param_coef0", "param_degree"]
-    elif i == 4: #svc sigmoid
-        it_params = ["param_C", "param_gamma", "param_kernel", "param_coef0", "param_degree"]
-        it_params_noC = ["param_gamma", "param_kernel", "param_coef0"]
-
-
 
     tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
     results = results[tot_params]
     results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
 
-    if i == 0 or i == 1 or i == 2:
+    if i == 0 :
         results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]]
-    elif i == 3:
-        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]] + " " + results[it_params_noC[2]] + " " + results[it_params_noC[3]]
-    elif i == 4:
-        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]] + " " + results[it_params_noC[2]]
         
     results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
     results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
@@ -199,4 +182,4 @@ for i in range(0, len(parameters)):
     g.fig.set_size_inches(18.5, 12.5)
     plt.savefig("saved_work/hp_tuning_" + str(i)+ classifiers[i].__class__.__name__ + ".png")
     plt.clf()
-    results.to_csv("saved_work/hp_tuning_" + str(i) + classifiers[i].__class__.__name__ + ".csv")
+    results.to_csv("saved_work/hp_tuning_" + str(i) + classifiers[i].__class__.__name__ + ".csv")"""

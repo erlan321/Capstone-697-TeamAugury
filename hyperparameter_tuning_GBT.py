@@ -1,4 +1,4 @@
-# This program was built to run an exhaustive GridSearchCV on the 3 selected models: LogisticRegression, SVC and GradientBoostingClassifier
+# This program was built to run an exhaustive GridSearchCV on the third of the selected models: GradientBoostingClassifier. LogisticRegression and SVC are tuned in their specific files
 # All features will be used for the models.
 
 import psycopg2
