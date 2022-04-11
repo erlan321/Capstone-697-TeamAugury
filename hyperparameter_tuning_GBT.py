@@ -1,4 +1,4 @@
-# This program was built to run an exhaustive GridSearchCV on the 2 selected models: LogisticRegression, SVC. GradientBoostingClassifier is tuned in the GBT specific file
+# This program was built to run an exhaustive GridSearchCV on the 3 selected models: LogisticRegression, SVC and GradientBoostingClassifier
 # All features will be used for the models.
 
 import psycopg2
@@ -36,8 +36,6 @@ df['hot_proxy_hr_3'] = df.apply(lambda x: np.nan if x['hours_since_created'] in 
 df['hot_proxy_hr_3'] = df.groupby(['post_id'])['hot_proxy_hr_3'].fillna( method='backfill') .fillna(value=0) 
 df['popular_hr_3'] = df.apply( lambda x: 1 if x['hot_proxy_hr_3']>=popular_hr_3_threshold else 0, axis=1)
 
-
-
 ### X - value decisions  ###
 
 ### column names broken into categories for ease of use
@@ -53,7 +51,6 @@ X_col_comment_sbert = [f'avg_comment_sbert_{"{:03d}".format(i)}' for i in range(
 numeric_features = ['number_comments_vs_hrs','post_author_karma', 'avg_comment_upvotes_vs_hrs','avg_comment_author_karma']
 
 categorical_features = X_col_post_temporal
-
 
 ### concat the X_value feature columns we want from the above categories
 X_columns = []
@@ -95,78 +92,41 @@ scoring = {'acc': 'accuracy', 'f1': 'f1'}
 
 # Set classifiers
 classifiers = [
-            LogisticRegression(random_state = rnd_state),
-            SVC(random_state=rnd_state),
-            SVC(random_state=rnd_state),
-            SVC(random_state=rnd_state),
-            SVC(random_state=rnd_state)#,
-            #GradientBoostingClassifier(random_state=rnd_state) #moved to another py file for clarity (and slightly different approach)
+            GradientBoostingClassifier(random_state=rnd_state)
             ]
 
-lr_params = [
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
-            "solver":["liblinear"],
-            "penalty":["l1", "l2"],
-            "max_iter":[5000], #raised to reduce non-convergence errors
-            "multi_class":["ovr"]},
+gbc_params = {
+            "learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
+            "n_estimators":[100, 225, 350, 500]}
 
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
-            "solver":["lbfgs"],
-            "penalty":["l2"],
-            "max_iter":[5000], #raised to reduce non-convergence errors
-            "multi_class":["ovr"]}
-            ]
+#1st pass
+        #gbc_params = {"learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
+        #               "n_estimators":[100, 225, 350, 500]}
+
+#2nd pass
+            #gbc_params = {"learning_rate":[0.005, 0.01, 0.02, 0.03, 0.4],
+            #              "n_estimators":[50, 75, 100, 125, 150]}
 
 
-# liblinear gave the better result for the solver, especially on the F1 score
-# finaly L2 penality was chosen, because L1 ramped up to over fitting the data as soon as C was greater than 0.1
-# After results of the above, picked C = 0.01, while the C = 1000 gives slightly better results, keeping C lower helps with regularization
-# With these settings the baseline is Accuracy = 0.789 and F1 = 0.306
+    """ "max_depth":[3, 4, 5],
+    "min_samples_split":np.linspace(0.1, 0.5, 8),
+    "min_samples_leaf":np.linspace(0.1, 0.5, 8),
+    "max_features":[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
+} """
 
-svc_params = [
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["linear"],
-            'gamma': ["scale", "auto"],
-            "max_iter":[-1],
-            "cache_size":[1000]}, #increased cache size to speed-up algorithm
-            # *** saved a copy of the csv will merge
+parameters = gbc_params
 
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["rbf"],
-            'gamma': ["scale", "auto"], # saw limited effect with [0.001, 0.01, 0.1, 1, 10]
-            "max_iter":[-1],
-            "cache_size":[1000]}, #increased cache size to speed-up algorithm
-
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["poly"],
-            'gamma': ["scale", "auto"], # saw limited effect with [0.001, 0.01, 0.1, 1, 10]
-            "coef0":[0, 0.1, 1],    #limited information on this parameter. 0 is the default.
-            "degree":[3, 4, 5],
-            "max_iter":[-1],
-            "cache_size":[1000]}, #increased cache size to speed-up algorithm
-            
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100], #removed 100 and 1000 as they tended towards overfitting
-            "kernel":["sigmoid"],
-            'gamma': ["scale", "auto"], # saw limited effect with [0.001, 0.01, 0.1, 1, 10]
-            "coef0":[0, 0.1, 1],    #limited information on this parameter. 0 is the default.
-            "max_iter":[-1],
-            "cache_size":[1000]} #increased cache size to speed-up algorithm
-            ]
-
-
-
-parameters = [lr_params, svc_params[0], svc_params[1], svc_params[2], svc_params[3]]
-
-for i in range(0, len(parameters)):
-    print("Initiating grid search on " + classifiers[i].__class__.__name__ + "...")
-    pipe_grid = GridSearchCV(estimator=classifiers[i], param_grid=parameters[i], cv=cv, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2).fit(X, y)  
+for i in range(0, 6):
+    print("Initiating grid search on " + classifiers[0].__class__.__name__ + "...")
+    pipe_grid = GridSearchCV(estimator=classifiers[0], param_grid=parameters[0], cv=cv, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2).fit(X, y)  
     results = pd.DataFrame(pipe_grid.cv_results_)
-    results.to_csv("saved_work/hp_tuning_RAW" + str(i) + classifiers[i].__class__.__name__ + ".csv")
-
     if i == 0: #logistic regression
         it_params = ["param_C", "param_penalty", "param_solver"] 
         it_params_noC = ["param_penalty", "param_solver"]
-    elif i == 1 or i == 2: #svc linear or rbf
+    elif i == 1: #svc linear
+        it_params = ["param_C", "param_gamma", "param_kernel"]
+        it_params_noC = ["param_gamma", "param_kernel"]
+    elif i == 2: #svc rbf
         it_params = ["param_C", "param_gamma", "param_kernel"]
         it_params_noC = ["param_gamma", "param_kernel"]
     elif i == 3: #svc poly
@@ -187,7 +147,7 @@ for i in range(0, len(parameters)):
     elif i == 3:
         results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]] + " " + results[it_params_noC[2]] + " " + results[it_params_noC[3]]
     elif i == 4:
-        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]] + " " + results[it_params_noC[2]]
+        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]] + " " + results[it_params_noC[2]]]
         
     results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
     results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
@@ -197,6 +157,6 @@ for i in range(0, len(parameters)):
     g = sns.FacetGrid(data=results, row="model_param", col="Score").map_dataframe(sns.lineplot, x="C", y="Result", hue="type") 
     g.add_legend()
     g.fig.set_size_inches(18.5, 12.5)
-    plt.savefig("saved_work/hp_tuning_" + str(i)+ classifiers[i].__class__.__name__ + ".png")
+    plt.savefig("saved_work/hp_tuning_" + str(i)+ classifiers[0].__class__.__name__ + ".png")
     plt.clf()
-    results.to_csv("saved_work/hp_tuning_" + str(i) + classifiers[i].__class__.__name__ + ".csv")
+    results.to_csv("saved_work/hp_tuning_" + str(i) + classifiers[0].__class__.__name__ + ".csv")
