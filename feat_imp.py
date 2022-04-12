@@ -16,8 +16,17 @@ print ('Testing load, length of X, y:', X_train.shape, y_train.shape)
 #load pkl'd GBT clf
 filename = "models/GradientBoostingClassifier_vanilla_model.sav" #note this is the 'Vanillia model', not the optimised tuned one
 GB_loaded = pickle.load(open(filename, 'rb'))
+
+#test load
 result = GB_loaded.score(X_train, y_train)
 print('Testing model load: Accuracy result for GBT:' , result)
+print (len(GB_loaded.steps[1][1].feature_importances_)) #This shows the pickled model only has 35 features whereas it should have 776...
+print (GB_loaded.steps)
+print (GB_loaded.steps[1][1], type(GB_loaded.steps[1][1]))
+print (len(GB_loaded.steps[1][1].feature_importances_), ': length of features importances') # how to access the model from the pipeline
+
+# print (clf.steps[1][1].feature_importances_)
+# print (clf.get_feature_names())
 
 # Plot feature importances
 figure(figsize=(10, 50), dpi=80)
@@ -29,14 +38,4 @@ def plot_feature_importance(model):
   plt.xlabel("Feature importance")
   plt.ylabel("Feature")
   plt.ylim(-1, n_features)
-
-clf = GB_loaded.fit(X_train, y_train)
-print (clf.steps)
-print (clf.steps[1][1], type(clf.steps[1][1]))
-print (len(clf.steps[1][1].feature_importances_), ': length of features importances') # how to access the model from the pipeline
-#print (clf.steps[1][1].feature_importances_)#
-
-
-
-# print (clf.get_feature_names())
 # plot_feature_importance(clf.steps[1][1])

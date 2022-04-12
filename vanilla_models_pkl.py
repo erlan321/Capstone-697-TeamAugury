@@ -79,7 +79,8 @@ categorical_transformer = Pipeline(steps=[
 preprocessor = ColumnTransformer(
             transformers=[
                 ('numerical', numeric_transformer, numeric_features),
-                ('categorical', categorical_transformer, categorical_features)])
+                ('categorical', categorical_transformer, categorical_features)],
+                remainder='passthrough')
 
 
 # Set classifiers
@@ -94,5 +95,6 @@ for classifier in classifiers:
     print("Fitting " + classifier.__class__.__name__ + "...")
     clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
     clf.fit(X,y)
+    #print (len(clf.steps[1][1].feature_importances_))
     filename = "models/"+ classifier.__class__.__name__ + "_vanilla_model.sav"
     pickle.dump(clf, open(filename, 'wb'))
