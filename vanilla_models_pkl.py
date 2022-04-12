@@ -79,7 +79,8 @@ categorical_transformer = Pipeline(steps=[
 preprocessor = ColumnTransformer(
             transformers=[
                 ('numerical', numeric_transformer, numeric_features),
-                ('categorical', categorical_transformer, categorical_features)])
+                ('categorical', categorical_transformer, categorical_features)],
+                remainder='passthrough')
 
 
 # Set classifiers
