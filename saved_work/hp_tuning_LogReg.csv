@@ -1,65 +1,105 @@
 Result,model_param,Score,type,C,penalty,solver
-0.7951014903079822,l2 / liblinear,Accuracy,train,0.03125,l2,liblinear
-0.7945040295163466,l2 / liblinear,Accuracy,train,0.0625,l2,liblinear
-0.7942054105870944,l2 / liblinear,Accuracy,train,0.125,l2,liblinear
-0.7959976814954354,l2 / liblinear,Accuracy,train,0.25,l2,liblinear
-0.7967443960184143,l2 / liblinear,Accuracy,train,0.5,l2,liblinear
-0.7970427920145352,l2 / liblinear,Accuracy,train,1.0,l2,liblinear
-0.7977896180040797,l2 / liblinear,Accuracy,train,2.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,4.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,8.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,16.0,l2,liblinear
-0.7974908876082619,l2 / liblinear,Accuracy,train,32.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,64.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,128.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,256.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,512.0,l2,liblinear
-0.7976402528061708,l2 / liblinear,Accuracy,train,1024.0,l2,liblinear
-0.7915202430958976,l2 / liblinear,Accuracy,test,0.03125,l2,liblinear
-0.7885333809991957,l2 / liblinear,Accuracy,test,0.0625,l2,liblinear
-0.788535168469032,l2 / liblinear,Accuracy,test,0.125,l2,liblinear
-0.7879363660738226,l2 / liblinear,Accuracy,test,0.25,l2,liblinear
-0.7873429260881223,l2 / liblinear,Accuracy,test,0.5,l2,liblinear
-0.7861506837072123,l2 / liblinear,Accuracy,test,1.0,l2,liblinear
-0.7855500938421665,l2 / liblinear,Accuracy,test,2.0,l2,liblinear
-0.7849512914469569,l2 / liblinear,Accuracy,test,4.0,l2,liblinear
-0.7849512914469569,l2 / liblinear,Accuracy,test,8.0,l2,liblinear
-0.7849512914469569,l2 / liblinear,Accuracy,test,16.0,l2,liblinear
-0.7849512914469569,l2 / liblinear,Accuracy,test,32.0,l2,liblinear
-0.7849512914469569,l2 / liblinear,Accuracy,test,64.0,l2,liblinear
-0.7843542765215836,l2 / liblinear,Accuracy,test,128.0,l2,liblinear
-0.7843542765215836,l2 / liblinear,Accuracy,test,256.0,l2,liblinear
-0.7843542765215836,l2 / liblinear,Accuracy,test,512.0,l2,liblinear
-0.7843542765215836,l2 / liblinear,Accuracy,test,1024.0,l2,liblinear
-0.23136507938538142,l2 / liblinear,F1,train,0.03125,l2,liblinear
-0.23430587029329925,l2 / liblinear,F1,train,0.0625,l2,liblinear
-0.2391554162317596,l2 / liblinear,F1,train,0.125,l2,liblinear
-0.25075656953771186,l2 / liblinear,F1,train,0.25,l2,liblinear
-0.2588782617341045,l2 / liblinear,F1,train,0.5,l2,liblinear
-0.2624001902466616,l2 / liblinear,F1,train,1.0,l2,liblinear
-0.2711088446356152,l2 / liblinear,F1,train,2.0,l2,liblinear
-0.2724485930478541,l2 / liblinear,F1,train,4.0,l2,liblinear
-0.27244506805696056,l2 / liblinear,F1,train,8.0,l2,liblinear
-0.2724485930478541,l2 / liblinear,F1,train,16.0,l2,liblinear
-0.2723015723784777,l2 / liblinear,F1,train,32.0,l2,liblinear
-0.2732348245594475,l2 / liblinear,F1,train,64.0,l2,liblinear
-0.2732348245594475,l2 / liblinear,F1,train,128.0,l2,liblinear
-0.2732348245594475,l2 / liblinear,F1,train,256.0,l2,liblinear
-0.2732348245594475,l2 / liblinear,F1,train,512.0,l2,liblinear
-0.2732348245594475,l2 / liblinear,F1,train,1024.0,l2,liblinear
-0.22243583175928383,l2 / liblinear,F1,test,0.03125,l2,liblinear
-0.22301641096314212,l2 / liblinear,F1,test,0.0625,l2,liblinear
-0.22656388226650473,l2 / liblinear,F1,test,0.125,l2,liblinear
-0.22968790354607654,l2 / liblinear,F1,test,0.25,l2,liblinear
-0.22900227758821617,l2 / liblinear,F1,test,0.5,l2,liblinear
-0.2277295320863367,l2 / liblinear,F1,test,1.0,l2,liblinear
-0.2302102238354507,l2 / liblinear,F1,test,2.0,l2,liblinear
-0.22626515517128087,l2 / liblinear,F1,test,4.0,l2,liblinear
-0.22626515517128087,l2 / liblinear,F1,test,8.0,l2,liblinear
-0.22626515517128087,l2 / liblinear,F1,test,16.0,l2,liblinear
-0.22626515517128087,l2 / liblinear,F1,test,32.0,l2,liblinear
-0.22626515517128087,l2 / liblinear,F1,test,64.0,l2,liblinear
-0.22573883938180722,l2 / liblinear,F1,test,128.0,l2,liblinear
-0.22573883938180722,l2 / liblinear,F1,test,256.0,l2,liblinear
-0.22573883938180722,l2 / liblinear,F1,test,512.0,l2,liblinear
-0.22573883938180722,l2 / liblinear,F1,test,1024.0,l2,liblinear
+0.8431901731075765,l2 / liblinear / 0.03125,Accuracy,train,0.03125,l2,liblinear
+0.8439367761639897,l2 / lbfgs / 0.03125,Accuracy,train,0.03125,l2,lbfgs
+0.7952509669724566,l1 / liblinear / 0.0625,Accuracy,train,0.0625,l1,liblinear
+0.8614111667205421,l2 / liblinear / 0.0625,Accuracy,train,0.0625,l2,liblinear
+0.8639498177521652,l2 / lbfgs / 0.0625,Accuracy,train,0.0625,l2,lbfgs
+0.8080941446613089,l1 / liblinear / 0.125,Accuracy,train,0.125,l1,liblinear
+0.885155217192603,l2 / liblinear / 0.125,Accuracy,train,0.125,l2,liblinear
+0.8841105525397657,l2 / lbfgs / 0.125,Accuracy,train,0.125,l2,lbfgs
+0.8325868045879637,l1 / liblinear / 0.25,Accuracy,train,0.25,l1,liblinear
+0.9069595264900293,l2 / liblinear / 0.25,Accuracy,train,0.25,l2,liblinear
+0.9060635582357073,l2 / lbfgs / 0.25,Accuracy,train,0.25,l2,lbfgs
+0.8702200350005016,l1 / liblinear / 0.5,Accuracy,train,0.5,l1,liblinear
+0.9278670872671743,l2 / liblinear / 0.5,Accuracy,train,0.5,l2,liblinear
+0.9287631669880619,l2 / lbfgs / 0.5,Accuracy,train,0.5,l2,lbfgs
+0.9118875748219321,l1 / liblinear / 1.0,Accuracy,train,1.0,l1,liblinear
+0.9477298719249161,l2 / liblinear / 1.0,Accuracy,train,1.0,l2,liblinear
+0.9468337922040284,l2 / lbfgs / 1.0,Accuracy,train,1.0,l2,lbfgs
+0.954151237836211,l1 / liblinear / 2.0,Accuracy,train,2.0,l1,liblinear
+0.9660982243376098,l2 / liblinear / 2.0,Accuracy,train,2.0,l2,liblinear
+0.9660983358041756,l2 / lbfgs / 2.0,Accuracy,train,2.0,l2,lbfgs
+0.9871559305786229,l1 / liblinear / 4.0,Accuracy,train,4.0,l1,liblinear
+0.9813314681261355,l2 / liblinear / 4.0,Accuracy,train,4.0,l2,liblinear
+0.9813314681261355,l2 / lbfgs / 4.0,Accuracy,train,4.0,l2,lbfgs
+0.812873050728434,l2 / lbfgs / 0.01,Accuracy,train,0.01,l2,lbfgs
+0.8785844860833993,l2 / lbfgs / 0.1,Accuracy,train,0.1,l2,lbfgs
+0.9468337922040284,l2 / lbfgs / 1,Accuracy,train,1,l2,lbfgs
+0.7849387791581017,l2 / liblinear / 0.03125,Accuracy,test,0.03125,l2,liblinear
+0.7855393690231478,l2 / lbfgs / 0.03125,Accuracy,test,0.03125,l2,lbfgs
+0.790925015640361,l1 / liblinear / 0.0625,Accuracy,test,0.0625,l1,liblinear
+0.7825525069264456,l2 / liblinear / 0.0625,Accuracy,test,0.0625,l2,liblinear
+0.7837465367771917,l2 / lbfgs / 0.0625,Accuracy,test,0.0625,l2,lbfgs
+0.7927124854768076,l1 / liblinear / 0.125,Accuracy,test,0.125,l1,liblinear
+0.7777692376441147,l2 / liblinear / 0.125,Accuracy,test,0.125,l2,liblinear
+0.7765787827330414,l2 / lbfgs / 0.125,Accuracy,test,0.125,l2,lbfgs
+0.7897220484404326,l1 / liblinear / 0.25,Accuracy,test,0.25,l1,liblinear
+0.7759746179283225,l2 / liblinear / 0.25,Accuracy,test,0.25,l2,liblinear
+0.7711967110555009,l2 / lbfgs / 0.25,Accuracy,test,0.25,l2,lbfgs
+0.777762087764769,l1 / liblinear / 0.5,Accuracy,test,0.5,l1,liblinear
+0.7628313522209312,l2 / liblinear / 0.5,Accuracy,test,0.5,l2,liblinear
+0.7640289570113504,l2 / lbfgs / 0.5,Accuracy,test,0.5,l2,lbfgs
+0.7640235946018411,l1 / liblinear / 1.0,Accuracy,test,1.0,l1,liblinear
+0.7544659933863616,l2 / liblinear / 1.0,Accuracy,test,1.0,l2,liblinear
+0.7538689784609884,l2 / lbfgs / 1.0,Accuracy,test,1.0,l2,lbfgs
+0.7449101796407186,l1 / liblinear / 2.0,Accuracy,test,2.0,l1,liblinear
+0.7443149521851818,l2 / liblinear / 2.0,Accuracy,test,2.0,l2,liblinear
+0.7437161497899722,l2 / lbfgs / 2.0,Accuracy,test,2.0,l2,lbfgs
+0.726400929484315,l1 / liblinear / 4.0,Accuracy,test,4.0,l1,liblinear
+0.735953168290285,l2 / liblinear / 4.0,Accuracy,test,4.0,l2,liblinear
+0.7383412279917777,l2 / lbfgs / 4.0,Accuracy,test,4.0,l2,lbfgs
+0.7938975779783717,l2 / lbfgs / 0.01,Accuracy,test,0.01,l2,lbfgs
+0.7807632496201626,l2 / lbfgs / 0.1,Accuracy,test,0.1,l2,lbfgs
+0.7538689784609884,l2 / lbfgs / 1,Accuracy,test,1,l2,lbfgs
+0.5235554891336934,l2 / liblinear / 0.03125,F1,train,0.03125,l2,liblinear
+0.5126803820163892,l2 / lbfgs / 0.03125,F1,train,0.03125,l2,lbfgs
+0.21943485758514658,l1 / liblinear / 0.0625,F1,train,0.0625,l1,liblinear
+0.5973736340562417,l2 / liblinear / 0.0625,F1,train,0.0625,l2,liblinear
+0.6003657051185775,l2 / lbfgs / 0.0625,F1,train,0.0625,l2,lbfgs
+0.321868538905305,l1 / liblinear / 0.125,F1,train,0.125,l1,liblinear
+0.6839268946667604,l2 / liblinear / 0.125,F1,train,0.125,l2,liblinear
+0.6786708643067378,l2 / lbfgs / 0.125,F1,train,0.125,l2,lbfgs
+0.4766517093467096,l1 / liblinear / 0.25,F1,train,0.25,l1,liblinear
+0.7549956680664642,l2 / liblinear / 0.25,F1,train,0.25,l2,liblinear
+0.751234773426537,l2 / lbfgs / 0.25,F1,train,0.25,l2,lbfgs
+0.6369392082041543,l1 / liblinear / 0.5,F1,train,0.5,l1,liblinear
+0.8170950696481855,l2 / liblinear / 0.5,F1,train,0.5,l2,liblinear
+0.8190876690847289,l2 / lbfgs / 0.5,F1,train,0.5,l2,lbfgs
+0.772192969918893,l1 / liblinear / 1.0,F1,train,1.0,l1,liblinear
+0.8715662867580356,l2 / liblinear / 1.0,F1,train,1.0,l2,liblinear
+0.8692895010811936,l2 / lbfgs / 1.0,F1,train,1.0,l2,lbfgs
+0.8891747640911658,l1 / liblinear / 2.0,F1,train,2.0,l1,liblinear
+0.9189668717204006,l2 / liblinear / 2.0,F1,train,2.0,l2,liblinear
+0.9189789934100739,l2 / lbfgs / 2.0,F1,train,2.0,l2,lbfgs
+0.970155274450278,l1 / liblinear / 4.0,F1,train,4.0,l1,liblinear
+0.9563116985492947,l2 / liblinear / 4.0,F1,train,4.0,l2,liblinear
+0.9563116985492947,l2 / lbfgs / 4.0,F1,train,4.0,l2,lbfgs
+0.3249514042259822,l2 / lbfgs / 0.01,F1,train,0.01,l2,lbfgs
+0.6581214545053603,l2 / lbfgs / 0.1,F1,train,0.1,l2,lbfgs
+0.8692895010811936,l2 / lbfgs / 1,F1,train,1,l2,lbfgs
+0.32430128122850493,l2 / liblinear / 0.03125,F1,test,0.03125,l2,liblinear
+0.30866571539761795,l2 / lbfgs / 0.03125,F1,test,0.03125,l2,lbfgs
+0.21010883200996472,l1 / liblinear / 0.0625,F1,test,0.0625,l1,liblinear
+0.34469307541045285,l2 / liblinear / 0.0625,F1,test,0.0625,l2,liblinear
+0.3363709223384869,l2 / lbfgs / 0.0625,F1,test,0.0625,l2,lbfgs
+0.2670690378733104,l1 / liblinear / 0.125,F1,test,0.125,l1,liblinear
+0.35658303991114776,l2 / liblinear / 0.125,F1,test,0.125,l2,liblinear
+0.3487494083292419,l2 / lbfgs / 0.125,F1,test,0.125,l2,lbfgs
+0.33329689012800967,l1 / liblinear / 0.25,F1,test,0.25,l1,liblinear
+0.3918987468965842,l2 / liblinear / 0.25,F1,test,0.25,l2,liblinear
+0.3711974659147156,l2 / lbfgs / 0.25,F1,test,0.25,l2,lbfgs
+0.35907451673737417,l1 / liblinear / 0.5,F1,test,0.5,l1,liblinear
+0.381190003803605,l2 / liblinear / 0.5,F1,test,0.5,l2,liblinear
+0.38292748917748914,l2 / lbfgs / 0.5,F1,test,0.5,l2,lbfgs
+0.3838040666752612,l1 / liblinear / 1.0,F1,test,1.0,l1,liblinear
+0.392567167547766,l2 / liblinear / 1.0,F1,test,1.0,l2,liblinear
+0.3884019412749816,l2 / lbfgs / 1.0,F1,test,1.0,l2,lbfgs
+0.3819144421470003,l1 / liblinear / 2.0,F1,test,2.0,l1,liblinear
+0.3919416658111805,l2 / liblinear / 2.0,F1,test,2.0,l2,liblinear
+0.39147902412716473,l2 / lbfgs / 2.0,F1,test,2.0,l2,lbfgs
+0.3858277195759594,l1 / liblinear / 4.0,F1,test,4.0,l1,liblinear
+0.3951335800205276,l2 / liblinear / 4.0,F1,test,4.0,l2,liblinear
+0.3973315871646264,l2 / lbfgs / 4.0,F1,test,4.0,l2,lbfgs
+0.23503845818493835,l2 / lbfgs / 0.01,F1,test,0.01,l2,lbfgs
+0.34316434951077757,l2 / lbfgs / 0.1,F1,test,0.1,l2,lbfgs
+0.3884019412749816,l2 / lbfgs / 1,F1,test,1,l2,lbfgs

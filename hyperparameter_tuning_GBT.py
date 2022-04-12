@@ -1,9 +1,6 @@
 # This program was built to run an exhaustive GridSearchCV on the third of the selected models: GradientBoostingClassifier. LogisticRegression and SVC are tuned in their specific files
 # All features will be used for the models.
 
-import psycopg2
-from functions.Team_Augury_feature_functions import generate_features_csv
-import functions.Team_Augury_SQL_func
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -82,7 +79,7 @@ categorical_transformer = Pipeline(steps=[
 preprocessor = ColumnTransformer(
             transformers=[
                 ('numerical', numeric_transformer, numeric_features),
-                ('categorical', categorical_transformer, categorical_features)])
+                ('categorical', categorical_transformer, categorical_features)], remainder='passthrough')
 
 # Moved to StratifiedKFold due to imbalanced dataset https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state= rnd_state)

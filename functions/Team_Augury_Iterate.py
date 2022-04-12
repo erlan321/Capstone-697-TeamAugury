@@ -135,13 +135,13 @@ def test_classifiers(dataframe, target="popular_hr_3", post_basic=True, post_tem
     preprocessor = ColumnTransformer(
             transformers=[
                 ('numerical', numeric_transformer, numeric_features),
-                ('categorical', categorical_transformer, categorical_features)])
+                ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
   elif numeric_features != [] and categorical_features == []:
     preprocessor = Pipeline(steps=[
-        ('numerical', numeric_transformer, numeric_features)])
+        ('numerical', numeric_transformer, numeric_features)], remainder="passthrough")
   elif numeric_features == [] and categorical_features != []:
     preprocessor = Pipeline(steps=[
-        ('categorical', categorical_transformer, categorical_features)])
+        ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
   else:
     preprocessor = None
 
@@ -149,7 +149,7 @@ def test_classifiers(dataframe, target="popular_hr_3", post_basic=True, post_tem
   #cv = KFold(n_splits=5, shuffle=True, random_state=42)
 
   # Moved to StratifiedKFold due to imbalanced dataset https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/
-  cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+  cv = StratifiedKFold(n_splits=5, shuffle=False) #shuffle set to false to ensure that the same train/test split is used for each iteration as well as keeping compute down
   
 
   #Scoring metrics

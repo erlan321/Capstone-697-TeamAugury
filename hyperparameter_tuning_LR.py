@@ -4,12 +4,11 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, RandomizedSearchCV
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-import seaborn as sns
-import matplotlib.pyplot as plt
+from scipy import stats
 
 import warnings
 warnings.filterwarnings('ignore')  ### BE CAREFUL USING THIS :) Supressing the warning that some LR are NaN
@@ -80,32 +79,13 @@ categorical_transformer = Pipeline(steps=[
 preprocessor = ColumnTransformer(
             transformers=[
                 ('numerical', numeric_transformer, numeric_features),
-                ('categorical', categorical_transformer, categorical_features)])
+                ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
 
 # Moved to StratifiedKFold due to imbalanced dataset https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state= rnd_state)
 
 #Scoring metrics
 scoring = {'acc': 'accuracy', 'f1': 'f1'}
-
-# Set classifiers
-classifiers = [
-            LogisticRegression(random_state = rnd_state),
-            ]
-
-lr_params = [
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
-            "solver":["liblinear"],
-            "penalty":["l1", "l2"],
-            "max_iter":[5000], #raised to reduce non-convergence errors
-            "multi_class":["ovr"]},
-
-            {"C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
-            "solver":["lbfgs"],
-            "penalty":["l2"],
-            "max_iter":[5000], #raised to reduce non-convergence errors
-            "multi_class":["ovr"]}
-            ]
 
 
 # liblinear gave the better result for the solver, especially on the F1 score
@@ -114,10 +94,10 @@ lr_params = [
 # With these settings the baseline is Accuracy = 0.789 and F1 = 0.306
 
 
-pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", LogisticRegression(random_state = rnd_state, max_iter=10000, multi_class="ovr"))])
+pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", LogisticRegression(random_state = rnd_state, max_iter=100000, multi_class="ovr"))])
 parameters = [
             {"clf__C":np.logspace(-5, 10, num=16, base=2),
-            "clf__solver":["liblinear"],
+            "clf__solver":["liblinear", "lbfgs"],
             "clf__penalty":["l1", "l2"],
             },
 
@@ -127,20 +107,28 @@ parameters = [
             }
             ]
 
+"""parameters = {"clf__C":stats.loguniform(2**-5, 2**10),
+            "clf__solver":["liblinear", "lbfgs"],
+            "clf__penalty":["l1", "l2"],
+            }"""
+
 results = GridSearchCV(estimator=pipe, param_grid=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1).fit(X, y)          
+#results = RandomizedSearchCV(estimator=pipe, param_distributions=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2, random_state=rnd_state, n_iter=100).fit(X, y)
 results = pd.DataFrame(results.cv_results_)
 results.columns = [col.replace('param_clf__', '') for col in results.columns]
 results.to_csv("saved_work/hp_tuning_RAW_LogReg.csv", index=False)
 # clean up
 it_params = ["C", "penalty", "solver"]
-it_params_noC = ["gamma", "penalty", "solver"]
+it_params_noC = ["penalty", "solver"]
 tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
 results = results[tot_params]
 results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
-results["model_param"] = results["penalty"] + " / " + results["solver"]
+results["model_param"] = results["penalty"] + " / " + results["solver"] + " / " + results["C"].astype(str)
 results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
 results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
 results = results[["Result", "model_param", "Score", "type", "C", "penalty","solver"]]
+#remove NANs
+results = results[results['Result'].notna()]
 #remove overfitting
 ovr_fit = results[(results["Result"]>=0.99) & (results["type"]=="train")]
 ovr_fit = list(set(ovr_fit['model_param']))
@@ -152,34 +140,3 @@ results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_LogReg.csv", index=False)
 
-
-"""
-
-
-    print("Initiating grid search on " + classifiers[i].__class__.__name__ + "...")
-    pipe_grid = GridSearchCV(estimator=classifiers[i], param_grid=parameters[i], cv=cv, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2).fit(X, y)  
-    results = pd.DataFrame(pipe_grid.cv_results_)
-    results.to_csv("saved_work/hp_tuning_RAW" + str(i) + classifiers[i].__class__.__name__ + ".csv")
-
-    if i == 0: #logistic regression
-        it_params = ["param_C", "param_penalty", "param_solver"] 
-        it_params_noC = ["param_penalty", "param_solver"]
-
-    tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
-    results = results[tot_params]
-    results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
-
-    if i == 0 :
-        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]]
-        
-    results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
-    results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
-    results["C"] = results["param_C"].astype(str)
-
-    sns.set(rc={'figure.figsize':(16,16)})
-    g = sns.FacetGrid(data=results, row="model_param", col="Score").map_dataframe(sns.lineplot, x="C", y="Result", hue="type") 
-    g.add_legend()
-    g.fig.set_size_inches(18.5, 12.5)
-    plt.savefig("saved_work/hp_tuning_" + str(i)+ classifiers[i].__class__.__name__ + ".png")
-    plt.clf()
-    results.to_csv("saved_work/hp_tuning_" + str(i) + classifiers[i].__class__.__name__ + ".csv")"""

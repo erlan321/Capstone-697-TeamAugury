@@ -42,8 +42,8 @@ else:
   print("Loading features...")
   feature_df = pd.read_csv("saved_work/backup_features_data.csv")
 
-targets = ['popular_hr_3', 'popular_hr_6','popular_hr_24'] #, 'popular_max']
-increments = [0, 3, 6]
+targets = ['popular_hr_3'] #, 'popular_hr_6','popular_hr_24'] #, 'popular_max'] --> Team decision based on EDA
+increments = [0] #, 3, 6] --> team decision based on EDA
 
 # Use the below if you want to test out all potential features combinations
 """ features = ["post_basic", "post_temporal", "comment_basic", "post_sent", "comment_sent", "post_sBERT", "comment_sBERT"]
