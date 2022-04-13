@@ -8,7 +8,8 @@ from sklearn.pipeline import Pipeline
 
 
 def load_and_preprocess():
-
+    '''Loads a stored version of pre-processed data and returns an output identical to what is fed to clf'''
+    
     rnd_state = 42
     # This file should be generated from the baseline features csv file
     print("Loading features...")
