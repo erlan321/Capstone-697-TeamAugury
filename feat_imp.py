@@ -26,29 +26,24 @@ print('Testing model load: Accuracy result for GBT:' , result)
 
 ## Explore Feature importances and Labels prior to plotting
 fimp = GB_loaded.steps[1][1].feature_importances_ #note len of 805 due to transformation, notably the one hot encoding day/hours
-clabels = list(X_train.columns) #note len of 776 'untransformed'
-clabels = clabels + list(GB_loaded['preprocessor'].transformers_[1][1]['onehot'].get_feature_names() ) 
-#print (len(clabels), 'is the length of the labels') #note this is two more than required as the original hours/days features still in here....
-#remove last two days of week as we can see where these land and understand from Viz where they should be inserted...
-clabels.remove('x1_5')
-clabels.remove('x1_6')
-
-combined_ns = list(zip(clabels,fimp))
-
+# clabels = list(X_train.columns) #note len of 776 'untransformed'
+# clabels = clabels + list(GB_loaded['preprocessor'].transformers_[1][1]['onehot'].get_feature_names() ) 
+# #print (len(clabels), 'is the length of the labels') #note this is two more than required as the original hours/days features still in here....
+# #remove last two days of week as we can see where these land and understand from Viz where they should be inserted...
+# clabels.remove('x1_5')
+# clabels.remove('x1_6')
+# combined_ns = list(zip(clabels,fimp))
 #print (f'first 40 {combined_ns[:40]}')
 
-#recombining features, how I think it works:
+#recombining features to match labels to features:
 clabels_v2 = list(X_train.columns)
 clabels_v2.remove('time_hour')
 clabels_v2.remove('day_of_week')
-#print (clabels_v2[387:390])
 
 clabels_v2 = clabels_v2[0:3] + clabels_v2[387:390] + list(GB_loaded['preprocessor'].transformers_[1][1]['onehot'].get_feature_names()) + clabels_v2[3:387]+clabels_v2[390:]
 
-new_combined_ns = list(zip(clabels_v2,fimp))
+#new_combined_ns = list(zip(clabels_v2,fimp))
 #print (f'first 40 {new_combined_ns[:40]}')
-#print (new_combined_ns[418:421])
-
 
 # Plot feature importances
 figure(figsize=(10, 80), dpi=100)
