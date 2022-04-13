@@ -24,6 +24,7 @@ result = GB_loaded.score(X_train, y_train)
 print('Testing model load: Accuracy result for GBT:' , result)
 
 print (GB_loaded.steps)
+print ('The second element of the first slice: ', type(GB_loaded.steps[0][1] )) #This index's the col transformer. However, AttributeError: Transformer numerical (type Pipeline) does not provide get_feature_names.
 print (GB_loaded.steps[1][1], type(GB_loaded.steps[1][1]))
 print (len(GB_loaded.steps[1][1].feature_importances_), ': length of features importances') # accesses the model from the pipeline
 
@@ -38,6 +39,9 @@ clabels = X_train.columns #note len of 776 'untransformed'
 
 print (GB_loaded['preprocessor'].transformers_[1][1]['onehot'].get_feature_names()) #get's names from transformed array of one hot feat names
 
+print (type (GB_loaded['preprocessor'].transformers_[1][1])) #['onehot'].get_feature_names())
+#print (GB_loaded['preprocessor'].transformers_[1][1].get_feature_names_out())  #AttributeError: 'Pipeline' object has no attribute 'get_feature_names_out'
+print (type (GB_loaded['preprocessor'].transformers_[1][1]['onehot']))#.get_feature_names())
 
 # for i in range(0,1): #will be upto 40 of these 
 #   sl_start = 0
