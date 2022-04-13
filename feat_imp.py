@@ -9,6 +9,7 @@ import pickle
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cla, figure
 import altair as alt
+from altair_saver import save
 
 
 X_train, y_train = load_and_preprocess()
@@ -90,7 +91,12 @@ scoring_array = np.concatenate(
 
 short_label_list = clabels_v2[0:37] + ['SBERT_posts', 'SBERT_comments']
 new_combined_ns = (zip(short_label_list,scoring_array))
-#print (new_combined_ns)
-
 df = pd.DataFrame(new_combined_ns, columns=['Feature','Importance'])
-print (df)
+#print (df)
+
+chart = alt.Chart(df).mark_bar().encode(
+  x = 'Feature:N',
+  y = 'Importance:Q'
+)
+
+save(chart, "saved_work/feat_imp_short.png")
