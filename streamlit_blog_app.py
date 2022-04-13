@@ -188,6 +188,12 @@ st.markdown("Testing Reddit access...")
 # APP_NAME= 'Capstone2'
 ### SECRETS TO DELETE ###
 
+REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
+REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
+APP_ID= st.secrets['APP_ID']
+APP_SECRET= st.secrets['APP_SECRET']
+APP_NAME= st.secrets['APP_NAME']
+
 reddit = praw.Reddit(
     client_id       = APP_ID,
     client_secret   = APP_SECRET,
