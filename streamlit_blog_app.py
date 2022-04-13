@@ -109,25 +109,63 @@ st.write("placeholder for text at the end of the literature review")
 
 st.header("") #create blank space
 st.subheader("Related Work v4")
-st.write('''
-    placeholder text introducing the following tables of work we reviewed
+st.markdown('''
+    The table below summarizes the papers we reviewed and the main insights we derived for use in our Augury project.  The types of works span from Supervised Learning methods through to Reinforcement Learning and we learned a little from each.  *(Full Citations are given in an appendix)*
     ''')
-c = st.container()
-with c:
-    c.markdown("").info('''
-        *Title:* paper's full title 1 the title of the paper  
-        *Topic:* short topic description    
-        *Implication for our project:* The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse)  
+related_work = st.container()
+with related_work:
+    related_work.markdown("").info('''
+        **Title:** Predicting the Popularity of Reddit Posts with AI.[3]  
+        **Topic:** Supervised Learning approaches to predict popularity    
+        **Implication for our project:** This is a prediction task on similar data.  The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF (Term Frequency-Inverse Document Frequency), and LDA (Latent Dirichlet Allocation) trained on features extracted with Naive Bayes and SVM.  This work is based on regression, trying to predict the number of upvotes, whereas Augury aims to predict whether a post will be popular or not ( a classification problem) within a three hour window.   
         ''')
-    c.markdown("").info('''
-        *Title:* paper's full title 2 the title of the paper  
-        *Topic:* short topic description    
-        *Implication for our project:* The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse)  
+    related_work.markdown("").info('''
+        **Title:** Data Stories. We analyzed 4 million data points to see what makes it to the front page of reddit. Here’s what we learned.[4]  
+        **Topic:** Supervised Learning approaches to predicting Reddit comment Popularity    
+        **Implication for our project:** Comparable aims, different NLP and looked only at Comments rather than posts.  Handling similar data, the author aimed to predict comment popularity.  Achieved relatively low accuracy scores ranging from 42% to 52.7% with a Decision Tree Classifier performing best. Cohen's Kappa statistic is applied to show results were, in fact, not much better than random.  In their conclusions they suggest research looks at temporal proximity of comments to posts, a key feature in Augury.
+        ''')
+    related_work.markdown("").info('''
+        **Title:** Popularity prediction of reddit texts.[5]  
+        **Topic:** Supervised learning approach to predict Reddit post popularity    
+        **Implication for our project:** Comparable objectives, uses different NLP and features. Focuses on using Topics to determine predictive task.   Achieved 60-75% accuracy on the task, using Latent Dirichlet Allocation (LDA) and Term Frequency Inverse Document Frequency (TFIDF) to classify topics in posts to explore the relationship between topics and posts in order to predict using Naive Bayes and Support Vector Machine Classifiers what will become popular. Augury includes topic modeling as a feature, and our initial model suite included these classifiers.  We later rejected these models as Tree based classifiers proved more performant.
+        ''')
+    related_work.markdown("").info('''
+        **Title:** Predicting the Popularity of Reddit Posts.[6]  
+        **Topic:** Supervised learning approach to predict Reddit post popularity    
+        **Implication for our project:** Conducted similar time of day, day of week features to Augury. Also performed sentiment analysis, with a different method. Finally treated the problem as a regression rather than classification one.  Our early experiments found classification to be better suited to our objective.
+        ''')
+    related_work.markdown("").info('''
+        **Title:** Deepcas: An end-to-end predictor of information cascades.[7]  
+        **Topic:** Neural Network approach to predicting information cascades    
+        **Implication for our project:** The prediction task in DeepCas was quite different to Augury. The problem definition included a Markov Decision Process as a ‘deep walk path’ making the work potentially relevant when we explored Reinforcement Learning approaches.  Eventually we moved away from these methods as our actor ‘choices’ i.e. picking a post had very little effect on the State/Environment hence we reject RL methods, despite a thorough investigation of use cases and an investigation of relevant works such as those in [8] to [11] below. The RL approach is effectively too contrived for our objective.
+        ''')
+    related_work.markdown("").info('''
+        **Title:** Deep reinforcement learning with a combinatorial action space for predicting popular reddit threads.[8]  
+        **Topic:** Reinforcement Learning on Reddit data    
+        **Implication for our project:** Similar domain space, different approaches.  Showed how a simulator might be used to reconstruct ‘Trees’ to set up and test sequential decision making. Related to our main task but not identical.
+        ''')
+    related_work.markdown("").info('''
+        **Title:** Deep reinforcement learning with a natural language action space.[9]  
+        **Topic:** Reinforcement Learning for NLP - Text based games    
+        **Implication for our project:** Illustrated the large action space issue for deep Q-learning in NLP.  Helps understand why the Tree approach was taken in [8] in order to re-use approach from text based games when seeking to predict karma on reddit.  
+        ''')
+    related_work.markdown("").info('''
+        **Title:** Deep reinforcement learning for NLP.[10]  
+        **Topic:** A primer on Reinforcement Learning for NLP    
+        **Implication for our project:** Simple introduction and overview to papers in the domain.  
+        ''')
+    related_work.markdown("").info('''
+        **Title:** SocialSift: Target Query Discovery on Online Social Media With Deep Reinforcement Learning.[11]  
+        **Topic:** Generation of SQL queries using Reinforcement Learning    
+        **Implication for our project:**  Sets out an online method (via API) of testing created text (‘Queries’) where the returned results are classified to create a reward for the RL policy Pi. The text of the query is effectively keywords that are extracted from the corpus of the previous query history and returned results.
+        ''')
+    related_work.markdown("").info('''
+        **Title:** Real-Time Predicting Bursting Hashtags on Twitter.[12]  
+        **Topic:** Predicting hashtag bursts on Reddit    
+        **Implication for our project:**  Similar data and has a temporal aspect to the prediction challenge. The definition of a ‘burst’ in this paper used a maximum function of hashtag counts over a 24 hour period to define a burst. Our early exploration of popularity as defined in Augury took inspiration from this, but was later adapted to our 3 hour target which better suited our objective. Augury also took some inspiration from the classification approach used in this paper.
         ''')
 
 
-
-st.write("placeholder for text at the end of the literature review")
 
 
 
@@ -163,7 +201,9 @@ st.markdown('''
 
     ''')
 db_schema_image = Image.open('blog_assets/db_schema.png')
-st.image(db_schema_image, caption='Augury Database Schema (created with website_credit)')
+st.image(db_schema_image, caption='Augury Database Schema in AWS')
+
+
 st.markdown('''
     - Extracting and cleaning the data
     - Feature Engineering
@@ -175,8 +215,54 @@ st.markdown('''
 
     ''')
 
-
-
+st.markdown("  -**Feature Engineering:**  After experimentation on our scraped dataset we settled upon the following features...")
+feature_table = st.container()
+with feature_table:
+    with feature_table.expander("Number of comments per hour"):
+        st.markdown('''
+            *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
+            *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
+        ''')
+    with feature_table.expander("Author Karma for the Post"):
+        st.markdown('''
+            *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
+            *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
+        ''')
+    with feature_table.expander("Hour and Day the Post was created"):
+        st.markdown('''
+            *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
+            *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
+        ''')
+    with feature_table.expander("VADER Text Sentiment of the Post"):
+        st.markdown('''
+            *Description:*  We used the VADER sentiment library to classify the sentiment of each posts text.  This produced a value in the range of -1, +1.     
+            *Rationale:*  We believe text that has a strongly positive or negative sentiment is more likely to become popular than something that is neutral. 
+        ''')
+    with feature_table.expander("SBERT Sentence Embeddings of the Post"):
+        st.markdown('''
+            *Description:*  We used the SBERT library to encode the text of both Posts and Comments.  The SBERT interface was simple to use and produced in effect 380+ features for our classifiers for each post.     
+            *Rationale:*  NEEDS UPDATE the rich meaning from language encoded via SBERT, which is based on the state of the art BERT language model.
+        ''')
+    with feature_table.expander("Average Upvotes for the Top 5 Comments on the Post (per Hour)"):
+        st.markdown('''
+            *Description:*  We look at the top 5 comments for a post (if available) and see how many upvotes that comment has gotten.     
+            *Rationale:*  Posts that gather comments quickly will likely have their popularity influenced by upvotes to those comments. 
+        ''')
+    with feature_table.expander("Average Author Karma for the Top 5 Comments on the Post"):
+        st.markdown('''
+            *Description:*  We look at the Commentor Karma for the top 5 comments for a post (if available).     
+            *Rationale:*  Posts that gather comments quickly from authors with a high reputation should impact the Post's popularity. 
+        ''')
+    with feature_table.expander("Average VADER Text Sentiment of the Top 5 Comments of the Post"):
+        st.markdown('''
+            *Description:*  We look at the average VADER text sentiment for the top 5 comments for a post (if available).     
+            *Rationale:*  Posts that gather comments quickly and have a highly positive or negative sentiment are likely to be related to popularity. 
+        ''')
+    with feature_table.expander("Average SBERT Sentence Embeddings of the Comments"):
+        st.markdown('''
+            *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available)     
+            *Rationale:*  NEEDS UPDATE the rich meaning from language encoded via SBERT, which is based on the state of the art BERT language model.
+        ''')
 
 st.header("Testing Reddit Access")
 st.markdown("Testing Reddit access...")
