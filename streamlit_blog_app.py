@@ -4,6 +4,7 @@ import streamlit as st
 #import joblib
 #from sklearn.linear_model import LogisticRegression
 from PIL import Image
+import praw
 
 
 # Title
@@ -177,6 +178,42 @@ st.markdown('''
 
 
 
+st.header("Testing Reddit Access")
+st.markdown("Testing Reddit access...")
+### SECRETS TO DELETE ###
+# REDDIT_USERNAME= 'Qiopta'
+# REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
+# APP_ID= '8oUZoJ3VwfzceEInW3Vd1g'
+# APP_SECRET= 'pRg3qU2brsbsyPrPaNP26vxPgwAJbA'
+# APP_NAME= 'Capstone2'
+### SECRETS TO DELETE ###
+
+REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
+REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
+APP_ID= st.secrets['APP_ID']
+APP_SECRET= st.secrets['APP_SECRET']
+APP_NAME= st.secrets['APP_NAME']
+
+reddit = praw.Reddit(
+    client_id       = APP_ID,
+    client_secret   = APP_SECRET,
+    user_agent      = APP_NAME, 
+    username        = REDDIT_USERNAME,  
+    password        = REDDIT_PASSWORD,  
+    check_for_async = False # This additional parameter supresses some annoying warnings about "asynchronous PRAW " https://asyncpraw.readthedocs.io/en/stable/
+)
+
+
+if st.button("Get new posts"):
+    for submission in reddit.subreddit("investing").new(limit=5):
+        if submission.author==None or submission.author=="Automoderator":
+            continue
+        else:
+            # st.markdown("Post ID:")
+            # st.text(submission.id)
+            # st.markdown("Post Title:")
+            # st.text(submission.title)
+            st.markdown(f"__Post ID:__ {submission.id} __// Post Title:__ {submission.title} ")
 
 
 
