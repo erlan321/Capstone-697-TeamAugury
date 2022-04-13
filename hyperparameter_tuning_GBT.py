@@ -4,14 +4,13 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, RandomizedSearchCV
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
 from sklearn.ensemble import GradientBoostingClassifier
 import seaborn as sns
 import matplotlib.pyplot as plt
+from scipy import stats
 
 import warnings
 warnings.filterwarnings('ignore')  ### BE CAREFUL USING THIS :) Supressing the warning that some LR are NaN
@@ -82,78 +81,53 @@ preprocessor = ColumnTransformer(
                 ('categorical', categorical_transformer, categorical_features)], remainder='passthrough')
 
 # Moved to StratifiedKFold due to imbalanced dataset https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state= rnd_state)
 
 #Scoring metrics
 scoring = {'acc': 'accuracy', 'f1': 'f1'}
 
-# Set classifiers
-classifiers = [
-            GradientBoostingClassifier(random_state=rnd_state)
-            ]
+""" gbc_params = {
+            "clf__learning_rate":stats.uniform(0.01, 0.15),
+            "clf__n_estimators":stats.randint(50, 200),
+            "clf__max_depth":stats.randint(2, 8),
+            "clf__min_samples_split":stats.uniform(0.01, 0.15),
+            "clf__min_samples_leaf":stats.randint(1, 10),
+            "clf__max_features":stats.uniform(0.1, 1)#,
+            #"clf__subsample":stats.uniform(0.1, 1)
+            } """
 
 gbc_params = {
-            "learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
-            "n_estimators":[100, 225, 350, 500]}
+            "clf__learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
+            "clf__n_estimators":[50,75,100,125,150,175,200, 250],
+            "clf__max_depth":[3,5,8],
+            "clf__max_features":["log2","sqrt"],
+            "clf__subsample":[0.5,0.75,1.0],
+            }
 
-#1st pass
-        #gbc_params = {"learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
-        #               "n_estimators":[100, 225, 350, 500]}
+pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", GradientBoostingClassifier(random_state=rnd_state))])
 
-#2nd pass
-            #gbc_params = {"learning_rate":[0.005, 0.01, 0.02, 0.03, 0.4],
-            #              "n_estimators":[50, 75, 100, 125, 150]}
-
-
-    """ "max_depth":[3, 4, 5],
-    "min_samples_split":np.linspace(0.1, 0.5, 8),
-    "min_samples_leaf":np.linspace(0.1, 0.5, 8),
-    "max_features":[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
-} """
-
-parameters = gbc_params
-
-for i in range(0, 6):
-    print("Initiating grid search on " + classifiers[0].__class__.__name__ + "...")
-    pipe_grid = GridSearchCV(estimator=classifiers[0], param_grid=parameters[0], cv=cv, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2).fit(X, y)  
-    results = pd.DataFrame(pipe_grid.cv_results_)
-    if i == 0: #logistic regression
-        it_params = ["param_C", "param_penalty", "param_solver"] 
-        it_params_noC = ["param_penalty", "param_solver"]
-    elif i == 1: #svc linear
-        it_params = ["param_C", "param_gamma", "param_kernel"]
-        it_params_noC = ["param_gamma", "param_kernel"]
-    elif i == 2: #svc rbf
-        it_params = ["param_C", "param_gamma", "param_kernel"]
-        it_params_noC = ["param_gamma", "param_kernel"]
-    elif i == 3: #svc poly
-        it_params = ["param_C", "param_gamma", "param_kernel", "param_coef0", "param_degree"]
-        it_params_noC = ["param_gamma", "param_kernel", "param_coef0", "param_degree"]
-    elif i == 4: #svc sigmoid
-        it_params = ["param_C", "param_gamma", "param_kernel", "param_coef0", "param_degree"]
-        it_params_noC = ["param_gamma", "param_kernel", "param_coef0"]
-
-
-
-    tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
-    results = results[tot_params]
-    results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
-
-    if i == 0 or i == 1 or i == 2:
-        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]]
-    elif i == 3:
-        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]] + " " + results[it_params_noC[2]] + " " + results[it_params_noC[3]]
-    elif i == 4:
-        results["model_param"] = results[it_params_noC[0]] + " " + results[it_params_noC[1]] + " " + results[it_params_noC[2]]]
-        
-    results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
-    results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
-    results["C"] = results["param_C"].astype(str)
-
-    sns.set(rc={'figure.figsize':(16,16)})
-    g = sns.FacetGrid(data=results, row="model_param", col="Score").map_dataframe(sns.lineplot, x="C", y="Result", hue="type") 
-    g.add_legend()
-    g.fig.set_size_inches(18.5, 12.5)
-    plt.savefig("saved_work/hp_tuning_" + str(i)+ classifiers[0].__class__.__name__ + ".png")
-    plt.clf()
-    results.to_csv("saved_work/hp_tuning_" + str(i) + classifiers[0].__class__.__name__ + ".csv")
+print("Initiating randomized grid search on GBT...")
+#results = RandomizedSearchCV(estimator=pipe, param_distributions=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1, random_state=rnd_state, n_iter=200).fit(X, y)
+results = GridSearchCV(estimator=pipe, param_grid=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2).fit(X, y)   
+results = pd.DataFrame(results.cv_results_)
+results.columns = [col.replace('param_clf__', '') for col in results.columns]
+results.to_csv("saved_work/hp_tuning_RAW_GBT.csv", index=False)
+# clean up
+it_params = ["learning_rate", "n_estimators", "max_depth", "max_features", "subsample"]
+it_params_noC = ["n_estimators", "max_depth", "max_features", "subsample"]
+tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
+results = results[tot_params]
+results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
+results["model_param"] =results["learning_rate"].astype(str) + " / " + results["n_estimators"].astype(str) + " / " + results["max_depth"].astype(str) + " / " + results["max_features"].astype(str) + " / " + results["subsample"].astype(str)
+results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
+results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
+results = results[["Result", "model_param", "Score", "type", "learning_rate", "n_estimators", "max_depth", "max_features", "subsample"]]
+#remove overfitting
+ovr_fit = results[(results["Result"]>=0.99) & (results["type"]=="train")] #with small dataset, better err on the side of caution
+ovr_fit = list(set(ovr_fit['model_param']))
+#remove dismal f1 score (<0.2)
+undr_fit = results[(results["Result"]<0.2) & (results["Score"]=="F1")]
+undr_fit = list(set(undr_fit['model_param']))
+remove_params = list(undr_fit + ovr_fit)
+results = results.drop(results[results.model_param.isin(remove_params)].index)
+#save
+results.to_csv("saved_work/hp_tuning_GBT.csv", index=False)
