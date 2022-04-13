@@ -5,7 +5,7 @@ import streamlit as st
 #from sklearn.linear_model import LogisticRegression
 from PIL import Image
 import praw
-
+from profanity_filter import ProfanityFilter
 
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
@@ -181,18 +181,18 @@ st.markdown('''
 st.header("Testing Reddit Access")
 st.markdown("Testing Reddit access...")
 ### SECRETS TO DELETE ###
-# REDDIT_USERNAME= 'Qiopta'
-# REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
-# APP_ID= '8oUZoJ3VwfzceEInW3Vd1g'
-# APP_SECRET= 'pRg3qU2brsbsyPrPaNP26vxPgwAJbA'
-# APP_NAME= 'Capstone2'
+REDDIT_USERNAME= 'Qiopta'
+REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
+APP_ID= '8oUZoJ3VwfzceEInW3Vd1g'
+APP_SECRET= 'pRg3qU2brsbsyPrPaNP26vxPgwAJbA'
+APP_NAME= 'Capstone2'
 ### SECRETS TO DELETE ###
 
-REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
-REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
-APP_ID= st.secrets['APP_ID']
-APP_SECRET= st.secrets['APP_SECRET']
-APP_NAME= st.secrets['APP_NAME']
+# REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
+# REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
+# APP_ID= st.secrets['APP_ID']
+# APP_SECRET= st.secrets['APP_SECRET']
+# APP_NAME= st.secrets['APP_NAME']
 
 reddit = praw.Reddit(
     client_id       = APP_ID,
