@@ -1,5 +1,4 @@
 import streamlit as st
-#from torch import hann_window
 #import pandas as pd
 #import joblib
 #from sklearn.linear_model import LogisticRegression
@@ -107,45 +106,43 @@ st.header("Our Project Workflow")
 st.write("The below graphic illustrates our project Augury workflow.  Below we will provide more details on each component of the workflow.")
 project_pipeline_image = Image.open('blog_assets/project_pipeline.png')
 st.image(project_pipeline_image, caption='Project Augury Workflow')
+
 st.subheader("") #create blank space
 st.subheader("Scraping Reddit Data") 
+st.write('''
+In order to request data from Reddit’s API, we decided to use the widely known PRAW python library to do our data scraping.  Our approach to scraping was informed primarily by studying the PRAW online documentation [15].    
 
+Because we were starting from a “blank slate” in our domain knowledge about Reddit data, we knew we wanted to track each post over a 24 hour period in order to effectively perform Exploratory Data Analysis (EDA) about how we would approach our prediction task.  
+We knew we wanted to see a posts popularity over time in order to see how and when popular posts developed, so we designed a scraping pipeline that captured a sample of ‘new’ posts each hour and stored it in our database.  
 
-# st.markdown('''
-#     The data scrape we finally put into use called upon the PRAW library to make efficient requests to Reddit’s API.  Our approach to scraping was informed by the following article’s XXXX and the code which we eventually used can be found on the project repo, linked at the head of this page. We knew that we wanted to capture the evolution of a posts popularity over time in order to see how and when popular posts developed, so we designed a pipeline that:
-#     ''')
-# st.markdown('''
-#     - Captured a sample of ‘new posts’ each hour.
-#         - These were initially five posts per hour, but the consequences of the remainder of our cleaning function meant that this process would ‘timeout’ on AWS Lambda.  So we decided at the end of February 2022 to strip our ‘new posts’ back to one per hour.
-#     - Tracked these posts over a 24 hour period.
-#         - Each subsequent scrape would recapture the data related to our target posts, such as the number of comments, the text of those comments, the karma (for which you might assume ‘popularity’) of the comment and post authors.
-#     - Cleaned the data
-#         -  Before we stored the data onto our AWS RDS (a postgresql instance) our code did a lot of the early cleaning work for us.  Initially our requests backed libraries wrote large JSON files to our database, when we went into production we had developed code that extracted and formatted the data we wanted from the subreddit’s, making downstream processing of the data much slicker.  For example XXXX 
-#     - Load the data
-#         - Our database design/schema of tables is shown below.  This design was to optimize the functioning of the RDS and minimize storage, by reducing duplication to a minimum.
+Our initial scraping process sought to scrape information about the five newest posts per hour from our selection of subreddits, and included information about the top 5 comments for each post  (more details about the features is below).  However, we discovered that this amount of data caused a “timeout” problem with the AWS Lambda service we were using, so by March 1st, 2022 we had to decide to scale back the number of new posts being scraped each hour to one per subreddit.  
 
-
-    # ''')
-db_schema_image = Image.open('blog_assets/db_schema.png')
-st.image(db_schema_image, caption='Augury Database Schema in AWS')
-
-
-st.markdown('''
-    - Extracting and cleaning the data
-    - Feature Engineering
-        - placeholder
-    - modeling
-        - placeholder
-    - prediction / production
-        - placeholder
-
+**Pre-storage Cleaning:**
+Despite having to reduce the original pace of data scraping, one of the benefits of our scraping process using PRAW was we were able to scrape and store just the data that we wanted, and we were able to filter out unwanted posts and comments, such as those that had already been deleted for any reason or that were authored by a subreddit Automoderator.  In that sense, the data we were gathering hourly was “clean” and usable right away without additional filtering when the data came back out from our database.  
+**Post-storage Cleaning:**
+As we noted above, we did apply one important additional post-scraping process to our data when extracting from our database, which was to remove profanity.
     ''')
 
 st.subheader("") #create blank space
+st.subheader("Storing our Data")
+st.write('''
+    We stored our scraped Reddit data in a PostGreSQL instance on AWS.  Our database design/schema is intended to reduce duplication to a minimum, thereby optimizing the functioning of the relational database and minimize storage.  We also designed this database with a view that we may want to perform additional projects on this data beyond what we achieve during this Capstone course, and we identify some of those areas of future work in our conclusion section below.  Our database design/schema is illustrated below:
+    ''')
+db_schema_image = Image.open('blog_assets/db_schema.png')
+st.image(db_schema_image, caption='Augury Database Schema in AWS')
+
+st.subheader("") #create blank space
+st.subheader("Exploratory Data Analysis (EDA)")
+st.write('''
+    Placeholder Text
+    ''')
+    
+
+st.subheader("") #create blank space
 st.subheader("Feature Engineering (Option 1)")
-st.write("After experimentation on our scraped dataset we decided upon the following features:")
 feature_table = st.container()
 with feature_table:
+    st.write("Through a combination of our EDA, our intuition, and our understanding of Reddit, we chose to engineer the following features for use in our prediction task.  (*Click on a feature for description & rationale*)")
     with feature_table.expander("Number of comments per hour"):
         st.markdown('''
             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
@@ -239,6 +236,7 @@ with feature_table3:
             *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
             *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
         ''')
+
 
 
 
