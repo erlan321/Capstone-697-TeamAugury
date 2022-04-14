@@ -146,7 +146,7 @@ st.write('''
     From this chart, we make two decisions about our prediction task.  First, that popularity can peak at different times, but using a post’s popularity at hour 3  seems to be appropriate for our prediction variable.  Second, we see a lot of the subsample achieves very low popularity, so we feel comfortable using a threshold for “popular” close to the top Quintile (the red line), or a “popularity” value of 10.  Thus, the determination of “popular” versus “not popular” in our prediction task is determined by if a post has a “popularity proxy” of over or under 10 by hour 3.  
     ''')
 st.write('''
-    Placeholder Text
+    Placeholder Text for more about EDA... maybe talk generally about factor correlations / network analysis?  We note in the features section below that we use certain features due to intuition or inclusion in Literature Review papers.
     ''')
     
 
@@ -201,53 +201,124 @@ with feature_table:
             *Rationale:*  NEEDS UPDATE the rich meaning from language encoded via SBERT, which is based on the state of the art BERT language model.
         ''')
 
-st.subheader("") #create blank space
-st.subheader("Feature Engineering (Option 2)")
-feature_table2 = st.container()
-with feature_table2:
-    st.write("After experimentation on our scraped dataset we decided upon the following features:")
-    f_col1, f_col2 = st.columns([1,2])
-    f_col1.info("Number of comments per hour")
-    f_col2.write('''
-            *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
-            *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
-        ''')
-    f_col1, f_col2 = st.columns([1,2])
-    f_col1.info("Author Karma for the Post")
-    f_col2.write('''
-            *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
-            *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
-        ''')
-    f_col1, f_col2 = st.columns([1,2])
-    f_col1.info("Hour and Day the Post was created")
-    f_col2.write('''
-            *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
-            *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
-        ''')
+# st.subheader("") #create blank space
+# st.subheader("Feature Engineering (Option 2)")
+# feature_table2 = st.container()
+# with feature_table2:
+#     st.write("After experimentation on our scraped dataset we decided upon the following features:")
+#     f_col1, f_col2 = st.columns([1,2])
+#     f_col1.info("Number of comments per hour")
+#     f_col2.write('''
+#             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
+#             *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
+#         ''')
+#     f_col1, f_col2 = st.columns([1,2])
+#     f_col1.info("Author Karma for the Post")
+#     f_col2.write('''
+#             *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
+#             *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
+#         ''')
+#     f_col1, f_col2 = st.columns([1,2])
+#     f_col1.info("Hour and Day the Post was created")
+#     f_col2.write('''
+#             *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
+#             *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
+#         ''')
+
+# st.subheader("") #create blank space
+# st.subheader("Feature Engineering (Option 3)")
+# feature_table3 = st.container()
+# with feature_table3:
+#     st.write("After experimentation on our scraped dataset we decided upon the following features:")
+#     f_col1, f_col2 = st.columns([1,2])
+#     f_col1.info("Number of comments per hour")
+#     f_col2.info('''
+#             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
+#             *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
+#         ''')
+#     f_col1, f_col2 = st.columns([1,2])
+#     f_col1.info("Author Karma for the Post")
+#     f_col2.info('''
+#             *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
+#             *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
+#         ''')
+#     f_col1, f_col2 = st.columns([1,2])
+#     f_col1.info("Hour and Day the Post was created")
+#     f_col2.info('''
+#             *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
+#             *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
+#         ''')
 
 st.subheader("") #create blank space
-st.subheader("Feature Engineering (Option 3)")
-feature_table3 = st.container()
-with feature_table3:
-    st.write("After experimentation on our scraped dataset we decided upon the following features:")
-    f_col1, f_col2 = st.columns([1,2])
-    f_col1.info("Number of comments per hour")
-    f_col2.info('''
-            *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
-            *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
-        ''')
-    f_col1, f_col2 = st.columns([1,2])
-    f_col1.info("Author Karma for the Post")
-    f_col2.info('''
-            *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
-            *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
-        ''')
-    f_col1, f_col2 = st.columns([1,2])
-    f_col1.info("Hour and Day the Post was created")
-    f_col2.info('''
-            *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
-            *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
-        ''')
+st.header("Modeling Inferences & Evaluation")
+st.subheader("Model Candidates")
+st.markdown('''
+	We selected three Supervised Learning models on which to attempt our Reddit post popularity prediction.  We kept our model exploration within the popular Scikit-Learn python library we learned in class.
+	 - Logistic Regression (LR):  LR was chosen as it also appeared in some of the related work that we reviewed, and this simple classifier is often used as a “baseline” prediction model.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)  
+	 - Support Vector Classification (SVC): SVC was chosen as it also appeared in the related papers that were pursuing similar goals to our Augury project.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html)  
+	 - Gradient Boosting Classifier (GBC):  GBC was chosen based on our intuition and also feedback from our professors that Gradient Boosted classifiers are often winning data science competitions lately.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html)
+	''')
+
+
+st.subheader("Hyperparameter Tuning")
+st.write('''
+    In order to perform hyperparameter tuning for these three models, we explored a few different options to perform cross-validation.  We ultimately decided on Scikit-Learn's GridSearchCV method [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html).  
+    We also explored RandomizedSearchCV and Nested Cross-Validation.  Since our dataset was relatively small the efficiency of RandomizedSearchCV was not required, and this also would have mad the Nested Cross-Validation difficult due to too small samples.  
+    Importantly, we chose to use the standard cv object within GridsearchCV as it implements the stratified k-fold approach, thus ensuring we do not split without the much smaller “popular” class.  
+
+    ''')
+st.write("placeholder for image of Stratified K-Fold validation ??")
+st.write('''
+    **Tuning Iterations:** We iterated through 1,062 combinations of parameters across LG, SVC, and GBC models.  
+    ''')
+st.write("**LR:** _Parameter dictionary used in our code_")
+st.code("""
+    parameters = [{"clf__C":np.logspace(-5, 10, num=16, base=2),
+                "clf__solver":["liblinear", "lbfgs"],
+                "clf__penalty":["l1", "l2"],
+                },
+                {"clf__C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
+                "clf__solver":["lbfgs"],
+                "clf__penalty":["l2"],}]
+    """, language="python")
+st.write("**SVC:** _Parameter dictionary used in our code_")
+st.code("""
+    parameters = {"clf__C":np.logspace(-5, 15, num=21, base=2), 
+                "clf__kernel":["rbf","linear","poly","sigmoid"],
+                "clf__degree": [3, 4, 5], #only related to the poly kernel
+                'clf__gamma': np.logspace(-15, 3, num=19, base=2)}
+    """, language="python")
+st.write("**GBC:** _Parameter dictionary used in our code_")
+st.code("""
+    parameters = {"clf__learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
+                "clf__n_estimators":[50,75,100,125,150,175,200, 250],
+                "clf__max_depth":[3,5,8],
+                "clf__max_features":["log2","sqrt"],
+                "clf__subsample":[0.5,0.75,1.0],}
+    """, language="python")
+
+
+st.subheader("Model Choice")
+
+st.subheader("Feature Importance of the Model")
+
+st.subheader("Model Performance (on unseen data)")
+
+st.subheader("Real-Time Model Prediction")
+
+
+st.header("Conclusions & Future Work")
+
+
+
+st.header("Appendix: Statement of work")
+
+
+
+st.header("Appendix: References")
+
+st.header("!!! END OF BLOG POST !!!")
+
 
 
 
@@ -363,7 +434,7 @@ if st.button("Get new posts"):
 
 
 
-st.title("End Blog Post Draft")
+
 
 
 
