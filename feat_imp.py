@@ -58,6 +58,7 @@ def plot_feature_importance(model):
   plt.ylabel("Feature")
   plt.ylim(-1, n_features)
 
+# Unhash lines 62 and 63 to create the long chart of all features
 # plot_feature_importance(GB_loaded.steps[1][1])
 # plt.savefig("saved_work/feat_imp_v3.png")
 
@@ -94,9 +95,10 @@ new_combined_ns = (zip(short_label_list,scoring_array))
 df = pd.DataFrame(new_combined_ns, columns=['Feature','Importance'])
 #print (df)
 
-chart = alt.Chart(df).mark_bar().encode(
-  x = 'Feature:N',
-  y = 'Importance:Q'
-)
+# Unhash lines 98-104 to create the final aggregated chart
+# chart = alt.Chart(df).mark_bar().encode(
+#   x = 'Feature:N',
+#   y = 'Importance:Q'
+# )
 
-save(chart, "saved_work/feat_imp_short.png")
+# save(chart, "saved_work/feat_imp_short.png")

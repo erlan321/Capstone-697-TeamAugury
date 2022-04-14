@@ -7,8 +7,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
 
-def load_and_preprocess():
-    '''Loads a stored version of pre-processed data and returns an output identical to what is fed to clf'''
+def load_and_preprocess(apply_transformer = False ):
+    '''Loads a stored version of pre-processed data and returns an output identical to what is fed to clf
+    Takes one argument apply_transfomer, default = False resulting in 776 features, if True it applies pipeline including 
+    one hot which results in 805 features '''
     
     rnd_state = 42
     # This file should be generated from the baseline features csv file
@@ -72,8 +74,9 @@ def load_and_preprocess():
                     ('numerical', numeric_transformer, numeric_features),
                     ('categorical', categorical_transformer, categorical_features)],
                     remainder='passthrough')
-
-    preprocessor.fit_transform(X)
+    
+    if apply_transformer:
+        X = preprocessor.fit_transform(X)
     
     print ('data loaded and pre_processed')
 
