@@ -1,5 +1,5 @@
 import streamlit as st
-#import pandas as pd
+import pandas as pd
 #import joblib
 #from sklearn.linear_model import LogisticRegression
 from PIL import Image
@@ -268,11 +268,16 @@ st.write('''
 
     ''')
 st.write("placeholder for image of Stratified K-Fold validation ??")
+st.write("placeholder for discussing # of Train, # of Validate, # of Test (Unseen) data points!")
 st.write('''
-    **Tuning Iterations:** We iterated through 1,062 combinations of parameters across LG, SVC, and GBC models.  
+    **Tuning Iterations:**  
+    We iterated through 1,062 combinations of parameters across LR, SVC, and GBC models.  
     ''')
-st.write("**LR:** _Parameter dictionary used in our code_")
-st.code("""
+st.write('''
+    _LR Tuning:_ For LR we flipped between the _solver_ parameter and a range of values of C we've seen before in our course work.  
+    _Parameter dictionary used in our code_
+    ''')
+st.code('''
     parameters = [{"clf__C":np.logspace(-5, 10, num=16, base=2),
                 "clf__solver":["liblinear", "lbfgs"],
                 "clf__penalty":["l1", "l2"],
@@ -280,22 +285,73 @@ st.code("""
                 {"clf__C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
                 "clf__solver":["lbfgs"],
                 "clf__penalty":["l2"],}]
-    """, language="python")
-st.write("**SVC:** _Parameter dictionary used in our code_")
-st.code("""
+    ''', language="python")
+st.write('''
+    _SVC Tuning:_ We looked at each of the four kernels individually to avoid errors that would make us lose a lot of compute time. The range for C and gamma was taken from A Practical Guide to Support Vector Classification (Chih-Wei Hsu et al. CITATION NEEDED BELOW), these were slightly more thorough in their tests than other information available.  
+    _Parameter dictionary used in our code (approximately)_
+    ''')
+st.code('''
     parameters = {"clf__C":np.logspace(-5, 15, num=21, base=2), 
                 "clf__kernel":["rbf","linear","poly","sigmoid"],
-                "clf__degree": [3, 4, 5], #only related to the poly kernel
+                "clf__degree": [3, 4, 5], #only related to the polynomial kernel
                 'clf__gamma': np.logspace(-15, 3, num=19, base=2)}
-    """, language="python")
-st.write("**GBC:** _Parameter dictionary used in our code_")
-st.code("""
+    ''', language="python")
+st.write('''
+    _GBC Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations of MachineLearningMastery CITATION NEEDED BELOW as well as some adjustments for speed (reducing the number of total folds) and introducing subsamples for Stochastic Gradient Descent as per the recommendation of the Hastie et al. 2009 CITATION NEEDED BELOW paper explained in the scikit learn documentation.  
+    _Parameter dictionary used in our code_
+    ''')
+st.code('''
     parameters = {"clf__learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
                 "clf__n_estimators":[50,75,100,125,150,175,200, 250],
                 "clf__max_depth":[3,5,8],
                 "clf__max_features":["log2","sqrt"],
                 "clf__subsample":[0.5,0.75,1.0],}
-    """, language="python")
+    ''', language="python")
+
+st.write(''' 
+    **Hyperparameter Decision Process:**  
+    With over 1,000 different options produced from our hyperparameter tuning process, we used both objective and subjective methods of coming to a decision about which hyperparameters were most appropriate, and thus which of the three styles of model to ultimate use for our prediction task.  
+    
+    For each iteration, we output the F1 Score and Accuracy calculation for each model, both on the training data and validation data.  Using this information, we went through these steps in each notebook:
+     - Using three different Jupyter Notebooks to visualize the results the most appropriate tool for this process.
+     - We began by viewing all of the F1 and Accuracy calculations for each model, as messy as it was, and noted any observable patterns.
+     - We then created charts that looked at each hyperparameter, looking for levels of the hyperparameter that gave higher performance "all else equal".  By this we mean we took the median performance metric for each level of an individual hyperparameter.  From this method we were able to see general trends in the individual hyperparameters that resulted in higher or lower model performance.
+     - Our _"objective"_ decision was to favor levels of a hyperparameter that yielded better scores, with a bias towards the F1 score.
+     - Our _"subjective"_ decision was to favor levels of a hyperparameter that were neither at the extremes of our tuning ranges, nor resulted in results that looked "too good" and might indicate over-fitting.  
+    
+    ''')
+st.write(''' 
+    **Hyperparameter Decisions:**  
+    The above process resulted in the following choices for hyperparameters:
+     > **LR**:  
+     >> Solver: liblinear   
+     >> Penalty: L2  
+     >> C: 0.25  
+     > **SVC**:  
+     >> Kernel: rbf  
+     >> Penalty: L2  
+     >> C: 4  
+     >> Gamma: 0.00390625  
+     > **GBC**:  
+     >> Learning_rate: 0.15  
+     >> N_estimators: 100  
+     >> Max_depth: 3  
+     >> Max_features: sqrt  
+     >> Subsample:  0.5  
+
+    ''')
+
+st.write('''
+    Performance metrics of the above "tuned" models:
+    ''')
+hpt_df = pd.DataFrame(data={
+    'Tuned_Model': ['LR','SVC','GBC'],
+    'F1_Score_Training': [0.75,0.80,0.93],
+    'F1_Score_Validate': [0.39,0.49,0.39],
+    'Accuracy_Training': [0.907,0.897,0.971],
+    'Accuracy_Validate': [0.776,0.740,0.795],
+    })
+st.table(hpt_df)
 
 
 st.subheader("Model Choice")
@@ -306,12 +362,56 @@ st.subheader("Model Performance (on unseen data)")
 
 st.subheader("Real-Time Model Prediction")
 
+st.markdown("Testing Reddit access...")
+# ### SECRETS TO DELETE ###
+# REDDIT_USERNAME= 'Qiopta'
+# REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
+# APP_ID= '8oUZoJ3VwfzceEInW3Vd1g'
+# APP_SECRET= 'pRg3qU2brsbsyPrPaNP26vxPgwAJbA'
+# APP_NAME= 'Capstone2'
+# ### SECRETS TO DELETE ###
+
+REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
+REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
+APP_ID= st.secrets['APP_ID']
+APP_SECRET= st.secrets['APP_SECRET']
+APP_NAME= st.secrets['APP_NAME']
+
+reddit = praw.Reddit(
+    client_id       = APP_ID,
+    client_secret   = APP_SECRET,
+    user_agent      = APP_NAME, 
+    username        = REDDIT_USERNAME,  
+    password        = REDDIT_PASSWORD,  
+    check_for_async = False # This additional parameter supresses some annoying warnings about "asynchronous PRAW " https://asyncpraw.readthedocs.io/en/stable/
+)
+
+
+if st.button("Get new posts"):
+    for submission in reddit.subreddit("investing").new(limit=5):
+        if submission.author==None or submission.author=="Automoderator":
+            continue
+        else:
+            # st.markdown("Post ID:")
+            # st.text(submission.id)
+            # st.markdown("Post Title:")
+            # st.text(submission.title)
+            st.markdown(f"__Post ID:__ {submission.id} __// Post Title:__ {submission.title} ")
 
 st.header("Conclusions & Future Work")
 
 
 
 st.header("Appendix: Statement of work")
+st.write('''
+The team worked across the entire project, but the below highlights the areas each team member either focussed, led or made a major contribution:  
+
+Antoine Wermenlinger led on the Supervised Learning aspect of the project from the long list of models, through to the down select and hyperparameter tuning. He initiated the feature Engineering work and was the originator of the project's core goal - to predict popularity of Reddit posts.  
+
+Chris Lynch led on the instantiation of our AWS instance, account and functions, notably the Lambda Function, Event Bridge Scheduling and the creation of our RDS (a postgreSQL database).  In the early phases of the project Chris led on the Reinforcement Learning aspects of the project creating a Reddit Simulator environment and a Q learning model, which eventually we decided not to use. Chris initiated the draft for our team Blog post.  
+
+Erik Lang led on the Social Media Scraping and analytics aspects of the project, creating the PRAW based code that scraped and cleaned the raw Reddit data that was written into our postgreSQL instance. He made major contributions to the feature engineering and team standups.   Finally Erik created our Streamlit instance, that is the host site for this Blog. 
+    ''')
 
 
 
@@ -394,52 +494,6 @@ st.header("!!! END OF BLOG POST !!!")
 
 
 
-st.markdown("") #create blank line
-st.header("Testing Reddit Access")
-st.markdown("Testing Reddit access...")
-# ### SECRETS TO DELETE ###
-# REDDIT_USERNAME= 'Qiopta'
-# REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
-# APP_ID= '8oUZoJ3VwfzceEInW3Vd1g'
-# APP_SECRET= 'pRg3qU2brsbsyPrPaNP26vxPgwAJbA'
-# APP_NAME= 'Capstone2'
-# ### SECRETS TO DELETE ###
-
-REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
-REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
-APP_ID= st.secrets['APP_ID']
-APP_SECRET= st.secrets['APP_SECRET']
-APP_NAME= st.secrets['APP_NAME']
-
-reddit = praw.Reddit(
-    client_id       = APP_ID,
-    client_secret   = APP_SECRET,
-    user_agent      = APP_NAME, 
-    username        = REDDIT_USERNAME,  
-    password        = REDDIT_PASSWORD,  
-    check_for_async = False # This additional parameter supresses some annoying warnings about "asynchronous PRAW " https://asyncpraw.readthedocs.io/en/stable/
-)
-
-
-if st.button("Get new posts"):
-    for submission in reddit.subreddit("investing").new(limit=5):
-        if submission.author==None or submission.author=="Automoderator":
-            continue
-        else:
-            # st.markdown("Post ID:")
-            # st.text(submission.id)
-            # st.markdown("Post Title:")
-            # st.text(submission.title)
-            st.markdown(f"__Post ID:__ {submission.id} __// Post Title:__ {submission.title} ")
-
-
-
-
-
-
-
-st.header("Testing Interactivity")
-st.markdown("> Just for fun, enter a number and choose a team member to see what happens...")
 
 
 
@@ -448,55 +502,65 @@ st.markdown("> Just for fun, enter a number and choose a team member to see what
 
 
 
-#  This is equivalent to <input type = "number"> in HTML.
-# Input bar 1
-a = st.number_input("Enter a Number")
+# st.header("Testing Interactivity")
+# st.markdown("> Just for fun, enter a number and choose a team member to see what happens...")
 
-# # Input bar 2
-# b = st.number_input("Input another Number")
 
-# This is equivalent to the <select> tag for the dropdown and the <option> tag for the options in HTML.
-# Dropdown input
-names = st.selectbox("Select Team Member", ("Erik", "Chris","Antoine"))
 
-# put it in an if statement because it simply returns True if pressed. This is equivalent to the <button> tag in HTML.
-# If button is pressed
-if st.button("Submit"):
+
+
+
+
+
+# #  This is equivalent to <input type = "number"> in HTML.
+# # Input bar 1
+# a = st.number_input("Enter a Number")
+
+# # # Input bar 2
+# # b = st.number_input("Input another Number")
+
+# # This is equivalent to the <select> tag for the dropdown and the <option> tag for the options in HTML.
+# # Dropdown input
+# names = st.selectbox("Select Team Member", ("Erik", "Chris","Antoine"))
+
+# # put it in an if statement because it simply returns True if pressed. This is equivalent to the <button> tag in HTML.
+# # If button is pressed
+# if st.button("Submit"):
     
-    # # Unpickle classifier
-    # clf = joblib.load("clf.pkl")
+#     # # Unpickle classifier
+#     # clf = joblib.load("clf.pkl")
     
-    # # Store inputs into dataframe
-    # X = pd.DataFrame([[height, weight, eyes]], 
-    #                  columns = ["Height", "Weight", "Eyes"])
-    # X = X.replace(["Brown", "Blue"], [1, 0])
+#     # # Store inputs into dataframe
+#     # X = pd.DataFrame([[height, weight, eyes]], 
+#     #                  columns = ["Height", "Weight", "Eyes"])
+#     # X = X.replace(["Brown", "Blue"], [1, 0])
     
-    # # Get prediction
-    # prediction = clf.predict(X)[0]
+#     # # Get prediction
+#     # prediction = clf.predict(X)[0]
     
-    # Output prediction
-    st.text(f"{names} just won {a} dollars!!!")
-    # Note that print() will not appear on a Streamlit app.
-    st.markdown(f"{names} just won {a} dollars!!!")
+#     # Output prediction
+#     st.text(f"{names} just won {a} dollars!!!")
+#     # Note that print() will not appear on a Streamlit app.
+#     st.markdown(f"{names} just won {a} dollars!!!")
 
 
 #st.markdown renders any string written using Github-flavored Markdown. It also supports HTML but Streamlit advises against allowing it due to potential user security concerns.
 
-st.header("Project Start")
-st.subheader("In Introduction to our Project")
-st.markdown("But seriously, we're here to talke about our blog.  This might be how text will appear in our blog.")
+# st.header("Project Start")
+# st.subheader("In Introduction to our Project")
+# st.markdown("But seriously, we're here to talke about our blog.  This might be how text will appear in our blog.")
 
 
 
 
 
-st.subheader("A Code Block")
-# st.code renders single-line as well as multi-line code blocks. There is also an option to specify the programming language.
-st.code("""
-def Team_Augury_feature_functions(df):
-    df = df.copy
-    df['column'] = df['old_column'].apply(lambda x: 1 if True else 0, axis1)
-    return None
-""", language="python")
+# st.subheader("A Code Block")
+# # st.code renders single-line as well as multi-line code blocks. There is also an option to specify the programming language.
+# st.code("""
+# def Team_Augury_feature_functions(df):
+#     df = df.copy
+#     df['column'] = df['old_column'].apply(lambda x: 1 if True else 0, axis1)
+#     return None
+# """, language="python")
 
 
