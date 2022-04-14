@@ -92,12 +92,6 @@ with related_work:
         **Implication for our project:**  Similar data and has a temporal aspect to the prediction challenge. The definition of a ‘burst’ in this paper used a maximum function of hashtag counts over a 24 hour period to define a burst. Our early exploration of popularity as defined in Augury took inspiration from this, but was later adapted to our 3 hour target which better suited our objective. Augury also took some inspiration from the classification approach used in this paper.
         ''')
 
-
-
-
-
-
-
 st.subheader("") #create blank space
 st.subheader("Ethical Considerations")
 st.write('''
@@ -113,21 +107,25 @@ st.header("Our Project Workflow")
 st.write("The below graphic illustrates our project Augury workflow.  Below we will provide more details on each component of the workflow.")
 project_pipeline_image = Image.open('blog_assets/project_pipeline.png')
 st.image(project_pipeline_image, caption='Project Augury Workflow')
-st.write('''
-    The data scrape we finally put into use called upon the PRAW library to make efficient requests to Reddit’s API.  Our approach to scraping was informed by the following article’s XXXX and the code which we eventually used can be found on the project repo, linked at the head of this page. We knew that we wanted to capture the evolution of a posts popularity over time in order to see how and when popular posts developed, so we designed a pipeline that:
-    ''')
-st.markdown('''
-    - Captured a sample of ‘new posts’ each hour.
-        - These were initially five posts per hour, but the consequences of the remainder of our cleaning function meant that this process would ‘timeout’ on AWS Lambda.  So we decided at the end of February 2022 to strip our ‘new posts’ back to one per hour.
-    - Tracked these posts over a 24 hour period.
-        - Each subsequent scrape would recapture the data related to our target posts, such as the number of comments, the text of those comments, the karma (for which you might assume ‘popularity’) of the comment and post authors.
-    - Cleaned the data
-        -  Before we stored the data onto our AWS RDS (a postgresql instance) our code did a lot of the early cleaning work for us.  Initially our requests backed libraries wrote large JSON files to our database, when we went into production we had developed code that extracted and formatted the data we wanted from the subreddit’s, making downstream processing of the data much slicker.  For example XXXX 
-    - Load the data
-        - Our database design/schema of tables is shown below.  This design was to optimize the functioning of the RDS and minimize storage, by reducing duplication to a minimum.
+st.subheader("") #create blank space
+st.subheader("Scraping Reddit Data") 
 
 
-    ''')
+# st.markdown('''
+#     The data scrape we finally put into use called upon the PRAW library to make efficient requests to Reddit’s API.  Our approach to scraping was informed by the following article’s XXXX and the code which we eventually used can be found on the project repo, linked at the head of this page. We knew that we wanted to capture the evolution of a posts popularity over time in order to see how and when popular posts developed, so we designed a pipeline that:
+#     ''')
+# st.markdown('''
+#     - Captured a sample of ‘new posts’ each hour.
+#         - These were initially five posts per hour, but the consequences of the remainder of our cleaning function meant that this process would ‘timeout’ on AWS Lambda.  So we decided at the end of February 2022 to strip our ‘new posts’ back to one per hour.
+#     - Tracked these posts over a 24 hour period.
+#         - Each subsequent scrape would recapture the data related to our target posts, such as the number of comments, the text of those comments, the karma (for which you might assume ‘popularity’) of the comment and post authors.
+#     - Cleaned the data
+#         -  Before we stored the data onto our AWS RDS (a postgresql instance) our code did a lot of the early cleaning work for us.  Initially our requests backed libraries wrote large JSON files to our database, when we went into production we had developed code that extracted and formatted the data we wanted from the subreddit’s, making downstream processing of the data much slicker.  For example XXXX 
+#     - Load the data
+#         - Our database design/schema of tables is shown below.  This design was to optimize the functioning of the RDS and minimize storage, by reducing duplication to a minimum.
+
+
+    # ''')
 db_schema_image = Image.open('blog_assets/db_schema.png')
 st.image(db_schema_image, caption='Augury Database Schema in AWS')
 
