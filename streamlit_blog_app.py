@@ -134,6 +134,18 @@ st.image(db_schema_image, caption='Augury Database Schema in AWS')
 st.subheader("") #create blank space
 st.subheader("Exploratory Data Analysis (EDA)")
 st.write('''
+    Our objective is to predict whether or not a post will become “popular”.  A “popular” post is one that would be near the top of the subreddit when a user goes to the webpage or opens the app (in Reddit’s vocabulary, the post is “Hot”).  From perusing Reddit’s own message boards, we understand that a rough approximation for this measure of “popularity” is:
+    ''')
+st.latex(r"popularity = \frac{upvotes}{hours}")
+st.write('''
+    We illustrate our exploration of “popularity” in the below chart on a sample of our data, where the faint blue lines are the popularity of individual posts scraped hourly for 24 hours from March 1st to March 28th, 2022, or (roughly 1,200 posts).  Overlaid on this chart are three lines representing the 50th percentile (half the data), 80th percentile (the top quintile), and 90th percentile (the top decile).  
+    ''')
+popularity_image = Image.open('blog_assets/EDA_popularity.png')
+st.image(popularity_image, caption='Proxy for Post Popularity')
+st.write('''
+    From this chart, we make two decisions about our prediction task.  First, that popularity can peak at different times, but using a post’s popularity at hour 3  seems to be appropriate for our prediction variable.  Second, we see a lot of the subsample achieves very low popularity, so we feel comfortable using a threshold for “popular” close to the top Quintile (the red line), or a “popularity” value of 10.  Thus, the determination of “popular” versus “not popular” in our prediction task is determined by if a post has a “popularity proxy” of over or under 10 by hour 3.  
+    ''')
+st.write('''
     Placeholder Text
     ''')
     
