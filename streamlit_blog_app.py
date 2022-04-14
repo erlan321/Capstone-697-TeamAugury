@@ -200,19 +200,19 @@ feature_table2 = st.container()
 with feature_table2:
     st.write("After experimentation on our scraped dataset we decided upon the following features:")
     f_col1, f_col2 = st.columns([1,2])
-    f_col1.write("Number of comments per hour")
+    f_col1.info("Number of comments per hour")
     f_col2.write('''
             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
             *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
         ''')
     f_col1, f_col2 = st.columns([1,2])
-    f_col1.write("Author Karma for the Post")
+    f_col1.info("Author Karma for the Post")
     f_col2.write('''
             *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
             *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
         ''')
     f_col1, f_col2 = st.columns([1,2])
-    f_col1.write("Hour and Day the Post was created")
+    f_col1.info("Hour and Day the Post was created")
     f_col2.write('''
             *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
             *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
