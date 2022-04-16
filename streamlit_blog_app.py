@@ -394,8 +394,22 @@ reddit = praw.Reddit(
     check_for_async = False # This additional parameter supresses some annoying warnings about "asynchronous PRAW " https://asyncpraw.readthedocs.io/en/stable/
 )
 ### Set up PRAW variables
-subreddit_scrape_list = ["investing", "wallstreetbets", "StockMarket", "stocks",]
-n_posts = 5
+#subreddit_scrape_list = ["investing", "wallstreetbets", "StockMarket", "stocks",]
+subreddit_scrape_list = []
+subreddit_selection_list = st.multiselect(
+    "Select either all subreddits about investing, or just a selection of subreddits:", 
+    ["r/investing","r/wallstreetbets","r/StockMarket","r/stocks"],
+    ["r/investing","r/wallstreetbets","r/StockMarket","r/stocks"],
+    )
+for item in subreddit_selection_list:
+    subreddit_scrape_list.append(item[2:]) #removes the r/
+subreddit_scrape_list = subreddit_scrape_list
+st.write("You selected:", subreddit_scrape_list)
+
+#n_posts = 5
+n_posts = st.selectbox("Select the max number of posts to try and scrape:", (1,3,5,10))
+st.write("Number of posts we'll try to collect:", n_posts)
+n_posts = int(n_posts)
 n_comments = 5 
 hrs_to_track = 1 #number of hours to track a post/submission
 #time_of_batch = datetime.utcnow().replace(microsecond=0)                                      
