@@ -1,10 +1,18 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+from datetime import datetime
 #import joblib
 #from sklearn.linear_model import LogisticRegression
 from PIL import Image
 import praw
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from sentence_transformers import SentenceTransformer
 from profanity_filter import ProfanityFilter
+from functions import Team_Augury_blog_praw_functions
+from functions import Team_Augury_feature_functions
+import spacy  #needed for language profanity filtering
+#spacy.load('en')
 
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
@@ -385,7 +393,20 @@ reddit = praw.Reddit(
     password        = REDDIT_PASSWORD,  
     check_for_async = False # This additional parameter supresses some annoying warnings about "asynchronous PRAW " https://asyncpraw.readthedocs.io/en/stable/
 )
+### Set up PRAW variables
+subreddit_scrape_list = ["investing", "wallstreetbets", "StockMarket", "stocks",]
+n_posts = 5
+n_comments = 5 
+hrs_to_track = 1 #number of hours to track a post/submission
+#time_of_batch = datetime.utcnow().replace(microsecond=0)                                      
+#char_limit = 256 #character limit for the text fields in the database
 
+if st.button("Test creating PRAW df for our pipeline"):
+    time_of_batch = datetime.utcnow().replace(microsecond=0)
+    new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
+    post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, new_submission_list=new_submission_list)
+    feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
+    st.table(feature_df)
 
 if st.button("Get new posts"):
     for submission in reddit.subreddit("investing").new(limit=5):

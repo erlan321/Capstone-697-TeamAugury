@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sentence_transformers import SentenceTransformer
 from profanity_filter import ProfanityFilter
+import spacy  #needed for language profanity filtering
 
 def hr_func(ts): 
     return ts.hour #returns the hour as an integer
@@ -160,16 +161,18 @@ def comment_sentence_transform_func(df):
 
 
 def post_profanity_removal(df):
-    
+    #import spacy
+    #nlp = spacy.load('en')
+    #pf = ProfanityFilter(nlps={'en': nlp}) # set the filter
     pf = ProfanityFilter() # set the filter
     
-    def profanity_filter(text):
+    def filter_profanity_func(text):
         return pf.censor(text)
     
     df = df.copy()
 
     df2 = df.copy()[['post_id','post_text']].drop_duplicates()
-    df2['new_col'] = df2['post_text'].apply(profanity_filter) 
+    df2['new_col'] = df2['post_text'].apply(filter_profanity_func) 
 
     output_df = df.copy()
     output_df = output_df.merge(df2, how='left',on=['post_id','post_text']).rename({'post_text':'delete_col'},axis=1).drop(['delete_col'],axis=1).rename({'new_col':'post_text'},axis=1) #merge and rearrange
