@@ -11,8 +11,9 @@ from sentence_transformers import SentenceTransformer
 from profanity_filter import ProfanityFilter
 from functions import Team_Augury_blog_praw_functions
 from functions import Team_Augury_feature_functions
-import spacy  #needed for language profanity filtering
+import spacy  #needed for language profanity filtering?
 #spacy.load('en')
+import pickle
 
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
@@ -425,17 +426,24 @@ if st.button("Test creating PRAW df for our pipeline"):
     feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
     st.write("X_values for pkl'd model")
     st.table(feature_df)
+    st.write("len(feature_df.columns):",len(feature_df.columns))
+    #load pkl'd classifier (clf)
+    filename = "models/SVC_vanilla_model.sav" #note this is the 'Vanillia model', not the optimised tuned one, assume kernel = rbf
+    clf = pickle.load(open(filename, 'rb'))
+    predictions = clf.predict(feature_df)
+    st.write("predictions...", predictions)
 
-if st.button("Get new posts"):
-    for submission in reddit.subreddit("investing").new(limit=5):
-        if submission.author==None or submission.author=="Automoderator":
-            continue
-        else:
-            # st.markdown("Post ID:")
-            # st.text(submission.id)
-            # st.markdown("Post Title:")
-            # st.text(submission.title)
-            st.markdown(f"__Post ID:__ {submission.id} __// Post Title:__ {submission.title} ")
+
+# if st.button("Get new posts"):
+#     for submission in reddit.subreddit("investing").new(limit=5):
+#         if submission.author==None or submission.author=="Automoderator":
+#             continue
+#         else:
+#             # st.markdown("Post ID:")
+#             # st.text(submission.id)
+#             # st.markdown("Post Title:")
+#             # st.text(submission.title)
+#             st.markdown(f"__Post ID:__ {submission.id} __// Post Title:__ {submission.title} ")
 
 st.header("Conclusions & Future Work")
 
