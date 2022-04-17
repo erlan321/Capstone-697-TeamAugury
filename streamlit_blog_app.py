@@ -407,7 +407,7 @@ subreddit_scrape_list = subreddit_scrape_list
 st.write("You selected:", subreddit_scrape_list)
 
 #n_posts = 5
-n_posts = st.selectbox("Select the max number of posts to try and scrape:", (1,3,5,10))
+n_posts = st.selectbox("Select the max number of posts to try and scrape:", (1,3,5))
 st.write("Number of posts we'll try to collect:", n_posts)
 n_posts = int(n_posts)
 n_comments = 5 
@@ -420,6 +420,10 @@ if st.button("Test creating PRAW df for our pipeline"):
     new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
     post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
+    st.table(feature_df)
+    st.subheader("") #blank space
+    feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
+    st.write("X_values for pkl'd model")
     st.table(feature_df)
 
 if st.button("Get new posts"):
