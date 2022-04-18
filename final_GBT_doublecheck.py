@@ -3,7 +3,11 @@ import numpy as np
 import psycopg2 
 from functions import Team_Augury_SQL_func
 from functions.Team_Augury_feature_functions import generate_features_csv
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.metrics import accuracy_score, f1_score
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import GradientBoostingClassifier
 import pickle
 
 choice = input("Load data (Y) or Run full featurization (N)?:").upper()
@@ -22,8 +26,8 @@ if choice == 'N':
 
   ### NEW SQL Variables
   sr_id = '(4, 31760, 31764, 31766)'   #[(4, '2qhhq', 'investing'), (16, 'mouw', 'science'), (130, '2qh1i', 'AskReddit'), (18162, '2qh3l', 'news'), (31760, '2qjuv', 'StockMarket'), (31764, '2qjfk', 'stocks'), (31766, '2th52', 'wallstreetbets')]
-  lower_timestamp = '2022-04-04 09:00:00'
-  upper_timestamp = '2022-04-18 11:00:00' 
+  lower_timestamp = '2022-03-01 14:30:00'
+  upper_timestamp = '2022-04-04 08:00:00' 
 
   #get data
   post_data, comments_data = Team_Augury_SQL_func.sql_by_timestamp(conn,sr_id,lower_timestamp,upper_timestamp)
@@ -34,11 +38,11 @@ if choice == 'N':
 
 # Uncomment to generate features and save data to csv (~10 minutes)
   print("Featurizing...")
-  feature_df = generate_features_csv(post_data,comments_data, csv_folder + "backup_features_data_final.csv")
+  feature_df = generate_features_csv(post_data,comments_data, csv_folder + "backup_features_data.csv")
 
 else:
   print("Loading features...")
-  feature_df = pd.read_csv("saved_work/backup_features_data_final.csv")
+  feature_df = pd.read_csv("saved_work/backup_features_data.csv")
 
 targets = ['popular_hr_3'] #, 'popular_hr_6','popular_hr_24'] #, 'popular_max'] --> Team decision based on EDA
 increments = [0] #, 3, 6] --> team decision based on EDA
@@ -92,26 +96,23 @@ df = df.copy()[X_columns + y_column]
 X = df[X_columns]
 y = df[y_column].values.ravel()
 
-print("Loading models...")
-#load pkl'd SVC clf
-filename = "models/SVC_final_model.pkl"
-SVC_loaded = pickle.load(open(filename, 'rb'))
+print("Training model...")
+numeric_transformer = Pipeline(steps=[("scaler", StandardScaler())])
 
-#load pkl'd SVC clf
-filename = "models/GradientBoostingClassifier_doublecheck_model.pkl"
-GBT_loaded = pickle.load(open(filename, 'rb'))
+categorical_transformer = Pipeline(steps=[('onehot', OneHotEncoder(handle_unknown='ignore', categories='auto'))])
 
-#load pkl'd SVC clf
-filename = "models/LogisticRegression_final_baseline_model.pkl"
-LR_loaded = pickle.load(open(filename, 'rb'))
+preprocessor = ColumnTransformer(
+            transformers=[
+                ('numerical', numeric_transformer, numeric_features),
+                ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
 
 
-print("Results...")
-print("LR Baseline Accuracy: {}".format(accuracy_score(y, LR_loaded.predict(X))))
-print("LR Baseline F1: {}".format(f1_score(y, LR_loaded.predict(X))))
-print("...")
-print("SVC Selected Model Accuracy: {}".format(accuracy_score(y, SVC_loaded.predict(X))))
-print("SVC Selected Model F1: {}".format(f1_score(y, SVC_loaded.predict(X))))
-print("...")
-print("GBDT double check Accuracy: {}".format(accuracy_score(y, GBT_loaded.predict(X))))
-print("GBDT double check F1: {}".format(f1_score(y, GBT_loaded.predict(X))))
+classifier = GradientBoostingClassifier(learning_rate=0.15, n_estimators=100, max_depth=3, max_features="sqrt",
+                                    subsample=0.5, random_state=rnd_state)
+
+clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
+clf.fit(X,y)
+filename = "models/"+ classifier.__class__.__name__ + "_doublecheck_model.pkl"
+pickle.dump(clf, open(filename, 'wb'))
+
+print("Model saved to {}".format(filename))
