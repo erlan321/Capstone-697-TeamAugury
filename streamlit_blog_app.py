@@ -437,12 +437,12 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.table(feature_df)
     st.write("len(feature_df.columns):",len(feature_df.columns))
     #load pkl'd classifier (clf)
-    filename = "models/SVC_vanilla_model.sav" #note this is the 'Vanilla model', not the optimised tuned one, assume kernel = rbf
+    filename = "models/SVC_final_model.pkl" 
     clf = pickle.load(open(filename, 'rb'))
     predictions = clf.predict(feature_df)
     st.write("predictions...", predictions)
-    # prediction_probas = clf.predict_proba(feature_df)
-    # st.write("prediction probabilities...", prediction_probas)
+    prediction_probas = clf.predict_proba(feature_df)
+    st.write("prediction probabilities...", prediction_probas)
 
 
 # if st.button("Get new posts"):
