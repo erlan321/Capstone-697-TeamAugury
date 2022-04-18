@@ -28,16 +28,14 @@ st.write('''
 st.header("Background")
 st.subheader("Motivation")
 st.markdown('''
-    Reddit is a popular social media networking site. From an investing perspective there are a few subreddits that have discussions related to investing.  A subreddit is a forum on Reddit that is dedicated to a specific topic, in our case we have chosen four subreddits to investigate:
+    Reddit is a popular social media networking site, and a subreddit is a forum on Reddit that is dedicated to a specific topic.  Project Augury is focussed on exploring what makes a post on these subreddits to be popular.  Our initial background research suggested that predictive tasks on Reddit  work better in thematic subreddits and do not necessarily generalize from one theme or subreddit to another.    But rather than focus on a single subreddit, we decided to investigate a small group of four subreddits related to a single theme: investing.  
 
      - r/investing
      - r/wallstreetbets
      - r/StockMarket
      - r/stocks
 
-    WSB achieved some notoriety during the “GameStop” incident where Keith Gill, a formerly little known trader achieved gains of $40M plus in a short period of time referred to as the ‘Reddit Rally’. Reuters claimed his ‘punchy move’ sparked thousands of comments on the WSB subreddit, causing his post(s) to go viral and his stock position to dramatically rise in value.  
-
-    Project Augury is focussed on exploring what makes a post on these subreddits to be popular. We are looking at a group of four subreddits as each subreddit itself has relatively low volumes of posts each day, when compared to the biggest subreddit’s like AskReddit, and our background research confirmed that predictive tasks on social media work better in thematic subreddits and do not necessarily generalize from one theme or subreddit to another.
+    We chose the investing theme because it felt particularly topical given the widely reported “GameStop” incident in 2021.  In this incident, the subreddit r/wallstreetbets achieved some notoriety where a formerly little known trader named Keith Gill achieved gains of $40M plus in a short period of time referred to as the ‘Reddit Rally’. Reuters claimed his ‘punchy move’ sparked thousands of comments on the subreddit, causing his post(s) to go viral and his stock position to dramatically rise in value.  We chose those four subreddits because they appear to be the four most active forums related to the theme according to the website [subredditstats.com](https://subredditstats.com) based on an analysis of subscribers and posts per day.  
     ''')
 
 
@@ -103,9 +101,11 @@ with related_work:
 st.subheader("") #create blank space
 st.subheader("Ethical Considerations")
 st.write('''
-    There are clearly ethical implications relating from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’ described above. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work.  To some extent this research has already been investigated in XXX   . Therefore we have made no further mitigations in our project related to market ethics.
-
-Another consideration is the free and open nature of online social media, and Reddit in particular. This can, and does, lead to environments which can become toxic in a number of ways. The subreddits which are looking at Investment are typically more professional in nature so the main way in which toxicity occurs in these fora is through the use of profane language. In our pipeline we have removed this language from our analysis using the python module profanity-filter 1.3.3 which replaces profane words with the character “*”.  
+    There are clearly ethical implications relating from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’ described above. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work. To some extent this research has already been investigated by Muxi Xu  in 2021 [13] and also by Hu et al [14]. Therefore we have made no further mitigations in our project related to market ethics.  
+    
+    Social Media is often thought of as an open and public forum of discussion.  But an important ethical consideration of any data science project related to social media is that saying something in “public” may not necessarily mean “consent” to using a person’s name or username in published research [CITATION].  While we did not have any need for usernames in the analysis we were performing, we did gather usernames into our database in order to track certain features of each Reddit post, and we are aware that if we were to ever use those usernames in future work, our database would could provide us with an already anonymized id number to protect each individuals’ privacy.  
+    
+    A different aspect of  the free and open nature of social media, and Reddit in particular, is that it can  lead to environments which become toxic in a number of ways.  To ameliorate this we did take some action in our post-processing of our database.  The subreddits which are looking at Investment are typically more professional in nature so the main way in which toxicity occurs in these fora is through the use of profane language. Thus, in our pipeline we have removed this language from our analysis using the python module profanity-filter 1.3.3 which replaces profane words with the character “*”.  
 
     ''')
 
@@ -160,53 +160,62 @@ st.write('''
     
 
 st.subheader("") #create blank space
-st.subheader("Feature Engineering (Option 1)")
+st.subheader("Feature Engineering")
 feature_table = st.container()
 with feature_table:
-    st.write("Through a combination of our EDA, our intuition, and our understanding of Reddit, we chose to engineer the following features for use in our prediction task.  (*Click on a feature for description & rationale*)")
+    st.write("Through a combination of our EDA, our review of Related Works, our intuition, and our understanding of Reddit, we chose to engineer the following features for use in our prediction task.  (*Click on a feature for description & rationale*)")
     with feature_table.expander("Number of comments per hour"):
         st.markdown('''
             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
+
             *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
         ''')
     with feature_table.expander("Author Karma for the Post"):
         st.markdown('''
-            *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
-            *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
+            *Description:*  We tracked the karma of both comment and post authors at the time of making either a post or a comment.  Reddit karma is a score a user recieves based on the user's activity.  
+
+            *Rationale:*  Whilst people who have high karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
         ''')
     with feature_table.expander("Hour and Day the Post was created"):
         st.markdown('''
             *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
+            
             *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
         ''')
     with feature_table.expander("VADER Text Sentiment of the Post"):
         st.markdown('''
-            *Description:*  We used the VADER sentiment library to classify the sentiment of each posts text.  This produced a value in the range of -1, +1.     
+            *Description:*  We used the VADER sentiment library to classify the sentiment of each posts text.  This produced a value in the range of -1, +1.  [(docs)](https://github.com/cjhutto/vaderSentiment)     
+
             *Rationale:*  We believe text that has a strongly positive or negative sentiment is more likely to become popular than something that is neutral. 
         ''')
     with feature_table.expander("SBERT Sentence Embeddings of the Post"):
         st.markdown('''
-            *Description:*  We used the SBERT library to encode the text of both Posts and Comments.  The SBERT interface was simple to use and produced in effect 380+ features for our classifiers for each post.     
+            *Description:*  We used the SBERT library to encode the text of both Posts and Comments.  The SBERT interface was simple to use and produced in effect 380+ features for our classifiers for each post.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
+
             *Rationale:*  NEEDS UPDATE the rich meaning from language encoded via SBERT, which is based on the state of the art BERT language model.
         ''')
     with feature_table.expander("Average Upvotes for the Top 5 Comments on the Post (per Hour)"):
         st.markdown('''
             *Description:*  We look at the top 5 comments for a post (if available) and see how many upvotes that comment has gotten.     
+            
             *Rationale:*  Posts that gather comments quickly will likely have their popularity influenced by upvotes to those comments. 
         ''')
     with feature_table.expander("Average Author Karma for the Top 5 Comments on the Post"):
         st.markdown('''
-            *Description:*  We look at the Commentor Karma for the top 5 comments for a post (if available).     
+            *Description:*  We look at the Commentor Karma for the top 5 comments for a post (if available).  Reddit karma is a score a user recieves based on the user's activity.   
+
             *Rationale:*  Posts that gather comments quickly from authors with a high reputation should impact the Post's popularity. 
         ''')
     with feature_table.expander("Average VADER Text Sentiment of the Top 5 Comments of the Post"):
         st.markdown('''
-            *Description:*  We look at the average VADER text sentiment for the top 5 comments for a post (if available).     
+            *Description:*  We look at the average VADER text sentiment for the top 5 comments for a post (if available).  [(docs)](https://github.com/cjhutto/vaderSentiment)     
+
             *Rationale:*  Posts that gather comments quickly and have a highly positive or negative sentiment are likely to be related to popularity. 
         ''')
     with feature_table.expander("Average SBERT Sentence Embeddings of the Comments"):
         st.markdown('''
-            *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available)     
+            *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available)  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
+
             *Rationale:*  NEEDS UPDATE the rich meaning from language encoded via SBERT, which is based on the state of the art BERT language model.
         ''')
 
@@ -272,8 +281,8 @@ st.markdown('''
 st.subheader("Hyperparameter Tuning")
 st.write('''
     In order to perform hyperparameter tuning for these three models, we explored a few different options to perform cross-validation.  We ultimately decided on Scikit-Learn's GridSearchCV method [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html).  
-    We also explored RandomizedSearchCV and Nested Cross-Validation.  Since our dataset was relatively small the efficiency of RandomizedSearchCV was not required, and this also would have mad the Nested Cross-Validation difficult due to too small samples.  
-    Importantly, we chose to use the standard cv object within GridsearchCV as it implements the stratified k-fold approach, thus ensuring we do not split without the much smaller “popular” class.  
+    We also explored RandomizedSearchCV and Nested Cross-Validation.  Since our dataset was relatively small the efficiency of RandomizedSearchCV was not required, and this also would have made the Nested Cross-Validation difficult due to too small samples.  
+    Importantly, we chose to use the standard _cv_ object within GridsearchCV as it implements the stratified k-fold approach, thus ensuring we do not split without the much smaller “popular” class.  
 
     ''')
 st.write("placeholder for image of Stratified K-Fold validation ??")
@@ -321,11 +330,11 @@ st.write('''
     **Hyperparameter Decision Process:**  
     With over 1,000 different options produced from our hyperparameter tuning process, we used both objective and subjective methods of coming to a decision about which hyperparameters were most appropriate, and thus which of the three styles of model to ultimate use for our prediction task.  
     
-    For each iteration, we output the F1 Score and Accuracy calculation for each model, both on the training data and validation data.  Using this information, we went through these steps in each notebook:
-     - Using three different Jupyter Notebooks to visualize the results the most appropriate tool for this process.
-     - We began by viewing all of the F1 and Accuracy calculations for each model, as messy as it was, and noted any observable patterns.
+    For each iteration, we output the F1 Score calculation for each model, both on the training data and validation data.  F1 Score felt most appropriate as it was the metric (and sometimes sole metric) used similar projects we saw in related works.  Using this information, we went through these steps in each notebook:
+     - We used Jupyter Notebooks to visualize the results, which we felt was the most appropriate tool for this process.
+     - We began by viewing all of the F1 calculations for each model, as messy as it was, and noted any observable patterns.
      - We then created charts that looked at each hyperparameter, looking for levels of the hyperparameter that gave higher performance "all else equal".  By this we mean we took the median performance metric for each level of an individual hyperparameter.  From this method we were able to see general trends in the individual hyperparameters that resulted in higher or lower model performance.
-     - Our _"objective"_ decision was to favor levels of a hyperparameter that yielded better scores, with a bias towards the F1 score.
+     - Our _"objective"_ decision was to favor levels of a hyperparameter that yielded better F1 scores.
      - Our _"subjective"_ decision was to favor levels of a hyperparameter that were neither at the extremes of our tuning ranges, nor resulted in results that looked "too good" and might indicate over-fitting.  
     
     ''')
@@ -356,9 +365,9 @@ st.write('''
 hpt_df = pd.DataFrame(data={
     'Tuned_Model': ['LR','SVC','GBC'],
     'F1_Score_Training': [0.75,0.80,0.93],
-    'F1_Score_Validate': [0.39,0.49,0.39],
-    'Accuracy_Training': [0.907,0.897,0.971],
-    'Accuracy_Validate': [0.776,0.740,0.795],
+    'F1_Score_Validation': [0.39,0.49,0.39],
+    #'Accuracy_Training': [0.907,0.897,0.971],
+    #'Accuracy_Validation': [0.776,0.740,0.795],
     })
 st.table(hpt_df)
 
@@ -428,12 +437,12 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.table(feature_df)
     st.write("len(feature_df.columns):",len(feature_df.columns))
     #load pkl'd classifier (clf)
-    filename = "models/SVC_vanilla_model.sav" #note this is the 'Vanillia model', not the optimised tuned one, assume kernel = rbf
+    filename = "models/SVC_vanilla_model.sav" #note this is the 'Vanilla model', not the optimised tuned one, assume kernel = rbf
     clf = pickle.load(open(filename, 'rb'))
     predictions = clf.predict(feature_df)
     st.write("predictions...", predictions)
-    prediction_probas = clf.predict_proba(feature_df)
-    st.write("prediction probabilities...", prediction_probas)
+    # prediction_probas = clf.predict_proba(feature_df)
+    # st.write("prediction probabilities...", prediction_probas)
 
 
 # if st.button("Get new posts"):
