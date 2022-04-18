@@ -156,7 +156,18 @@ st.write('''
     From this chart, we make two decisions about our prediction task.  First, that popularity can peak at different times, but using a post’s popularity at hour 3  seems to be appropriate for our prediction variable.  Second, we see a lot of the subsample achieves very low popularity, so we feel comfortable using a threshold for “popular” close to the top Quintile (the red line), or a “popularity” value of 10.  Thus, the determination of “popular” versus “not popular” in our prediction task is determined by if a post has a “popularity proxy” of over or under 10 by hour 3.  
     ''')
 st.write('''
-    Placeholder Text for more about EDA... maybe talk generally about factor correlations / network analysis?  We note in the features section below that we use certain features due to intuition or inclusion in Literature Review papers.
+    In order to get a sense of how some of the basic information we have collected about the posts (and the comments related to each post) might be influencing popularity on Reddit, we looked at a correlation analysis against our proxy measure of popularity.  We see that both the total number of comments (normalized for how old the post is) as well as the number of upvotes those comments receive have a strong positive correlation to popularity.  On the other hand, data related to a posts' author karma and commenters' karma seems to have a very weak relationship to popularity.    
+
+    ''')
+st.write("placeholder for correlation table or chart")
+st.write('''
+    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we simply looked at the average popularity of each post in the sample over its life compared to both the hour of the day and the day of the week that the post was created.  
+    There were not many strong conclusions to draw from this analysis of possible temporal features, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see weaker popularity overall for posts created on Mondays and Wednesdays (UTC), and strongest popularity on Fridays (UTC).  We also see the weakest popularity for posts created around 16:00 hours (UTC) and strongest at 11:00 (UTC).  Given the global nature of online communities such as Reddit, we don't want to read much into these relationships, but we will remain aware of them when examining the feature importance of our model.  
+
+    ''')
+st.write("placeholder for Two viz... for days_of_week and hours, could be a simple histogram or line chart")
+st.write('''
+    (edit?) _In summary_, the above EDA was very helpful in determining our classification of "popular" or "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
     ''')
     
 
