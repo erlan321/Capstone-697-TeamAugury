@@ -18,6 +18,9 @@ Supporting functions (Team_Augury_...)
 * load_transform_saved.py: loads a stored version of pre-processed data and returns an output identical to what is fed to clf
 * SQL_func.py: returns raw data from SQL using timestamps as entrants
 
+Final
+* final_model.py : generates the final model as a pickled file based on the hyperparameter tuning
+* final_results.py : featurizes the unseen data and predicts wit the final model reporting accuracy and f1 scores
 
 Miscellaneous
 * vanilla_models_pkl.py: creates pickled files of the vanilla (non-hpt) models
