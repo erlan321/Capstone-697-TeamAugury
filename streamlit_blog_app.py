@@ -423,12 +423,12 @@ n_posts = int(n_posts)
 n_comments = 5 
 hrs_to_track = 1 #number of hours to track a post/submission
 #time_of_batch = datetime.utcnow().replace(microsecond=0)                                      
-#char_limit = 256 #character limit for the text fields in the database
+char_limit = 256 #character limit for the text fields in the database
 
 if st.button("Test creating PRAW df for our pipeline"):
     time_of_batch = datetime.utcnow().replace(microsecond=0)
     new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
-    post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, new_submission_list=new_submission_list)
+    post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
     st.table(feature_df)
     st.subheader("") #blank space
