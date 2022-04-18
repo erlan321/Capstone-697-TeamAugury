@@ -90,11 +90,11 @@ scoring = {'acc': 'accuracy', 'f1': 'f1'}
 
 # Linear  
 
-       
-#results = RandomizedSearchCV(estimator=pipe, param_distributions=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2, random_state=rnd_state, n_iter=100).fit(X, y)
 #parameters = {"clf__C":stats.loguniform(2**-5, 2**15), 
 #            "clf__kernel":["linear"],
-#            'clf__gamma': stats.loguniform(2**-15, 2**3)}
+#            'clf__gamma': stats.loguniform(2**-15, 2**3)}     
+#results = RandomizedSearchCV(estimator=pipe, param_distributions=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2, random_state=rnd_state, n_iter=100).fit(X, y)
+
 
 print("Initiating randomized grid search on linear SVC...")
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", SVC(class_weight="balanced", max_iter=100000, cache_size=2000, random_state=rnd_state))])
@@ -125,8 +125,7 @@ undr_fit = list(set(undr_fit['model_param']))
 remove_params = list(undr_fit + ovr_fit)
 results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
-results.to_csv("saved_work/hp_tuning_SVC_linear.csv", index=False) 
-
+results.to_csv("saved_work/hp_tuning_SVC_linear.csv", index=False)
 
 
 
