@@ -14,6 +14,7 @@ from functions import Team_Augury_feature_functions
 import spacy  #needed for language profanity filtering?
 #spacy.load('en')
 import pickle
+import altair as alt
 
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
@@ -338,6 +339,63 @@ st.write('''
      - Our _"subjective"_ decision was to favor levels of a hyperparameter that were neither at the extremes of our tuning ranges, nor resulted in results that looked "too good" and might indicate over-fitting.  
     
     ''')
+#############################################################
+#hpt_median_or_avg = "median"
+#hpt_metric = "F1 Score"
+hpt_metric = st.selectbox("Select the Scoring Metric to view a sample of our hyperparameter tuning visualizations:", ("F1","Accuracy"))
+
+hpt_data = pd.read_csv("saved_work/hp_tuning_SVC_poly.csv")
+hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
+hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
+hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
+
+def hpt_chart(input_df, metric):
+    chart_title = metric+" Score"
+
+    df = input_df.copy()
+    df = df[df.Score==metric]
+    df = df.groupby(['type','C',])['Result'].median().reset_index()
+    chart1 = alt.Chart(df).mark_line().encode(
+        x = 'C:O',
+        y = 'Result:Q',
+        color = 'type:N',
+        tooltip = ['Result:Q','C:Q'],
+    ).properties(
+        title = chart_title
+    )
+
+    df = input_df.copy()
+    df = df[df.Score==metric]
+    df = df.groupby(['type','gamma',])['Result'].median().reset_index()
+    chart2 = alt.Chart(df).mark_line().encode(
+        x = 'gamma:O',
+        y = 'Result:Q',
+        color = 'type:N',
+        tooltip = ['Result:Q','gamma:Q'],
+    ).properties(
+        title = chart_title
+    )
+
+    df = input_df.copy()
+    df = df[df.Score==metric]
+    df = df.groupby(['type','kernel',])['Result'].median().reset_index()
+
+    chart3 = alt.Chart(df).mark_line().encode(
+        x = 'kernel:O',
+        y = 'Result:Q',
+        color = 'type:N',
+        tooltip = ['Result:Q','kernel:N'],
+
+    ).properties(
+        title = chart_title
+    )
+
+    return chart1 | chart2 | chart3
+
+st.altair_chart(hpt_chart(hpt_data, hpt_metric), use_container_width=True)
+
+
+##############################################################
 st.write(''' 
     **Hyperparameter Decisions:**  
     The above process resulted in the following choices for hyperparameters:
