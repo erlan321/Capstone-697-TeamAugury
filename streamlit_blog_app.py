@@ -432,6 +432,8 @@ if st.button("Test creating PRAW df for our pipeline"):
     clf = pickle.load(open(filename, 'rb'))
     predictions = clf.predict(feature_df)
     st.write("predictions...", predictions)
+    prediction_probas = clf.predict_proba(feature_df)
+    st.write("prediction probabilities...", prediction_probas)
 
 
 # if st.button("Get new posts"):
