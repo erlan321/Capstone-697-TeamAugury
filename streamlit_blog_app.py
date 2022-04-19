@@ -152,11 +152,13 @@ with col3:
 st.subheader("") #create blank space
 st.subheader("Exploratory Data Analysis (EDA)")
 st.write('''
+    As mentioned above, we were successfully scraping Reddit consistently starting on March 1st of 2022.  We began performing Exploratory Data Analysis (EDA) with the data we had gathered so far on March 28th of 2022, which represented roughly 1,200 posts tracked over a 24 hour period.  
+    
     Our objective is to predict whether or not a post will become “popular”.  A “popular” post is one that would be near the top of the subreddit when a user goes to the webpage or opens the app (in Reddit’s vocabulary, the post is “Hot”).  From perusing Reddit’s own message boards, we understand that a rough approximation for this measure of “popularity” is:
     ''')
 st.latex(r"popularity = \frac{upvotes}{hours}")
 st.write('''
-    We illustrate our exploration of “popularity” in the below chart on a sample of our data, where the faint blue lines are the popularity of individual posts scraped hourly for 24 hours from March 1st to March 28th, 2022, or (roughly 1,200 posts).  Overlaid on this chart are three lines representing the 50th percentile (half the data), 80th percentile (the top quintile), and 90th percentile (the top decile).  
+    We illustrate our exploration of “popularity” in the below chart on a sample of our data, where the faint blue lines are the popularity of individual posts scraped hourly for 24 hours.  Overlaid on this chart are three lines representing the 50th percentile (half the data), 80th percentile (the top quintile), and 90th percentile (the top decile).  
     ''')
 popularity_image = Image.open('blog_assets/EDA_popularity.png')
 st.image(popularity_image, caption='Proxy for Post Popularity')
@@ -314,11 +316,33 @@ st.write('''
     Importantly, we chose to use the standard _cv_ object within GridsearchCV as it implements the stratified k-fold approach, thus ensuring we do not split without the much smaller “popular” class.  
 
     ''')
-st.write("placeholder for image of Stratified K-Fold validation ??")
-st.write("placeholder for discussing # of Train, # of Validate, # of Test (Unseen) data points!")
+kfold_image = Image.open('blog_assets/StratifiedKFoldCVExplainerGraph.png')
+st.image(kfold_image, caption='Illustration of how Stratified K-Fold Cross Validation works in Project Augury')
+st.write("") #blank space
+st.write('''
+    **Project train / validation / test split:**  
+    Related to the above illustration of how we are cross-validating our model choices we want to highlight what this implies for our project's split between training, validation, and test data sets.  
+    We have been successfully scraping from Reddit since March 1st of 2022, and we are going to be training and validating our model choices on data up until April 18th of 2022, or 48 days of hourly scraping.  Therefore, our "unseen" test set of data will be from April 18th to XXXXXXX of 2022, or XXXXXXX days.  
+    
+    _Here is how these splits translate into the percentages of our overall data and number of individual posts:_  
+
+    ''')
+col1, col2, col3 = st.columns(3)
+col1.info("**Training**")
+col2.info("**Validation**")
+col3.info("**Testing**")
+col1.write("68% of data")
+col2.write("17% of data")
+col3.write("15% of data")
+col1.write("~2,200 posts")
+col2.write("~560 posts")
+col3.write("~500 posts")
+st.write("!! UPDATE NUMBERS ABOVE BEFORE SUBMISSION !!")
+
+st.write("") #blank space
 st.write('''
     **Tuning Iterations:**  
-    We iterated through 1,062 combinations of parameters across LR, SVC, and GBDT models.  
+    We iterated through roughly 1,000 combinations of parameters across LR, SVC, and GBDT models, for which we needed to develop both objective and subjective methods of making parameter choices.  
     ''')
 st.write('''
     _LR Tuning:_ For LR we flipped between the _solver_ parameter, the types of penalty, and a range of values of C we've seen before in our course work.  
@@ -371,7 +395,7 @@ st.write('''
 st.write("") #blank space
 st.write('''
     **Visualizing the Hyperparameter Decision Process:**  
-    The below charts illustrate the process we described in the bullet-points above.  Choose either F1 Score or Accuracy Score to visualized the median results across the different models and parameters for yourself.  
+    The below charts illustrate the process we described in the bullet-points above.  Choose either F1 Score or Accuracy Score to visualize the median results across the different models and parameters for yourself.  
     ''')
 #############################################################
 score_metric = st.selectbox("Select the Scoring Metric to view a sample of our hyperparameter tuning visualizations:", ("F1","Accuracy"))
@@ -466,6 +490,11 @@ hrs_to_track = 1 #number of hours to track a post/submission
 #time_of_batch = datetime.utcnow().replace(microsecond=0)                                      
 char_limit = 256 #character limit for the text fields in the database
 
+#load pkl'd classifier (clf)
+#filename = "models/SVC_final_model.pkl" 
+filename = "models/LogisticRegression_final_baseline_model.pkl" 
+clf = pickle.load(open(filename, 'rb'))
+
 if st.button("Test creating PRAW df for our pipeline"):
     time_of_batch = datetime.utcnow().replace(microsecond=0)
     new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
@@ -477,9 +506,7 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.write("X_values for pkl'd model")
     st.table(feature_df)
     st.write("len(feature_df.columns):",len(feature_df.columns))
-    #load pkl'd classifier (clf)
-    filename = "models/SVC_final_model.pkl" 
-    clf = pickle.load(open(filename, 'rb'))
+
     predictions = clf.predict(feature_df)
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
