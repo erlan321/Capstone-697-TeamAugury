@@ -114,7 +114,7 @@ st.write('''
 st.subheader("") #create blank space
 st.header("Our Project Workflow")
 st.write("The below graphic illustrates our project Augury workflow.  Below we will provide more details on each component of the workflow.")
-project_pipeline_image = Image.open('blog_assets/project_pipeline.png')
+project_pipeline_image = Image.open('blog_assets/project_pipeline2.png')
 st.image(project_pipeline_image, caption='Project Augury Workflow')
 
 st.subheader("") #create blank space
