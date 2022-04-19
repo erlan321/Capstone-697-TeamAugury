@@ -166,7 +166,7 @@ st.write('''
     Given the global nature of online communities such as Reddit and that fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
 
     ''')
-temporal_image = Image.open('blog_assets/temporal_image.png')
+temporal_image = Image.open('blog_assets/eda_temporal_chart.png')
 st.image(corr_image, caption='Analysis the median maximum popularity acheived based on the day or time a post is created')
 st.write('''
     In summary, the above EDA was very helpful in determining our classification of "popular" versus "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
