@@ -107,7 +107,7 @@ preprocessor = ColumnTransformer(
                 ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
 
 
-classifier = GradientBoostingClassifier(learning_rate=0.15, n_estimators=100, max_depth=3, max_features="sqrt",
+classifier = GradientBoostingClassifier(learning_rate=0.15, n_estimators=150, max_depth=3, max_features="sqrt",
                                     subsample=0.5, random_state=rnd_state)
 
 clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
