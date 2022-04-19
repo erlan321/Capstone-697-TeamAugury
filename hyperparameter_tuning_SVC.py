@@ -5,11 +5,10 @@ from inspect import classify_class_attrs
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
-from scipy import stats
 
 import warnings
 warnings.filterwarnings('ignore')  ### BE CAREFUL USING THIS :) Supressing the warning that some LR are NaN
@@ -89,7 +88,7 @@ scoring = {'acc': 'accuracy', 'f1': 'f1'}
 # SHOULD CHANGE TO FUNCTION
 
 # Linear  
-"""
+
 print("Initiating randomized grid search on linear SVC...")
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", SVC(class_weight="balanced", max_iter=100000, cache_size=2000, random_state=rnd_state))])
 
@@ -153,7 +152,7 @@ results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_SVC_rbf.csv", index=False)
 
-"""
+
 # sigmoid  
 print("Initiating randomized grid search on sigmoid SVC...")
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", SVC(class_weight="balanced", max_iter=-1, cache_size=2000, random_state=rnd_state))])
@@ -185,7 +184,7 @@ results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_SVC_sigmoid.csv", index=False) 
 
-"""
+
 # poly  
 print("Initiating randomized grid search on poly SVC...")
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", SVC(class_weight="balanced", max_iter=100000, cache_size=2000, random_state=rnd_state))])
@@ -203,7 +202,7 @@ it_params_noC = ["gamma", "kernel", "degree"]
 tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
 results = results[tot_params]
 results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
-results["model_param"] =results["C"].astype(str) + " / " + results["gamma"].astype(str) + " / " + results["degree"].astype(str)
+results["model_param"] =results["C"].astype(str) + " / " + results["gamma"].astype(str) + " / " + results["degree"].astype(str) + " / " + results["kernel"].astype(str)
 results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
 results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
 results = results[["Result", "model_param", "Score", "type", "C", "gamma", "degree", "kernel"]]
@@ -217,4 +216,3 @@ remove_params = list(undr_fit + ovr_fit)
 results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_SVC_poly.csv", index=False)
-"""
