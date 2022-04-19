@@ -176,12 +176,12 @@ with col3:
     st.write("")
 
 st.write('''
-    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we looked at what the maximum popularity each post in the sample acheived during a 24 hour period and calculated the median for each hour of the day and the day of the week that the post was created.  We should note first that we scraped and stored this data in UTC time, and made no adjustment to a different time zone in the visualization.    
+    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we looked at what the maximum popularity each post in the sample achieved during a 24 hour period and calculated the median for each hour of the day and the day of the week that the post was created.  We should note first that we scraped and stored this data in UTC time, and made no adjustment to a different time zone in the visualization.    
     Given the global nature of online communities such as Reddit and that fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
 
     ''')
 temporal_image = Image.open('blog_assets/eda_temporal_chart.png')
-st.image(temporal_image, caption='Analysis the median maximum popularity acheived based on the day or time a post is created')
+st.image(temporal_image, caption='Analysis the median maximum popularity achieved based on the day or time a post is created')
 st.write('''
     In summary, the above EDA was very helpful in determining our classification of "popular" versus "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
     ''')
@@ -320,7 +320,7 @@ st.write('''
     We iterated through 1,062 combinations of parameters across LR, SVC, and GBDT models.  
     ''')
 st.write('''
-    _LR Tuning:_ For LR we flipped between the _solver_ parameter and a range of values of C we've seen before in our course work.  
+    _LR Tuning:_ For LR we flipped between the _solver_ parameter, the types of penalty, and a range of values of C we've seen before in our course work.  
     _Parameter dictionary used in our code_
     ''')
 st.code('''
@@ -371,55 +371,190 @@ st.write('''
 #hpt_metric = "F1 Score"
 hpt_metric = st.selectbox("Select the Scoring Metric to view a sample of our hyperparameter tuning visualizations:", ("F1","Accuracy"))
 
-hpt_svc_data = pd.read_csv("saved_work/hp_tuning_SVC_poly.csv")
-hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
-hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
-hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
+# hpt_svc_data = pd.read_csv("saved_work/hp_tuning_SVC_poly.csv")
+# hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
+# hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
+# hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
 
-def hpt_chart(input_df, metric):
+def hpt_chart( metric):
     chart_title = metric+" Score"
 
+    input_df = pd.read_csv("saved_work/hp_tuning_SVC_poly.csv")
+    input_df = pd.concat([input_df, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
+    input_df = pd.concat([input_df, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
+    input_df = pd.concat([input_df, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
+
+    ### C values
     df = input_df.copy()
     df = df[df.Score==metric]
     df = df.groupby(['type','C',])['Result'].median().reset_index()
-    chart1 = alt.Chart(df).mark_line().encode(
+    # Create a selection that chooses the nearest point & selects based on x-value
+    nearest = alt.selection(type='single', nearest=True, on='mouseover', clear='mouseout',
+                            fields=['C'], empty='none')
+    line = alt.Chart(df).mark_line().encode(
         x = 'C:O',
         y = 'Result:Q',
         color = 'type:N',
-        tooltip = ['Result:Q','C:Q'],
-    ).properties(
-        title = chart_title
     )
+    # Transparent selectors across the chart. This is what tells us
+    # the x-value of the cursor
+    selectors = alt.Chart(df).mark_point().encode(
+        x='C:O',
+        opacity=alt.value(0),
+    ).add_selection(
+        nearest
+    )
+    # Draw points on the line, and highlight based on selection
+    points = line.mark_point().encode(
+        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+    )
+    # Draw text labels near the points, and highlight based on selection
+    text = line.mark_text(align='left', dx=5, dy=-5).encode(
+        text=alt.condition(nearest, alt.Text('Result:Q', format=",.2f"), alt.value(' '))
+    )
+    # Draw a rule at the location of the selection
+    rules = alt.Chart(df).mark_rule(color='gray').encode(
+        x='C:O',
+    ).transform_filter(
+        nearest
+    )
+    chart1 = alt.layer(line, selectors, points, rules, text)
 
+    ### gamma values
     df = input_df.copy()
     df = df[df.Score==metric]
     df = df.groupby(['type','gamma',])['Result'].median().reset_index()
-    chart2 = alt.Chart(df).mark_line().encode(
+    # Create a selection that chooses the nearest point & selects based on x-value
+    nearest = alt.selection(type='single', nearest=True, on='mouseover', clear='mouseout',
+                            fields=['gamma'], empty='none')
+    line = alt.Chart(df).mark_line().encode(
         x = 'gamma:O',
         y = 'Result:Q',
         color = 'type:N',
-        tooltip = ['Result:Q','gamma:Q'],
-    ).properties(
-        title = chart_title
     )
+    # Transparent selectors across the chart. This is what tells us
+    # the x-value of the cursor
+    selectors = alt.Chart(df).mark_point().encode(
+        x='gamma:O',
+        opacity=alt.value(0),
+    ).add_selection(
+        nearest
+    )
+    # Draw points on the line, and highlight based on selection
+    points = line.mark_point().encode(
+        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+    )
+    # Draw text labels near the points, and highlight based on selection
+    text = line.mark_text(align='left', dx=5, dy=-5).encode(
+        text=alt.condition(nearest, alt.Text('Result:Q', format=",.2f"), alt.value(' '))
+    )
+    # Draw a rule at the location of the selection
+    rules = alt.Chart(df).mark_rule(color='gray').encode(
+        x='gamma:O',
+    ).transform_filter(
+        nearest
+    )
+    chart2 = alt.layer(line, selectors, points, rules, text)
 
+
+    ### kernel values
     df = input_df.copy()
     df = df[df.Score==metric]
     df = df.groupby(['type','kernel',])['Result'].median().reset_index()
-
-    chart3 = alt.Chart(df).mark_line().encode(
+    # Create a selection that chooses the nearest point & selects based on x-value
+    nearest = alt.selection(type='single', nearest=True, on='mouseover', clear='mouseout',
+                            fields=['kernel'], empty='none')
+    line = alt.Chart(df).mark_line().encode(
         x = 'kernel:O',
         y = 'Result:Q',
         color = 'type:N',
-        tooltip = ['Result:Q','kernel:N'],
-
-    ).properties(
-        title = chart_title
     )
+    # Transparent selectors across the chart. This is what tells us
+    # the x-value of the cursor
+    selectors = alt.Chart(df).mark_point().encode(
+        x='kernel:O',
+        opacity=alt.value(0),
+    ).add_selection(
+        nearest
+    )
+    # Draw points on the line, and highlight based on selection
+    points = line.mark_point().encode(
+        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+    )
+    # Draw text labels near the points, and highlight based on selection
+    text = line.mark_text(align='left', dx=5, dy=-5).encode(
+        text=alt.condition(nearest, alt.Text('Result:Q', format=",.2f"), alt.value(' '))
+    )
+    # Draw a rule at the location of the selection
+    rules = alt.Chart(df).mark_rule(color='gray').encode(
+        x='kernel:O',
+    ).transform_filter(
+        nearest
+    )
+    chart3 = alt.layer(line, selectors, points, rules, text)
 
-    return chart1 | chart2 | chart3
+    output_chart = chart1 | chart2 | chart3
+    output_chart = output_chart.properties(
+        title={
+            "text": "SVC Models: {} Score For Hyperparameter Tuning".format(metric),
+            "subtitle": "Median score is on the y-axis across all iterations of the parameter on the x-axis",
+            "anchor": "start",
+            "fontSize": 22,
+            "subtitleFontSize": 14,
+           
+        })
 
-st.altair_chart(hpt_chart(hpt_svc_data, hpt_metric), use_container_width=True)
+    return output_chart
+
+
+st.altair_chart(hpt_chart( hpt_metric), use_container_width=False)
+
+# def hpt_chart(input_df, metric):
+#     chart_title = metric+" Score"
+
+    
+
+#     df = input_df.copy()
+#     df = df[df.Score==metric]
+#     df = df.groupby(['type','C',])['Result'].median().reset_index()
+#     chart1 = alt.Chart(df).mark_line().encode(
+#         x = 'C:O',
+#         y = 'Result:Q',
+#         color = 'type:N',
+#         tooltip = ['Result:Q','C:Q'],
+#     ).properties(
+#         title = chart_title
+#     )
+
+#     df = input_df.copy()
+#     df = df[df.Score==metric]
+#     df = df.groupby(['type','gamma',])['Result'].median().reset_index()
+#     chart2 = alt.Chart(df).mark_line().encode(
+#         x = 'gamma:O',
+#         y = 'Result:Q',
+#         color = 'type:N',
+#         tooltip = ['Result:Q','gamma:Q'],
+#     ).properties(
+#         title = chart_title
+#     )
+
+#     df = input_df.copy()
+#     df = df[df.Score==metric]
+#     df = df.groupby(['type','kernel',])['Result'].median().reset_index()
+
+#     chart3 = alt.Chart(df).mark_line().encode(
+#         x = 'kernel:O',
+#         y = 'Result:Q',
+#         color = 'type:N',
+#         tooltip = ['Result:Q','kernel:N'],
+
+#     ).properties(
+#         title = chart_title
+#     )
+
+#     return chart1 | chart2 | chart3
+
+# st.altair_chart(hpt_chart(hpt_svc_data, hpt_metric), use_container_width=True)
 
 
 ##############################################################
