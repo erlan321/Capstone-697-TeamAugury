@@ -49,7 +49,7 @@ def blog_submission_list(reddit, time_of_batch, hrs_to_track, n_posts, subreddit
 
 ### this function creates the information from PRAW for both submissions/posts and for comments, in dataframe form.
 
-def blog_scrape_dataframes(reddit, time_of_batch, n_comments, new_submission_list): #, old_submission_list=old_submission_list ):
+def blog_scrape_dataframes(reddit, time_of_batch, n_comments, char_limit, new_submission_list): #, old_submission_list=old_submission_list ):
     submission_df = pd.DataFrame()
     comment_df = pd.DataFrame()
 
@@ -76,7 +76,7 @@ def blog_scrape_dataframes(reddit, time_of_batch, n_comments, new_submission_lis
                     'hours_since_created'   : 0,
                     #'sr_id'           : str(submission.subreddit.id), # subreddit id
                     'sr'                : str(submission.subreddit.display_name), # subreddit name
-                    'post_text'          : str(submission.title), #[:char_limit],  #The title of the submission. #limit the text to the character limit in the database
+                    'post_text'          : str(submission.title)[:char_limit],  #The title of the submission. #limit the text to the character limit in the database
                     
                     'post_upvotes'         : int(submission.score),  #The number of upvotes for the submission.
                     'number_comments'       : int(submission.num_comments),  #The number of comments on the submission.
@@ -118,7 +118,7 @@ def blog_scrape_dataframes(reddit, time_of_batch, n_comments, new_submission_lis
                                 
                                 'comment_id'              : str(comment.id),   #The ID of the comment.
                                 
-                                'comment_text'            : str(comment.body),#[:char_limit],  #The body of the comment, as Markdown. #limit the text to the character limit in the database
+                                'comment_text'            : str(comment.body)[:char_limit],  #The body of the comment, as Markdown. #limit the text to the character limit in the database
                                 'comment_upvotes'         : int(comment.score),  #The number of upvotes for the comment
                                 'comment_created_at'      : datetime.fromtimestamp(comment.created_utc),  #Time the submission was created, represented in Unix Time
                                 #'c_redditor_name'   : str(comment.author),  #username

@@ -14,6 +14,7 @@ from functions import Team_Augury_feature_functions
 import spacy  #needed for language profanity filtering?
 #spacy.load('en')
 import pickle
+import altair as alt
 
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
@@ -155,7 +156,18 @@ st.write('''
     From this chart, we make two decisions about our prediction task.  First, that popularity can peak at different times, but using a post’s popularity at hour 3  seems to be appropriate for our prediction variable.  Second, we see a lot of the subsample achieves very low popularity, so we feel comfortable using a threshold for “popular” close to the top Quintile (the red line), or a “popularity” value of 10.  Thus, the determination of “popular” versus “not popular” in our prediction task is determined by if a post has a “popularity proxy” of over or under 10 by hour 3.  
     ''')
 st.write('''
-    Placeholder Text for more about EDA... maybe talk generally about factor correlations / network analysis?  We note in the features section below that we use certain features due to intuition or inclusion in Literature Review papers.
+    In order to get a sense of how some of the basic information we have collected about the posts (and the comments related to each post) might be influencing popularity on Reddit, we looked at a correlation analysis against our proxy measure of popularity.  We see that both the total number of comments (normalized for how old the post is) as well as the number of upvotes those comments receive have a strong positive correlation to popularity.  On the other hand, data related to a posts' author karma and commenters' karma seems to have a very weak relationship to popularity.    
+
+    ''')
+st.write("placeholder for correlation table or chart")
+st.write('''
+    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we simply looked at the average popularity of each post in the sample over its life compared to both the hour of the day and the day of the week that the post was created.  
+    There were not many strong conclusions to draw from this analysis of possible temporal features, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see weaker popularity overall for posts created on Mondays and Wednesdays (UTC), and strongest popularity on Fridays (UTC).  We also see the weakest popularity for posts created around 16:00 hours (UTC) and strongest at 11:00 (UTC).  Given the global nature of online communities such as Reddit, we don't want to read much into these relationships, but we will remain aware of them when examining the feature importance of our model.  
+
+    ''')
+st.write("placeholder for Two viz... for days_of_week and hours, could be a simple histogram or line chart")
+st.write('''
+    (edit?) _In summary_, the above EDA was very helpful in determining our classification of "popular" or "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
     ''')
     
 
@@ -338,6 +350,63 @@ st.write('''
      - Our _"subjective"_ decision was to favor levels of a hyperparameter that were neither at the extremes of our tuning ranges, nor resulted in results that looked "too good" and might indicate over-fitting.  
     
     ''')
+#############################################################
+#hpt_median_or_avg = "median"
+#hpt_metric = "F1 Score"
+hpt_metric = st.selectbox("Select the Scoring Metric to view a sample of our hyperparameter tuning visualizations:", ("F1","Accuracy"))
+
+hpt_data = pd.read_csv("saved_work/hp_tuning_SVC_poly.csv")
+hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
+hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
+hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
+
+def hpt_chart(input_df, metric):
+    chart_title = metric+" Score"
+
+    df = input_df.copy()
+    df = df[df.Score==metric]
+    df = df.groupby(['type','C',])['Result'].median().reset_index()
+    chart1 = alt.Chart(df).mark_line().encode(
+        x = 'C:O',
+        y = 'Result:Q',
+        color = 'type:N',
+        tooltip = ['Result:Q','C:Q'],
+    ).properties(
+        title = chart_title
+    )
+
+    df = input_df.copy()
+    df = df[df.Score==metric]
+    df = df.groupby(['type','gamma',])['Result'].median().reset_index()
+    chart2 = alt.Chart(df).mark_line().encode(
+        x = 'gamma:O',
+        y = 'Result:Q',
+        color = 'type:N',
+        tooltip = ['Result:Q','gamma:Q'],
+    ).properties(
+        title = chart_title
+    )
+
+    df = input_df.copy()
+    df = df[df.Score==metric]
+    df = df.groupby(['type','kernel',])['Result'].median().reset_index()
+
+    chart3 = alt.Chart(df).mark_line().encode(
+        x = 'kernel:O',
+        y = 'Result:Q',
+        color = 'type:N',
+        tooltip = ['Result:Q','kernel:N'],
+
+    ).properties(
+        title = chart_title
+    )
+
+    return chart1 | chart2 | chart3
+
+st.altair_chart(hpt_chart(hpt_data, hpt_metric), use_container_width=True)
+
+
+##############################################################
 st.write(''' 
     **Hyperparameter Decisions:**  
     The above process resulted in the following choices for hyperparameters:
@@ -423,12 +492,12 @@ n_posts = int(n_posts)
 n_comments = 5 
 hrs_to_track = 1 #number of hours to track a post/submission
 #time_of_batch = datetime.utcnow().replace(microsecond=0)                                      
-#char_limit = 256 #character limit for the text fields in the database
+char_limit = 256 #character limit for the text fields in the database
 
 if st.button("Test creating PRAW df for our pipeline"):
     time_of_batch = datetime.utcnow().replace(microsecond=0)
     new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
-    post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, new_submission_list=new_submission_list)
+    post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
     st.table(feature_df)
     st.subheader("") #blank space
@@ -437,12 +506,12 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.table(feature_df)
     st.write("len(feature_df.columns):",len(feature_df.columns))
     #load pkl'd classifier (clf)
-    filename = "models/SVC_vanilla_model.sav" #note this is the 'Vanilla model', not the optimised tuned one, assume kernel = rbf
+    filename = "models/SVC_final_model.pkl" 
     clf = pickle.load(open(filename, 'rb'))
     predictions = clf.predict(feature_df)
     st.write("predictions...", predictions)
-    # prediction_probas = clf.predict_proba(feature_df)
-    # st.write("prediction probabilities...", prediction_probas)
+    prediction_probas = clf.predict_proba(feature_df)
+    st.write("prediction probabilities...", prediction_probas)
 
 
 # if st.button("Get new posts"):
