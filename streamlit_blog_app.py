@@ -167,7 +167,7 @@ st.write('''
 
     ''')
 temporal_image = Image.open('blog_assets/eda_temporal_chart.png')
-st.image(corr_image, caption='Analysis the median maximum popularity acheived based on the day or time a post is created')
+st.image(temporal_image, caption='Analysis the median maximum popularity acheived based on the day or time a post is created')
 st.write('''
     In summary, the above EDA was very helpful in determining our classification of "popular" versus "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
     ''')
