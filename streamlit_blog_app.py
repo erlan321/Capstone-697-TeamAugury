@@ -286,7 +286,7 @@ st.markdown('''
 	We selected three Supervised Learning models on which to attempt our Reddit post popularity prediction.  We kept our model exploration within the popular Scikit-Learn python library we learned in class.
 	 - Logistic Regression (LR):  LR was chosen as it also appeared in some of the related work that we reviewed, and this simple classifier is often used as a “baseline” prediction model.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)  
 	 - Support Vector Classification (SVC): SVC was chosen as it also appeared in the related papers that were pursuing similar goals to our Augury project.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html)  
-	 - Gradient Boosting Classifier (GBC):  GBC was chosen based on our intuition and also feedback from our professors that Gradient Boosted classifiers are often winning data science competitions lately.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html)
+	 - Gradient Boosting Classifier (GBDT):  GBDT was chosen based on our intuition and also feedback from our professors that Gradient Boosted classifiers are often winning data science competitions lately.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html)
 	''')
 
 
@@ -301,7 +301,7 @@ st.write("placeholder for image of Stratified K-Fold validation ??")
 st.write("placeholder for discussing # of Train, # of Validate, # of Test (Unseen) data points!")
 st.write('''
     **Tuning Iterations:**  
-    We iterated through 1,062 combinations of parameters across LR, SVC, and GBC models.  
+    We iterated through 1,062 combinations of parameters across LR, SVC, and GBDT models.  
     ''')
 st.write('''
     _LR Tuning:_ For LR we flipped between the _solver_ parameter and a range of values of C we've seen before in our course work.  
@@ -327,7 +327,7 @@ st.code('''
                 'clf__gamma': np.logspace(-15, 3, num=19, base=2)}
     ''', language="python")
 st.write('''
-    _GBC Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations of MachineLearningMastery CITATION NEEDED BELOW as well as some adjustments for speed (reducing the number of total folds) and introducing subsamples for Stochastic Gradient Descent as per the recommendation of the Hastie et al. 2009 CITATION NEEDED BELOW paper explained in the scikit learn documentation.  
+    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations of MachineLearningMastery CITATION NEEDED BELOW as well as some adjustments for speed (reducing the number of total folds) and introducing subsamples for Stochastic Gradient Descent as per the recommendation of the Hastie et al. 2009 CITATION NEEDED BELOW paper explained in the scikit learn documentation.  
     _Parameter dictionary used in our code_
     ''')
 st.code('''
@@ -355,10 +355,10 @@ st.write('''
 #hpt_metric = "F1 Score"
 hpt_metric = st.selectbox("Select the Scoring Metric to view a sample of our hyperparameter tuning visualizations:", ("F1","Accuracy"))
 
-hpt_data = pd.read_csv("saved_work/hp_tuning_SVC_poly.csv")
-hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
-hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
-hpt_data = pd.concat([hpt_data, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
+hpt_svc_data = pd.read_csv("saved_work/hp_tuning_SVC_poly.csv")
+hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
+hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
+hpt_svc_data = pd.concat([hpt_svc_data, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
 
 def hpt_chart(input_df, metric):
     chart_title = metric+" Score"
@@ -403,25 +403,24 @@ def hpt_chart(input_df, metric):
 
     return chart1 | chart2 | chart3
 
-st.altair_chart(hpt_chart(hpt_data, hpt_metric), use_container_width=True)
+st.altair_chart(hpt_chart(hpt_svc_data, hpt_metric), use_container_width=True)
 
 
 ##############################################################
 st.write(''' 
     **Hyperparameter Decisions:**  
-    The above process resulted in the following choices for hyperparameters:
-     > **LR**:  
-     >> Solver: liblinear   
+    The above process resulted in the following hyperparameter decisions:
+     > **LR** (_matches the default settings_):  
+     >> Solver: lbfgs   
      >> Penalty: L2  
-     >> C: 0.25  
+     >> C: 1.0  
      > **SVC**:  
-     >> Kernel: rbf  
-     >> Penalty: L2  
-     >> C: 4  
-     >> Gamma: 0.00390625  
-     > **GBC**:  
+     >> Kernel: rbf    
+     >> C: 0.125  
+     >> Gamma: 0.0078125  
+     > **GBDT**:  
      >> Learning_rate: 0.15  
-     >> N_estimators: 100  
+     >> N_estimators: 150  
      >> Max_depth: 3  
      >> Max_features: sqrt  
      >> Subsample:  0.5  
@@ -432,11 +431,11 @@ st.write('''
     Performance metrics of the above "tuned" models:
     ''')
 hpt_df = pd.DataFrame(data={
-    'Tuned_Model': ['LR','SVC','GBC'],
-    'F1_Score_Training': [0.75,0.80,0.93],
-    'F1_Score_Validation': [0.39,0.49,0.39],
-    #'Accuracy_Training': [0.907,0.897,0.971],
-    #'Accuracy_Validation': [0.776,0.740,0.795],
+    'Tuned_Model': ['LR','SVC','GBDT'],
+    'F1_Score_Training': [0.76,0.73,0.94],
+    'F1_Score_Validation': [0.39,0.52,0.35],
+    'Accuracy_Training': [0.91,0.75,0.98],
+    'Accuracy_Validation': [0.77,0.73,0.79],
     })
 st.table(hpt_df)
 
