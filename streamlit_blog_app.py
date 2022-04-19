@@ -36,7 +36,7 @@ st.markdown('''
      - r/StockMarket
      - r/stocks
 
-    We chose the investing theme because it felt particularly topical given the widely reported “GameStop” incident in 2021.  In this incident, the subreddit r/wallstreetbets achieved some notoriety where a formerly little known trader named Keith Gill achieved gains of $40M plus in a short period of time referred to as the ‘Reddit Rally’. Reuters claimed his ‘punchy move’ sparked thousands of comments on the subreddit, causing his post(s) to go viral and his stock position to dramatically rise in value.  We chose those four subreddits because they appear to be the four most active forums related to the theme according to the website [subredditstats.com](https://subredditstats.com) based on an analysis of subscribers and posts per day.  
+    We chose the investing theme because it felt particularly topical given the widely reported “GameStop” incident in 2021.  In this incident, the subreddit r/wallstreetbets achieved some notoriety where a formerly little known trader named Keith Gill achieved gains of $40M plus in a short period of time referred to as the ‘Reddit Rally’ [1].  We chose those four subreddits because they appear to be the four most active forums related to the theme according to the website [subredditstats.com](https://subredditstats.com) based on an analysis of subscribers and posts per day.  
     ''')
 
 
@@ -159,15 +159,17 @@ st.write('''
     In order to get a sense of how some of the basic information we have collected about the posts (and the comments related to each post) might be influencing popularity on Reddit, we looked at a correlation analysis against our proxy measure of popularity.  We see that both the total number of comments (normalized for how old the post is) as well as the number of upvotes those comments receive have a strong positive correlation to popularity.  On the other hand, data related to a posts' author karma and commenters' karma seems to have a very weak relationship to popularity.    
 
     ''')
-st.write("placeholder for correlation table or chart")
+corr_image = Image.open('blog_assets/eda_basic_corr.png')
+st.image(corr_image, caption='Correlation of Basic Data to Popularity')
 st.write('''
-    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we simply looked at the average popularity of each post in the sample over its life compared to both the hour of the day and the day of the week that the post was created.  
-    There were not many strong conclusions to draw from this analysis of possible temporal features, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see weaker popularity overall for posts created on Mondays and Wednesdays (UTC), and strongest popularity on Fridays (UTC).  We also see the weakest popularity for posts created around 16:00 hours (UTC) and strongest at 11:00 (UTC).  Given the global nature of online communities such as Reddit, we don't want to read much into these relationships, but we will remain aware of them when examining the feature importance of our model.  
+    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we looked at what the maximum popularity each post in the sample acheived during a 24 hour period and calculated the median for each hour of the day and the day of the week that the post was created.  We should note first that we scraped and stored this data in UTC time, and made no adjustment to a different time zone in the visualization.    
+    Given the global nature of online communities such as Reddit and that fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
 
     ''')
-st.write("placeholder for Two viz... for days_of_week and hours, could be a simple histogram or line chart")
+temporal_image = Image.open('blog_assets/temporal_image.png')
+st.image(corr_image, caption='Analysis the median maximum popularity acheived based on the day or time a post is created')
 st.write('''
-    (edit?) _In summary_, the above EDA was very helpful in determining our classification of "popular" or "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
+    In summary, the above EDA was very helpful in determining our classification of "popular" versus "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
     ''')
     
 
