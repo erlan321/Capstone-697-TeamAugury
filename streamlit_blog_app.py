@@ -54,7 +54,7 @@ with related_work:
         **Implication for our project:** This is a prediction task on similar data.  The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF (Term Frequency-Inverse Document Frequency), and LDA (Latent Dirichlet Allocation) trained on features extracted with Naive Bayes and SVM.  This work is based on regression, trying to predict the number of upvotes, whereas Augury aims to predict whether a post will be popular or not ( a classification problem) within a three hour window.   
         ''')
     related_work.info('''
-        **Title:** Data Stories. We analyzed 4 million data points to see what makes it to the front page of reddit. Here’s what we learned.[4]  
+        **Title:** Data Stories. We analyzed 4 million data points to see what makes it to the front page of reddit. Here’s what we learned.[2]  
         **Topic:** Supervised Learning approaches to predicting Reddit comment Popularity    
         **Implication for our project:** Comparable aims, different NLP and looked only at Comments rather than posts.  Handling similar data, the author aimed to predict comment popularity.  Achieved relatively low accuracy scores ranging from 42% to 52.7% with a Decision Tree Classifier performing best. Cohen's Kappa statistic is applied to show results were, in fact, not much better than random.  In their conclusions they suggest research looks at temporal proximity of comments to posts, a key feature in Augury.
         ''')
@@ -104,7 +104,7 @@ st.subheader("Ethical Considerations")
 st.write('''
     There are clearly ethical implications relating from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’ described above. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work. To some extent this research has already been investigated by Muxi Xu  in 2021 [13] and also by Hu et al [14]. Therefore we have made no further mitigations in our project related to market ethics.  
     
-    Social Media is often thought of as an open and public forum of discussion.  But an important ethical consideration of any data science project related to social media is that saying something in “public” may not necessarily mean “consent” to using a person’s name or username in published research [CITATION].  While we did not have any need for usernames in the analysis we were performing, we did gather usernames into our database in order to track certain features of each Reddit post, and we are aware that if we were to ever use those usernames in future work, our database would could provide us with an already anonymized id number to protect each individuals’ privacy.  
+    Social Media is often thought of as an open and public forum of discussion.  But an important ethical consideration of any data science project related to social media is that saying something in “public” may not necessarily mean “consent” to using a person’s name or username in published research [15].  While we did not have any need for usernames in the analysis we were performing, we did gather usernames into our database in order to track certain features of each Reddit post, and we are aware that if we were to ever use those usernames in future work, our database would could provide us with an already anonymized id number to protect each individuals’ privacy.  
     
     A different aspect of  the free and open nature of social media, and Reddit in particular, is that it can  lead to environments which become toxic in a number of ways.  To ameliorate this we did take some action in our post-processing of our database.  The subreddits which are looking at Investment are typically more professional in nature so the main way in which toxicity occurs in these fora is through the use of profane language. Thus, in our pipeline we have removed this language from our analysis using the python module profanity-filter 1.3.3 which replaces profane words with the character “*”.  
 
@@ -120,7 +120,7 @@ st.image(project_pipeline_image, caption='Project Augury Workflow')
 st.subheader("") #create blank space
 st.subheader("Scraping Reddit Data") 
 st.write('''
-In order to request data from Reddit’s API, we decided to use the widely known PRAW python library to do our data scraping.  Our approach to scraping was informed primarily by studying the PRAW online documentation [15].    
+In order to request data from Reddit’s API, we decided to use the widely known PRAW python library to do our data scraping.  Our approach to scraping was informed primarily by studying the PRAW online documentation [(docs)](https://praw.readthedocs.io/en/stable/).    
 
 Because we were starting from a “blank slate” in our domain knowledge about Reddit data, we knew we wanted to track each post over a 24 hour period in order to effectively perform Exploratory Data Analysis (EDA) about how we would approach our prediction task.  
 We knew we wanted to see a posts popularity over time in order to see how and when popular posts developed, so we designed a scraping pipeline that captured a sample of ‘new’ posts each hour and stored it in our database.  
@@ -139,7 +139,14 @@ st.write('''
     We stored our scraped Reddit data in a PostGreSQL instance on AWS.  Our database design/schema is intended to reduce duplication to a minimum, thereby optimizing the functioning of the relational database and minimize storage.  We also designed this database with a view that we may want to perform additional projects on this data beyond what we achieve during this Capstone course, and we identify some of those areas of future work in our conclusion section below.  Our database design/schema is illustrated below:
     ''')
 db_schema_image = Image.open('blog_assets/db_schema.png')
-st.image(db_schema_image, caption='Augury Database Schema in AWS')
+col1, col2, col3 = st.columns([1,5,1]) #column trick to center on the webpage
+with col1:
+    st.write("")
+with col2:
+    st.image(db_schema_image, caption='Augury Database Schema in AWS')
+with col3:
+    st.write("")
+
 
 st.subheader("") #create blank space
 st.subheader("Exploratory Data Analysis (EDA)")
@@ -160,7 +167,14 @@ st.write('''
 
     ''')
 corr_image = Image.open('blog_assets/eda_basic_corr.png')
-st.image(corr_image, caption='Correlation of Basic Data to Popularity')
+col1, col2, col3 = st.columns([1,5,1]) #column trick to center on the webpage
+with col1:
+    st.write("")
+with col2:
+    st.image(corr_image, caption='Correlation of Basic Data to Popularity')
+with col3:
+    st.write("")
+
 st.write('''
     We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we looked at what the maximum popularity each post in the sample acheived during a 24 hour period and calculated the median for each hour of the day and the day of the week that the post was created.  We should note first that we scraped and stored this data in UTC time, and made no adjustment to a different time zone in the visualization.    
     Given the global nature of online communities such as Reddit and that fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
@@ -319,7 +333,7 @@ st.code('''
                 "clf__penalty":["l2"],}]
     ''', language="python")
 st.write('''
-    _SVC Tuning:_ We looked at each of the four kernels individually to avoid errors that would make us lose a lot of compute time. The range for C and gamma was taken from A Practical Guide to Support Vector Classification (Chih-Wei Hsu et al. CITATION NEEDED BELOW), these were slightly more thorough in their tests than other information available.  
+    _SVC Tuning:_ We looked at each of the four kernels individually to avoid errors that would make us lose a lot of compute time. The range for C and gamma was taken from A Practical Guide to Support Vector Classification by Chih-Wei Hsu et al.[16], these were slightly more thorough in their tests than other information available.  
     _Parameter dictionary used in our code (approximately)_
     ''')
 st.code('''
@@ -329,7 +343,7 @@ st.code('''
                 'clf__gamma': np.logspace(-15, 3, num=19, base=2)}
     ''', language="python")
 st.write('''
-    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations of MachineLearningMastery CITATION NEEDED BELOW as well as some adjustments for speed (reducing the number of total folds) and introducing subsamples for Stochastic Gradient Descent as per the recommendation of the Hastie et al. 2009 CITATION NEEDED BELOW paper explained in the scikit learn documentation.  
+    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and introducing subsamples for Stochastic Gradient Descent as per the recommendation of the Hastie et al. 2009 [CITATION NEEDED] paper explained in the scikit learn documentation.  
     _Parameter dictionary used in our code_
     ''')
 st.code('''
