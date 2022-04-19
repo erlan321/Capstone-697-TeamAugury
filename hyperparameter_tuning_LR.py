@@ -107,13 +107,7 @@ parameters = [
             }
             ]
 
-"""parameters = {"clf__C":stats.loguniform(2**-5, 2**10),
-            "clf__solver":["liblinear", "lbfgs"],
-            "clf__penalty":["l1", "l2"],
-            }"""
-
 results = GridSearchCV(estimator=pipe, param_grid=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1).fit(X, y)          
-#results = RandomizedSearchCV(estimator=pipe, param_distributions=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2, random_state=rnd_state, n_iter=100).fit(X, y)
 results = pd.DataFrame(results.cv_results_)
 results.columns = [col.replace('param_clf__', '') for col in results.columns]
 results.to_csv("saved_work/hp_tuning_RAW_LogReg.csv", index=False)

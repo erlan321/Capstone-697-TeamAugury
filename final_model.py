@@ -108,10 +108,22 @@ preprocessor = ColumnTransformer(
 
 
 classifier = SVC(kernel='rbf', probability=True, random_state=rnd_state, C=4.0, gamma=0.00390625)
-
 clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
 clf.fit(X,y)
-filename = "models/"+ classifier.__class__.__name__ + "_final_model.pkl"
+filename = "models/"+ classifier.__class__.__name__ + "_rbf_final_model.pkl"
 pickle.dump(clf, open(filename, 'wb'))
+print("Model saved to {}".format(filename))
 
+classifier = SVC(kernel='rbf', probability=True, random_state=rnd_state, C=2.0, gamma= 0.0078125)
+clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
+clf.fit(X,y)
+filename = "models/"+ classifier.__class__.__name__ + "_linear_final_model.pkl"
+pickle.dump(clf, open(filename, 'wb'))
+print("Model saved to {}".format(filename))
+
+classifier = SVC(kernel='rbf', probability=True, random_state=rnd_state, C=2.0, gamma=0.0078125)
+clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
+clf.fit(X,y)
+filename = "models/"+ classifier.__class__.__name__ + "_rbf2_final_model.pkl"
+pickle.dump(clf, open(filename, 'wb'))
 print("Model saved to {}".format(filename))

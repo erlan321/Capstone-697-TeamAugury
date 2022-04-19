@@ -107,7 +107,7 @@ pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", GradientBoostingC
 
 print("Initiating randomized grid search on GBT...")
 #results = RandomizedSearchCV(estimator=pipe, param_distributions=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1, random_state=rnd_state, n_iter=200).fit(X, y)
-results = GridSearchCV(estimator=pipe, param_grid=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2).fit(X, y)   
+results = GridSearchCV(estimator=pipe, param_grid=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1).fit(X, y)   
 results = pd.DataFrame(results.cv_results_)
 results.columns = [col.replace('param_clf__', '') for col in results.columns]
 results.to_csv("saved_work/hp_tuning_RAW_GBT.csv", index=False)

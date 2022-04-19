@@ -89,13 +89,7 @@ scoring = {'acc': 'accuracy', 'f1': 'f1'}
 # SHOULD CHANGE TO FUNCTION
 
 # Linear  
-
-#parameters = {"clf__C":stats.loguniform(2**-5, 2**15), 
-#            "clf__kernel":["linear"],
-#            'clf__gamma': stats.loguniform(2**-15, 2**3)}     
-#results = RandomizedSearchCV(estimator=pipe, param_distributions=parameters, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=2, random_state=rnd_state, n_iter=100).fit(X, y)
-
-
+"""
 print("Initiating randomized grid search on linear SVC...")
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", SVC(class_weight="balanced", max_iter=100000, cache_size=2000, random_state=rnd_state))])
 
@@ -126,7 +120,6 @@ remove_params = list(undr_fit + ovr_fit)
 results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_SVC_linear.csv", index=False)
-
 
 
 # rbf  
@@ -160,7 +153,7 @@ results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_SVC_rbf.csv", index=False)
 
-
+"""
 # sigmoid  
 print("Initiating randomized grid search on sigmoid SVC...")
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", SVC(class_weight="balanced", max_iter=-1, cache_size=2000, random_state=rnd_state))])
@@ -177,7 +170,7 @@ it_params_noC = ["gamma", "kernel"]
 tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
 results = results[tot_params]
 results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
-results["model_param"] =results["C"].round(5).astype(str) + " / " + results["gamma"].round(5).astype(str)
+results["model_param"] =results["C"].astype(str) + " / " + results["gamma"].astype(str)
 results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
 results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
 results = results[["Result", "model_param", "Score", "type", "C", "gamma", "kernel"]]
@@ -192,7 +185,7 @@ results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_SVC_sigmoid.csv", index=False) 
 
-
+"""
 # poly  
 print("Initiating randomized grid search on poly SVC...")
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", SVC(class_weight="balanced", max_iter=100000, cache_size=2000, random_state=rnd_state))])
@@ -224,3 +217,4 @@ remove_params = list(undr_fit + ovr_fit)
 results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
 results.to_csv("saved_work/hp_tuning_SVC_poly.csv", index=False)
+"""

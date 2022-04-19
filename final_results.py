@@ -94,14 +94,21 @@ y = df[y_column].values.ravel()
 
 print("Loading models...")
 #load pkl'd SVC clf
-filename = "models/SVC_final_model.pkl"
+filename = "models/SVC_rbf_final_model.pkl"
 SVC_loaded = pickle.load(open(filename, 'rb'))
 
-#load pkl'd SVC clf
+filename = "models/SVC_rbf2_final_model.pkl"
+SVC2_loaded = pickle.load(open(filename, 'rb'))
+
+filename = "models/SVC_linear_final_model.pkl"
+SVCL_loaded = pickle.load(open(filename, 'rb'))
+
+
+#load pkl'd GBT clf
 filename = "models/GradientBoostingClassifier_doublecheck_model.pkl"
 GBT_loaded = pickle.load(open(filename, 'rb'))
 
-#load pkl'd SVC clf
+#load pkl'd LR clf
 filename = "models/LogisticRegression_final_baseline_model.pkl"
 LR_loaded = pickle.load(open(filename, 'rb'))
 
@@ -110,8 +117,14 @@ print("Results...")
 print("LR Baseline Accuracy: {}".format(accuracy_score(y, LR_loaded.predict(X))))
 print("LR Baseline F1: {}".format(f1_score(y, LR_loaded.predict(X))))
 print("...")
-print("SVC Selected Model Accuracy: {}".format(accuracy_score(y, SVC_loaded.predict(X))))
-print("SVC Selected Model F1: {}".format(f1_score(y, SVC_loaded.predict(X))))
+print("SVC RBF Selected Model Accuracy: {}".format(accuracy_score(y, SVC_loaded.predict(X))))
+print("SVC RBF Selected Model F1: {}".format(f1_score(y, SVC_loaded.predict(X))))
+print("...")
+print("SVC RBF Alternate Model Accuracy: {}".format(accuracy_score(y, SVC2_loaded.predict(X))))
+print("SVC RBF Alternate Model F1: {}".format(f1_score(y, SVC2_loaded.predict(X))))
+print("...")
+print("SVC Linear Alternate Model Accuracy: {}".format(accuracy_score(y, SVCL_loaded.predict(X))))
+print("SVC Linear Alternate Model F1: {}".format(f1_score(y, SVCL_loaded.predict(X))))
 print("...")
 print("GBDT double check Accuracy: {}".format(accuracy_score(y, GBT_loaded.predict(X))))
 print("GBDT double check F1: {}".format(f1_score(y, GBT_loaded.predict(X))))
