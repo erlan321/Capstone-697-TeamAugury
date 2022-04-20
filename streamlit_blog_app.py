@@ -450,11 +450,11 @@ st.subheader("Real-Time Model Prediction")
 filename = "models/LogisticRegression_final_baseline_model.pkl" 
 clf = pickle.load(open(filename, 'rb'))
 
-st.write('''
+st.markdown('''
     We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  
-    Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  
-    Below we give you an opportunity to choose either all or some of those four investing subreddits, and also the number of posts you want a recommendation for from each subreddit.  
-    This process will only scrape posts from Reddit that have been created within the last hour, similar to our project, so _you may see less posts than you are attempting to scrape_.
+     - Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  
+     - Below we give you an opportunity to choose either all or some of those four investing subreddits, and also the number of posts you want a recommendation for from each subreddit.  
+     - This process will only scrape posts from Reddit that have been created within the last hour, similar to our project, so _you may see less posts than you are attempting to scrape_.
 
     ''')
 
@@ -493,7 +493,7 @@ subreddit_selection_list = st.multiselect(
 for item in subreddit_selection_list:
     subreddit_scrape_list.append(item[2:]) #removes the r/
 subreddit_scrape_list = subreddit_scrape_list
-st.write("You selected:", subreddit_scrape_list)
+#st.write("You selected:", subreddit_scrape_list)
 
 #n_posts = 5
 n_posts = st.selectbox("Select the number of posts you'd like to scrape from each subreddit:", (1,3,5))
@@ -522,6 +522,8 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
     st.write("prediction probabilities...", prediction_probas)
+
+    
 
 
 
