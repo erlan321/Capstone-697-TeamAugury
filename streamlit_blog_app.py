@@ -528,25 +528,24 @@ if st.button("Predict Reddit Popularity!"):
         if len(new_submission_list)==0:
             st.warning("There are no new posts within the last hour for your selection.")
         else:
-            st.write("Number of posts we've identified on Reddit:", len(new_submission_list))
+            st.write("Number of new posts we've identified on Reddit:", len(new_submission_list))
     except:
         st.error("A problem occurred contacting Reddit.")
 
-    st.subheader("") #blank space
     try:    
-        st.write("Starting feature creation...")
+        st.write("Starting feature engineering...")
         post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
         feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
         #st.table(feature_df)
         output_df = feature_df[['sr','post_id','post_text']].copy() #need this to attach predict_proba to later...
         #st.write("output_df",output_df)
         del post_data, comments_data
-        st.write("Number of posts we could collect:",len(output_df))
+        st.write("Number of posts for which we engineered features:",len(output_df))
     except: 
         st.error("A problem occurred when creating the features.")
 
     try:
-        st.write("Starting transformation of features for our model...")
+        st.write("Starting transformation of features into our model's format...")
         feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
         #st.write("X_values for pkl'd model")
         #st.table(feature_df)
@@ -573,7 +572,7 @@ if st.button("Predict Reddit Popularity!"):
             'Popular Probability':  pd.Series(prediction_probas[:, 1].round(2)),
             })
         
-        st.write("**Post Popularity Prediction** (Sorted most likely to least likely)", 
+        st.write("**Post Popularity Prediction** (_Sorted most likely to least likely_)", 
                 output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
     except:
         st.error("A problem occurred in making the output dataframe.")
