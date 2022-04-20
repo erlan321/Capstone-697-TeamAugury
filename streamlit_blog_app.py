@@ -541,7 +541,6 @@ if st.button("Predict Reddit Popularity!"):
     except: 
         st.error("A problem occurred when creating the features.")
 
-    st.subheader("") #blank space
     try:
         feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
         st.write("X_values for pkl'd model")
@@ -565,10 +564,10 @@ if st.button("Predict Reddit Popularity!"):
             'Subreddit': output_df['sr'],
             'Post ID':  output_df['post_id'],
             'Post Title':  output_df['post_text'],
-            'Popular Probability':  pd.Series(prediction_probas[:, 1]),
+            'Popular Probability':  pd.Series(prediction_probas[:, 1].round(2)),
             })
         
-        st.write("output df", output_df)
+        st.write("output df", output_df.sort_values(['Popular Probability'], ascending=False))
     except:
         st.error("A problem occurred in making the output dataframe.")
     
