@@ -534,7 +534,7 @@ if st.button("Test creating PRAW df for our pipeline"):
         'Subreddit': output_df['sr'],
         'Post ID':  output_df['post_id'],
         'Post Title':  output_df['post_text'],
-        'Popular Probability':  pd.Series(prediction_probas[:][1]),
+        'Popular Probability':  pd.Series(prediction_probas[1][:]),
         })
     st.write(output_df)
     
