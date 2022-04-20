@@ -526,6 +526,10 @@ if st.button("Test creating PRAW df for our pipeline"):
     predictions = clf.predict(feature_df)
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
+    st.write("prediction probabilities...", prediction_probas)
+    st.write("prediction probabilities...", type(prediction_probas))
+    st.write("prediction probabilities...", prediction_probas.columns)
+    
     prediction_probas.rename({0:'Non_Popular_Probability', 1:'Popular_Probability'}, axis=1)
     st.write("prediction probabilities...", prediction_probas)
     st.write("temp", prediction_probas['Popular_Probability'])
