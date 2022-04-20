@@ -505,7 +505,7 @@ hrs_to_track = 1 #number of hours to track a post/submission
 char_limit = 256 #character limit for the text fields in the database
 
 
-
+st.write("") #blank space
 if st.button("Test creating PRAW df for our pipeline"):
     st.write("Number of posts we'll try to collect:", n_posts*len(subreddit_scrape_list))
 
@@ -526,7 +526,7 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
     st.write("prediction probabilities...", prediction_probas)
-    df = pd.concat([ df, prediction_probas[[1]] ], axis=1)
+    df = pd.concat([ df, prediction_probas.filter([1],axis=1), axis=1)
     st.write("output df",df)
 
 
