@@ -522,8 +522,9 @@ if st.button("Predict Reddit Popularity!"):
 
     time_of_batch = datetime.utcnow().replace(microsecond=0)
     try:
+        st.write("Gathering new posts...")
         new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
-        st.write("len(new_submission_list)",len(new_submission_list))
+        #st.write("len(new_submission_list)",len(new_submission_list))
         if len(new_submission_list)==0:
             st.warning("There are no new posts within the last hour for your selection.")
     except:
@@ -531,6 +532,7 @@ if st.button("Predict Reddit Popularity!"):
 
     st.subheader("") #blank space
     try:    
+        st.write("Starting feature creation...")
         post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
         feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
         st.table(feature_df)
@@ -542,6 +544,7 @@ if st.button("Predict Reddit Popularity!"):
         st.error("A problem occurred when creating the features.")
 
     try:
+        st.write("Starting transformation of features for our model...")
         feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
         st.write("X_values for pkl'd model")
         st.table(feature_df)
@@ -550,6 +553,7 @@ if st.button("Predict Reddit Popularity!"):
         st.error("A problem occurred when transforming the features into the model's desired format.")
 
     try: 
+        st.write("Starting prediction process with our model...")
         predictions = clf.predict(feature_df)
         st.write("predictions...", predictions)
         prediction_probas = clf.predict_proba(feature_df)
@@ -559,7 +563,7 @@ if st.button("Predict Reddit Popularity!"):
         st.error("A problem occurred in making the model predictions.")
     
     try: 
-        
+        st.write("Starting to create the model output...")
         output_df = pd.DataFrame({
             'Subreddit': output_df['sr'],
             'Post ID':  output_df['post_id'],
