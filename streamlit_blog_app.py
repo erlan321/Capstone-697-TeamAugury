@@ -526,7 +526,7 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
     st.write("prediction probabilities...", prediction_probas)
-    df = pd.concat([ df, prediction_probas.filter([1],axis=1), axis=1)
+    df = df.merge(prediction_probas, left_index=True, right_index=True)
     st.write("output df",df)
 
 
