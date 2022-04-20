@@ -459,7 +459,8 @@ st.markdown('''
     We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  
      - Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  
      - Below we give you an opportunity to choose either all or some of those four investing subreddits, and also the number of posts you want a recommendation for from each subreddit.  
-     - This process will only scrape posts from Reddit that have been created within the last hour, similar to our project, so _you may see less posts than you are attempting to scrape_.
+     - This process will only scrape posts from Reddit that have been created within the last hour, which is similar to the workflow of our project.  So, readers should be aware that _you may see less posts than you are attempting to scrape_.  
+     - The output of this "live" prediction process is the probability of a post becoming "popular", according to our model.  
 
     ''')
 
@@ -513,11 +514,18 @@ char_limit = 256 #character limit for the text fields in the database
 
 
 st.write("") #blank space
-if st.button("Test creating PRAW df for our pipeline"):
+if st.button("Predict Popularity!"):
     st.write("Number of posts we'll try to collect:", n_posts*len(subreddit_scrape_list))
 
     time_of_batch = datetime.utcnow().replace(microsecond=0)
-    new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
+    try:
+        new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
+        st.write(len(new_submission_list))
+        if len(new_submission_list)==0:
+            st.write("There are no new posts within the last hour for your selection.")
+    except:
+        st.write("A problem occurred contacting Reddit.")
+        break
     post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
     st.table(feature_df)
