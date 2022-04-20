@@ -508,8 +508,12 @@ subreddit_scrape_list = subreddit_scrape_list
 
 #n_posts = 5
 n_posts = st.selectbox("Select the number of posts you'd like to scrape from each subreddit:", (1,3,5))
-
 n_posts = int(n_posts)
+
+if (len(subreddit_selection_list)==1) & (n_posts==1):
+    st.warning("We highly recommend you choose more than 1 post if you have chosen only 1 subreddit!")
+
+
 n_comments = 5 
 hrs_to_track = 1 #number of hours to track a post/submission
 #time_of_batch = datetime.utcnow().replace(microsecond=0)                                      
