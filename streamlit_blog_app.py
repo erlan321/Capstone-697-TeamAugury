@@ -517,47 +517,60 @@ char_limit = 256 #character limit for the text fields in the database
 
 
 st.write("") #blank space
-if st.button("Predict Popularity!"):
+if st.button("Predict Reddit Popularity!"):
     st.write("Number of posts we'll try to collect:", n_posts*len(subreddit_scrape_list))
 
     time_of_batch = datetime.utcnow().replace(microsecond=0)
     try:
         new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
-        st.write(len(new_submission_list))
+        st.write("len(new_submission_list)",len(new_submission_list))
         if len(new_submission_list)==0:
-            st.error("There are no new posts within the last hour for your selection.")
+            st.warning("There are no new posts within the last hour for your selection.")
     except:
         st.error("A problem occurred contacting Reddit.")
-        
-    post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
-    feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
-    st.table(feature_df)
-    output_df = feature_df[['sr','post_id','post_text']].copy()
-    st.write("df",output_df)
-
-    st.write("Number of posts we did collect:",len(output_df))
 
     st.subheader("") #blank space
-    feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
-    st.write("X_values for pkl'd model")
-    st.table(feature_df)
-    #st.write("len(feature_df.columns):",len(feature_df.columns))
+    try:    
+        post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
+        feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
+        st.table(feature_df)
+        output_df = feature_df[['sr','post_id','post_text']].copy()
+        st.write("df",output_df)
 
-    predictions = clf.predict(feature_df)
-    st.write("predictions...", predictions)
-    prediction_probas = clf.predict_proba(feature_df)
-    st.write("prediction probabilities...", prediction_probas)
+        st.write("Number of posts we did collect:",len(output_df))
+    except: 
+        st.error("A problem occurred when creating the features.")
+
+    st.subheader("") #blank space
+    try:
+        feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
+        st.write("X_values for pkl'd model")
+        st.table(feature_df)
+        #st.write("len(feature_df.columns):",len(feature_df.columns))
+    except:
+        st.error("A problem occurred when transforming the features into the model's desired format.")
+
+    try: 
+        predictions = clf.predict(feature_df)
+        st.write("predictions...", predictions)
+        prediction_probas = clf.predict_proba(feature_df)
+        st.write("prediction probabilities...", prediction_probas)
+        del feature_df #no longer need feature_df
+    except:
+        st.error("A problem occurred in making the model predictions.")
     
-    
-    del feature_df
-    output_df = pd.DataFrame({
-        'Subreddit': output_df['sr'],
-        'Post ID':  output_df['post_id'],
-        'Post Title':  output_df['post_text'],
-        'Popular Probability':  pd.Series(prediction_probas[:, 1]),
-        })
-    
-    st.write("output df", output_df)
+    try: 
+        
+        output_df = pd.DataFrame({
+            'Subreddit': output_df['sr'],
+            'Post ID':  output_df['post_id'],
+            'Post Title':  output_df['post_text'],
+            'Popular Probability':  pd.Series(prediction_probas[:, 1]),
+            })
+        
+        st.write("output df", output_df)
+    except:
+        st.error("A problem occurred in making the output dataframe.")
     
     
 
