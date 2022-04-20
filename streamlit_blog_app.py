@@ -525,7 +525,7 @@ if st.button("Predict Popularity!"):
             st.write("There are no new posts within the last hour for your selection.")
     except:
         st.write("A problem occurred contacting Reddit.")
-        break
+        
     post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
     st.table(feature_df)
