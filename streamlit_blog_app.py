@@ -527,6 +527,8 @@ if st.button("Predict Reddit Popularity!"):
         #st.write("len(new_submission_list)",len(new_submission_list))
         if len(new_submission_list)==0:
             st.warning("There are no new posts within the last hour for your selection.")
+        else:
+            st.write("Number of posts we've identified on Reddit:", len(new_submission_list))
     except:
         st.error("A problem occurred contacting Reddit.")
 
@@ -535,19 +537,19 @@ if st.button("Predict Reddit Popularity!"):
         st.write("Starting feature creation...")
         post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
         feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
-        st.table(feature_df)
-        output_df = feature_df[['sr','post_id','post_text']].copy()
-        st.write("output_df",output_df)
-
-        st.write("Number of posts we did collect:",len(output_df))
+        #st.table(feature_df)
+        output_df = feature_df[['sr','post_id','post_text']].copy() #need this to attach predict_proba to later...
+        #st.write("output_df",output_df)
+        del post_data, comments_data
+        st.write("Number of posts we could collect:",len(output_df))
     except: 
         st.error("A problem occurred when creating the features.")
 
     try:
         st.write("Starting transformation of features for our model...")
         feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
-        st.write("X_values for pkl'd model")
-        st.table(feature_df)
+        #st.write("X_values for pkl'd model")
+        #st.table(feature_df)
         #st.write("len(feature_df.columns):",len(feature_df.columns))
     except:
         st.error("A problem occurred when transforming the features into the model's desired format.")
@@ -555,13 +557,13 @@ if st.button("Predict Reddit Popularity!"):
     try: 
         st.write("Starting prediction process with our model...")
         predictions = clf.predict(feature_df)
-        st.write("predictions...", predictions)
+        #st.write("predictions...", predictions)
         prediction_probas = clf.predict_proba(feature_df)
-        st.write("prediction probabilities...", prediction_probas)
+        #st.write("prediction probabilities...", prediction_probas)
         del feature_df #no longer need feature_df
     except:
         st.error("A problem occurred in making the model predictions.")
-    
+            
     try: 
         st.write("Starting to create the model output...")
         output_df = pd.DataFrame({
@@ -571,7 +573,8 @@ if st.button("Predict Reddit Popularity!"):
             'Popular Probability':  pd.Series(prediction_probas[:, 1].round(2)),
             })
         
-        st.write("output df", output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
+        st.write("**Post Popularity Prediction** (Sorted most likely to least likely)", 
+                output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
     except:
         st.error("A problem occurred in making the output dataframe.")
     
