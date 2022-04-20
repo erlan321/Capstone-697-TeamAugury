@@ -384,7 +384,7 @@ st.write('''
     **Hyperparameter Decision Process:**  
     With over 1,000 different options produced from our hyperparameter tuning process, we used both objective and subjective methods of coming to a decision about which hyperparameters were most appropriate, and thus which of the three styles of model to ultimate use for our prediction task.  
     
-    For each iteration, we output the F1 Score calculation for each model, both on the training data and validation data.  F1 Score felt most appropriate as it was the metric (and sometimes sole metric) used similar projects we saw in related works.  Using this information, we went through these steps in each notebook:
+    For each iteration, we output the F1 Score calculation for each model, both on the training data and validation data.  F1 Score felt most appropriate as it has a better ability to account for imbalanced classification data such as ours, where only a small percentage of posts would become "popular.  Also, the F1 Score was the metric (and sometimes sole metric) used similar projects we saw in related works.  Using this information, we went through these steps in each notebook:
      - We used Jupyter Notebooks to visualize the results, which we felt was the most appropriate tool for this process.
      - We began by viewing all of the F1 calculations for each model, as messy as it was, and noted any observable patterns.
      - We then created charts that looked at each hyperparameter, looking for levels of the hyperparameter that gave higher performance "all else equal".  By this we mean we took the median performance metric for each level of an individual hyperparameter.  From this method we were able to see general trends in the individual hyperparameters that resulted in higher or lower model performance.
@@ -445,7 +445,21 @@ st.subheader("Model Performance (on unseen data)")
 
 st.subheader("Real-Time Model Prediction")
 
-st.markdown("Testing Reddit access...")
+#load pkl'd classifier (clf)
+#filename = "models/SVC_final_model.pkl" 
+filename = "models/LogisticRegression_final_baseline_model.pkl" 
+clf = pickle.load(open(filename, 'rb'))
+
+st.write('''
+    We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  
+    Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  
+    Below we give you an opportunity to choose either all or some of those four investing subreddits, and also the number of posts you want a recommendation for from each subreddit.  
+    This process will only scrape posts from Reddit that have been created within the last hour, similar to our project, so _you may see less posts than you are attempting to scrape_.
+
+    ''')
+
+
+#st.markdown("Testing Reddit access...")
 # ### SECRETS TO DELETE ###
 # REDDIT_USERNAME= 'Qiopta'
 # REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
@@ -482,18 +496,15 @@ subreddit_scrape_list = subreddit_scrape_list
 st.write("You selected:", subreddit_scrape_list)
 
 #n_posts = 5
-n_posts = st.selectbox("Select the max number of posts to try and scrape:", (1,3,5))
-st.write("Number of posts we'll try to collect:", n_posts)
+n_posts = st.selectbox("Select the number of posts you'd like to scrape from each subreddit:", (1,3,5))
+st.write("Number of posts we'll try to collect:", n_posts*len(subreddit_scrape_list))
 n_posts = int(n_posts)
 n_comments = 5 
 hrs_to_track = 1 #number of hours to track a post/submission
 #time_of_batch = datetime.utcnow().replace(microsecond=0)                                      
 char_limit = 256 #character limit for the text fields in the database
 
-#load pkl'd classifier (clf)
-#filename = "models/SVC_final_model.pkl" 
-filename = "models/LogisticRegression_final_baseline_model.pkl" 
-clf = pickle.load(open(filename, 'rb'))
+
 
 if st.button("Test creating PRAW df for our pipeline"):
     time_of_batch = datetime.utcnow().replace(microsecond=0)
@@ -511,6 +522,8 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
     st.write("prediction probabilities...", prediction_probas)
+
+
 
 
 # if st.button("Get new posts"):
