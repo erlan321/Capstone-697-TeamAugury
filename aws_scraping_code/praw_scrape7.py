@@ -41,29 +41,7 @@ def scrape_praw_to_db(conn, reddit, time_of_batch, hrs_to_track, n_comments, cha
             continue
         else: 
             try:
-                # submission_df = submission_df.append({
-
-                #     'time_of_batch'     : time_of_batch,
-                    
-                #     'sr_id'           : str(submission.subreddit.id), # subreddit id
-                #     'sr_name'         : str(submission.subreddit.display_name), # subreddit name
-
-                #     'p_created_at'      : datetime.fromtimestamp(submission.created_utc),  #Time the submission was created, represented in Unix Time
-                #     'p_id'              : p_id,   #str(submission.name),  #Fullname of the submission. (different from id, has "t3_" at the start)
-                #     'p_number_comments' : int(submission.num_comments),  #The number of comments on the submission.
-                #     'p_upvotes'         : int(submission.score),  #The number of upvotes for the submission.
-                #     'p_ratio'           : float(submission.upvote_ratio),  #The percentage of upvotes from all votes on the submission.
-                #     'p_text'            : str(submission.title)[:char_limit],  #The title of the submission. #limit the text to the character limit in the database
-                #     'p_redditor_name'   : str(submission.author),  #username
-                #     'p_redditor_id'     : str(submission.author.id),  #The ID of the Redditor.
-                #     'p_redditor_karma'  : int(submission.author.comment_karma),  #The comment karma for the Redditor.
-
-                #     'p_since_created'   : int(pd.Series(  (pd.Series(time_of_batch) - pd.Series(datetime.fromtimestamp(submission.created_utc)))  ).astype('timedelta64[h]')), # creates integer number of hours that have passed using datetime timedelta functionality
-                #     'p_current_flag'    : True ,
-                #     'p_old_or_new'      : 'OLD' if p_id in old_submission_list else 'NEW',
-
-                # }, ignore_index=True)
-                
+                                
                 #print("Start REDDIT submission data download")
                 
                 ### submission variables
@@ -176,27 +154,7 @@ def scrape_praw_to_db(conn, reddit, time_of_batch, hrs_to_track, n_comments, cha
                         continue
                     elif (comment_counter < n_comments) & (j < max_comment_counts):
                         try:
-                            # comment_df = comment_df.append({
-
-                            #     'time_of_batch'     : time_of_batch,
-                                
-                            #     'sr_id'             : str(submission.subreddit.id), # subreddit id
-                            #     'sr_name'           : str(submission.subreddit.display_name), # subreddit name
-
-                            #     'p_id'              : p_id, #the submission id
-
-                            #     'c_created_at'      : datetime.fromtimestamp(comment.created_utc),  #Time the submission was created, represented in Unix Time
-                            #     'c_id'              : str(comment.id),   #The ID of the comment.
-                            #     'c_upvotes'         : int(comment.score),  #The number of upvotes for the comment
-                            #     'c_text'            : str(comment.body)[:char_limit],  #The body of the comment, as Markdown. #limit the text to the character limit in the database
-                            #     'c_redditor_name'   : str(comment.author),  #username
-                            #     'c_redditor_id'     : str(comment.author.id),  #The ID of the Redditor.
-                            #     'c_redditor_karma'  : int(comment.author.comment_karma),  #The comment karma for the Redditor.
-                            #     'c_is_a'            : bool(comment.is_submitter),  #Whether or not the comment author is also the author of the submission.
-                            #     'c_since_created'   : int(pd.Series(  (pd.Series(time_of_batch) - pd.Series(datetime.fromtimestamp(comment.created_utc)))  ).astype('timedelta64[h]')), # creates integer number of hours that have passed using datetime timedelta functionality
-
-                            # }, ignore_index=True)
-
+                            
                             time_of_batch     = time_of_batch
                             
                             #sr_id             = str(submission.subreddit.id) # subreddit id
@@ -278,16 +236,7 @@ def scrape_praw_to_db(conn, reddit, time_of_batch, hrs_to_track, n_comments, cha
 
 
 
-    ## ### add some datetime based columns and any additional information for debugging
-    ## submission_df['p_since_created'] = (submission_df['time_of_batch']-submission_df['p_created_at']).astype('timedelta64[h]').astype('int')
-    ## submission_df['p_current_flag'] = submission_df.apply(lambda x: True if x['p_since_created'] <= hrs_to_track else False, axis=1).astype('bool')
-    ## submission_df['p_old_or_new'] = submission_df.apply(lambda x: 'OLD' if x['p_id'] in old_submission_list else 'NEW', axis=1).astype('str')
     
-    ## comment_df['c_since_created'] = (comment_df['time_of_batch']-comment_df['c_created_at']).astype('timedelta64[h]').astype('int')
-
-    #display(submission_df)
-    #display(comment_df)
-
     ### close the connection
     cur.close()
     return posts_updated_in_batch, posts_new_in_batch, comments_in_batch
