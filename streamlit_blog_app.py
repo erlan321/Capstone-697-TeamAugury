@@ -224,9 +224,9 @@ with feature_table:
         ''')
     with feature_table.expander("SBERT Sentence Embeddings of the Post"):
         st.markdown('''
-            *Description:*  We used the SBERT library to encode the text of both Posts and Comments.  The SBERT interface was simple to use and produced in effect 380+ features for our classifiers for each post.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
+            *Description:*  We used the SBERT library to encode the text of both Posts and Comments.  The SBERT interface was simple to use and produced in effect 380+ features for our classifiers for each post.  It provides a vectorial embedding of a sentence.  For the posts, this provides a vectorial space representation of each sentence that can be compared.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
 
-            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[XXX] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.
+            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[19] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.    
         ''')
     with feature_table.expander("Average Upvotes for the Top 5 Comments on the Post (per Hour)"):
         st.markdown('''
@@ -248,9 +248,9 @@ with feature_table:
         ''')
     with feature_table.expander("Average SBERT Sentence Embeddings of the Comments"):
         st.markdown('''
-            *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available)  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
+            *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available), just as we did for Posts.  It provides a vectorial embedding of a sentence.  For the comments we created a centroid vector of all the comments by averaging each comments’ SBERT embedding.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)       
 
-            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[XXX] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.
+            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[19] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.  
         ''')
 
 # st.subheader("") #create blank space
@@ -372,7 +372,7 @@ st.code('''
     ''', language="python")
 st.write("") #blank space
 st.write('''
-    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and introducing subsamples for Stochastic Gradient Descent as per the recommendation of the Hastie et al. 2009 [CITATION NEEDED] paper explained in the scikit learn documentation.  
+    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and  introducing subsamples for Stochastic Gradient Boosting as per the recommendation of the Friedman 1999/2002 paper[18] that is explained in the Sci-Kit Learn documentation.  
     
     _Parameter dictionary used in our code_
     ''')
