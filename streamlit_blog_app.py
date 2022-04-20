@@ -498,8 +498,8 @@ subreddit_selection_list = st.multiselect(
     ["r/investing","r/wallstreetbets","r/StockMarket","r/stocks"],
     ["r/investing","r/wallstreetbets","r/StockMarket","r/stocks"],
     )
-if len(subreddit_scrape_list)==0:
-    st.warning("You have not selected any subreddits!")
+if len(subreddit_selection_list)==0:
+    st.error("You have not selected any subreddits!")
 
 for item in subreddit_selection_list:
     subreddit_scrape_list.append(item[2:]) #removes the r/
@@ -525,9 +525,9 @@ if st.button("Predict Popularity!"):
         new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
         st.write(len(new_submission_list))
         if len(new_submission_list)==0:
-            st.write("There are no new posts within the last hour for your selection.")
+            st.error("There are no new posts within the last hour for your selection.")
     except:
-        st.write("A problem occurred contacting Reddit.")
+        st.error("A problem occurred contacting Reddit.")
         
     post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
