@@ -25,7 +25,7 @@ if choice == 'N':
   ### NEW SQL Variables
   sr_id = '(4, 31760, 31764, 31766)'   #[(4, '2qhhq', 'investing'), (16, 'mouw', 'science'), (130, '2qh1i', 'AskReddit'), (18162, '2qh3l', 'news'), (31760, '2qjuv', 'StockMarket'), (31764, '2qjfk', 'stocks'), (31766, '2th52', 'wallstreetbets')]
   lower_timestamp = '2022-04-18 11:00:00'
-  upper_timestamp = '2022-04-20 8:00:00' 
+  upper_timestamp = '2022-04-20 11:00:00' 
 
   #get data
   post_data, comments_data = Team_Augury_SQL_func.sql_by_timestamp(conn,sr_id,lower_timestamp,upper_timestamp)
@@ -60,9 +60,9 @@ SVC_loaded_rand = pickle.load(open(filename, 'rb'))
 filename = "models/GradientBoostingClassifier_doublecheck_model.pkl"
 GBT_loaded = pickle.load(open(filename, 'rb'))
 
-##load pkl'd GBT rand clf
-#filename = "models/GradientBoostingClassifier_doublecheck_model_rand.pkl"
-#GBT_loaded_rand = pickle.load(open(filename, 'rb'))
+#load pkl'd GBT rand clf
+filename = "models/GradientBoostingClassifier_doublecheck_model_rand.pkl"
+GBT_loaded_rand = pickle.load(open(filename, 'rb'))
 
 #load pkl'd LR clf
 filename = "models/LogisticRegression_final_baseline_model.pkl"
@@ -81,6 +81,6 @@ print("SVC Rand Selected Model F1: {}".format(f1_score(y, SVC_loaded.predict(X))
 print("...")
 print("GBDT double check Accuracy: {}".format(accuracy_score(y, GBT_loaded.predict(X))))
 print("GBDT double check F1: {}".format(f1_score(y, GBT_loaded.predict(X))))
-#print("...")
-#print("GBDT Rand double check Accuracy: {}".format(accuracy_score(y, GBT_loaded_rand.predict(X))))
-#print("GBDT Rand double check F1: {}".format(f1_score(y, GBT_loaded_rand.predict(X))))
+print("...")
+print("GBDT Rand double check Accuracy: {}".format(accuracy_score(y, GBT_loaded_rand.predict(X))))
+print("GBDT Rand double check F1: {}".format(f1_score(y, GBT_loaded_rand.predict(X))))

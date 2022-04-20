@@ -64,8 +64,8 @@ preprocessor = ColumnTransformer(
                 ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
 
 
-classifier = GradientBoostingClassifier(learning_rate=0.15, n_estimators=150, max_depth=3, max_features="sqrt",
-                                    subsample=0.5, random_state=rnd_state)
+classifier = GradientBoostingClassifier(learning_rate=0.09745623414545382, n_estimators=197, max_depth=5, max_features=0.8039461351385094,
+                                    subsample=0.3358658571498351, random_state=rnd_state, min_samples_leaf=1, min_samples_split= 0.13261653426076614)
 
 clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
 clf.fit(X,y)
