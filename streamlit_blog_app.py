@@ -514,8 +514,8 @@ if st.button("Test creating PRAW df for our pipeline"):
     post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
     st.table(feature_df)
-    df = feature_df[['sr','post_id','post_text']].copy()
-    st.write("df",df)
+    output_df = feature_df[['sr','post_id','post_text']].copy()
+    st.write("df",output_df)
 
     st.subheader("") #blank space
     feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
@@ -528,11 +528,22 @@ if st.button("Test creating PRAW df for our pipeline"):
     prediction_probas = clf.predict_proba(feature_df)
     st.write("prediction probabilities...", prediction_probas)
     st.write("prediction probabilities...", type(prediction_probas))
-    st.write("prediction probabilities...", prediction_probas.columns)
     
-    prediction_probas.rename({0:'Non_Popular_Probability', 1:'Popular_Probability'}, axis=1)
-    st.write("prediction probabilities...", prediction_probas)
-    st.write("temp", prediction_probas['Popular_Probability'])
+    del feature_df
+    output_df = pd.DataFrame({
+        'Subreddit': output_df['sr'],
+        'Post ID':  output_df['post_id'],
+        'Post Title':  output_df['post_text'],
+        'Popular Probability':  pd.Series(prediction_probas[:][1]),
+        })
+    st.write(output_df)
+    
+    
+
+    
+    # prediction_probas.rename({0:'Non_Popular_Probability', 1:'Popular_Probability'}, axis=1)
+    # st.write("prediction probabilities...", prediction_probas)
+    # st.write("temp", prediction_probas['Popular_Probability'])
     # df = pd.concat([df, prediction_probas], axis=0)
     # st.write("output df",df)
 
