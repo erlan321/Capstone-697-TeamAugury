@@ -515,6 +515,7 @@ if st.button("Test creating PRAW df for our pipeline"):
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
     st.table(feature_df)
     df = feature_df[['sr','post_id','post_text']].copy()
+    st.write("df",df)
 
     st.subheader("") #blank space
     feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
