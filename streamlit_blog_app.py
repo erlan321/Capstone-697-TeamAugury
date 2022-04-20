@@ -511,7 +511,9 @@ n_posts = st.selectbox("Select the number of posts you'd like to scrape from eac
 n_posts = int(n_posts)
 
 if (len(subreddit_selection_list)==1) & (n_posts==1):
-    st.warning("We highly recommend you choose more than 1 post if you have chosen only 1 subreddit!")
+    st.warning("We recommend you choose more than 1 post if you have chosen only 1 subreddit!")
+if (len(subreddit_selection_list)==2) & (n_posts==1):
+    st.warning("We recommend you choose more than 1 post if you have chosen only 2 subreddits!")
 
 
 n_comments = 5 
