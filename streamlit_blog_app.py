@@ -528,7 +528,7 @@ if st.button("Predict Reddit Popularity!"):
 
     time_of_batch = datetime.utcnow().replace(microsecond=0)
     try:
-        st.write("Gathering new posts...")
+        st.write("Gathering new posts from Reddit...")
         new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
         #st.write("len(new_submission_list)",len(new_submission_list))
         if len(new_submission_list)==0:
