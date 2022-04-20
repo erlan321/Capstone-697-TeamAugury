@@ -20,7 +20,7 @@ import altair as alt
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
 st.caption(" **augury** _noun_; a sign of what will happen in the future     -- Cambridge Dictionary")
-st.markdown(">Course: SIADS 697/698  \n>> Git Repository: [Github Link](https://github.com/rosecorn24601/Capstone-697-TeamAugury)  \n>> Blog Post: [Streamlit Link](https://share.streamlit.io/rosecorn24601/capstone-697-teamaugury/main/streamlit_blog_app.py)  \n>Authors:  \n>> Antoine Wermenlinger (awerm@umich.edu)  \n>> Chris Lynch (cdlynch@umich.edu)  \n>> Erik Lang (eriklang@umich.edu)")
+st.markdown(">Resources:  \n>> Git Repository: [Github Link](https://github.com/rosecorn24601/Capstone-697-TeamAugury)  \n>> Blog Post: [Streamlit Link](https://share.streamlit.io/rosecorn24601/capstone-697-teamaugury/main/streamlit_blog_app.py)  \n>Authors:  \n>> Antoine Wermenlinger (awerm@umich.edu)  \n>> Chris Lynch (cdlynch@umich.edu)  \n>> Erik Lang (eriklang@umich.edu)")
 
 st.header("Summary")
 st.write('''
@@ -62,7 +62,7 @@ with related_work:
     related_work.info('''
         **Title:** Popularity prediction of reddit texts.[5]  
         **Topic:** Supervised learning approach to predict Reddit post popularity    
-        **Implication for our project:** Comparable objectives, uses different NLP and features. Focuses on using Topics to determine predictive task.   Achieved 60-75% accuracy on the task, using Latent Dirichlet Allocation (LDA) and Term Frequency Inverse Document Frequency (TFIDF) to classify topics in posts to explore the relationship between topics and posts in order to predict using Naive Bayes and Support Vector Machine Classifiers what will become popular. Augury includes topic modeling as a feature, and our initial model suite included these classifiers.  We later rejected these models as Tree based classifiers proved more performant.
+        **Implication for our project:** Comparable objectives, uses different NLP and features. Focuses on using Topics to determine predictive task.   Achieved 60-75% accuracy on the task, using Latent Dirichlet Allocation (LDA) and Term Frequency Inverse Document Frequency (TFIDF) to classify topics in posts to explore the relationship between topics and posts in order to predict using Naive Bayes and Support Vector Machine Classifiers what will become popular. Augury includes topic modeling as a feature, and our initial model suite included these classifiers.  
         ''')
     related_work.info('''
         **Title:** Predicting the Popularity of Reddit Posts.[6]  
@@ -103,7 +103,7 @@ with related_work:
 st.subheader("") #create blank space
 st.subheader("Ethical Considerations")
 st.write('''
-    There are clearly ethical implications relating from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’ described above. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work. To some extent this research has already been investigated by Muxi Xu  in 2021 [13] and also by Hu et al [14]. Therefore we have made no further mitigations in our project related to market ethics.  
+    There are clearly ethical implications flowing from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’ described above. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work. To some extent this research has already been investigated by Muxi Xu  in 2021 [13] and also by Hu et al [14]. Therefore we have made no further mitigations in our project related to market ethics.  
     
     Social Media is often thought of as an open and public forum of discussion.  But an important ethical consideration of any data science project related to social media is that saying something in “public” may not necessarily mean “consent” to using a person’s name or username in published research [15].  While we did not have any need for usernames in the analysis we were performing, we did gather usernames into our database in order to track certain features of each Reddit post, and we are aware that if we were to ever use those usernames in future work, our database would could provide us with an already anonymized id number to protect each individuals’ privacy.  
     
@@ -124,12 +124,14 @@ st.write('''
 In order to request data from Reddit’s API, we decided to use the widely known PRAW python library to do our data scraping.  Our approach to scraping was informed primarily by studying the PRAW online documentation [(docs)](https://praw.readthedocs.io/en/stable/).    
 
 Because we were starting from a “blank slate” in our domain knowledge about Reddit data, we knew we wanted to track each post over a 24 hour period in order to effectively perform Exploratory Data Analysis (EDA) about how we would approach our prediction task.  
+
 We knew we wanted to see a posts popularity over time in order to see how and when popular posts developed, so we designed a scraping pipeline that captured a sample of ‘new’ posts each hour and stored it in our database.  
 
 Our initial scraping process sought to scrape information about the five newest posts per hour from our selection of subreddits, and included information about the top 5 comments for each post  (more details about the features is below).  However, we discovered that this amount of data caused a “timeout” problem with the AWS Lambda service we were using, so by March 1st, 2022 we had to decide to scale back the number of new posts being scraped each hour to one per subreddit.  
 
 **Pre-storage Cleaning:**
 Despite having to reduce the original pace of data scraping, one of the benefits of our scraping process using PRAW was we were able to scrape and store just the data that we wanted, and we were able to filter out unwanted posts and comments, such as those that had already been deleted for any reason or that were authored by a subreddit Automoderator.  In that sense, the data we were gathering hourly was “clean” and usable right away without additional filtering when the data came back out from our database.  
+
 **Post-storage Cleaning:**
 As we noted above, we did apply one important additional post-scraping process to our data when extracting from our database, which was to remove profanity.
     ''')
@@ -152,7 +154,7 @@ with col3:
 st.subheader("") #create blank space
 st.subheader("Exploratory Data Analysis (EDA)")
 st.write('''
-    As mentioned above, we were successfully scraping Reddit consistently starting on March 1st of 2022.  We began performing Exploratory Data Analysis (EDA) with the data we had gathered so far on March 28th of 2022, which represented roughly 1,200 posts tracked over a 24 hour period.  
+    As mentioned above, we were successfully scraping Reddit consistently starting on March 1st of 2022.  We began performing EDA with the data we had gathered so far on March 28th of 2022, which represented roughly 1,200 posts tracked over a 24 hour period.  
     
     Our objective is to predict whether or not a post will become “popular”.  A “popular” post is one that would be near the top of the subreddit when a user goes to the webpage or opens the app (in Reddit’s vocabulary, the post is “Hot”).  From perusing Reddit’s own message boards, we understand that a rough approximation for this measure of “popularity” is:
     ''')
@@ -180,7 +182,8 @@ with col3:
 
 st.write('''
     We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we looked at what the maximum popularity each post in the sample achieved during a 24 hour period and calculated the median for each hour of the day and the day of the week that the post was created.  We should note first that we scraped and stored this data in UTC time, and made no adjustment to a different time zone in the visualization.    
-    Given the global nature of online communities such as Reddit and that fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
+    
+    Given the global nature of online communities such as Reddit and the fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
 
     ''')
 temporal_image = Image.open('blog_assets/eda_temporal_chart.png')
@@ -203,7 +206,7 @@ with feature_table:
         ''')
     with feature_table.expander("Author Karma for the Post"):
         st.markdown('''
-            *Description:*  We tracked the karma of both comment and post authors at the time of making either a post or a comment.  Reddit karma is a score a user recieves based on the user's activity.  
+            *Description:*  We tracked the karma of both comment and post authors at the time of making either a post or a comment.  Reddit karma is a score a user receives based on the user's activity.  
 
             *Rationale:*  Whilst people who have high karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
         ''')
@@ -223,7 +226,7 @@ with feature_table:
         st.markdown('''
             *Description:*  We used the SBERT library to encode the text of both Posts and Comments.  The SBERT interface was simple to use and produced in effect 380+ features for our classifiers for each post.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
 
-            *Rationale:*  NEEDS UPDATE the rich meaning from language encoded via SBERT, which is based on the state of the art BERT language model.
+            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[XXX] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.
         ''')
     with feature_table.expander("Average Upvotes for the Top 5 Comments on the Post (per Hour)"):
         st.markdown('''
@@ -247,7 +250,7 @@ with feature_table:
         st.markdown('''
             *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available)  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
 
-            *Rationale:*  NEEDS UPDATE the rich meaning from language encoded via SBERT, which is based on the state of the art BERT language model.
+            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[XXX] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.
         ''')
 
 # st.subheader("") #create blank space
@@ -302,10 +305,10 @@ st.subheader("") #create blank space
 st.header("Modeling Inferences & Evaluation")
 st.subheader("Model Candidates")
 st.markdown('''
-	We selected three Supervised Learning models on which to attempt our Reddit post popularity prediction.  We kept our model exploration within the popular Scikit-Learn python library we learned in class.
+	We selected three Supervised Learning models on which to attempt our Reddit post popularity prediction.  We kept our model exploration within the popular Scikit-Learn python library for the reason of more efficient and consistent modeling pipeline management.
 	 - Logistic Regression (LR):  LR was chosen as it also appeared in some of the related work that we reviewed, and this simple classifier is often used as a “baseline” prediction model.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)  
 	 - Support Vector Classification (SVC): SVC was chosen as it also appeared in the related papers that were pursuing similar goals to our Augury project.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html)  
-	 - Gradient Boosting Classifier (GBDT):  GBDT was chosen based on our intuition and also feedback from our professors that Gradient Boosted classifiers are often winning data science competitions lately.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html)
+	 - Gradient Boosting Classifier (GBDT):  GBDT was chosen based on our intuition and also that Gradient Boosted classifiers are popular in business and do well in data science competitions.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html)
 	''')
 
 
@@ -342,23 +345,23 @@ st.write("!! UPDATE NUMBERS ABOVE BEFORE SUBMISSION !!")
 st.write("") #blank space
 st.write('''
     **Tuning Iterations:**  
-    We iterated through roughly 1,000 combinations of parameters across LR, SVC, and GBDT models, for which we needed to develop both objective and subjective methods of making parameter choices.  
+    We iterated through over 1,000 combinations of parameters across LR, SVC, and GBDT models, for which we needed to develop both objective and subjective methods of making parameter choices.  
     ''')
 st.write('''
     _LR Tuning:_ For LR we flipped between the _solver_ parameter, the types of penalty, and a range of values of C we've seen before in our course work.  
+    
     _Parameter dictionary used in our code_
     ''')
 st.code('''
     parameters = [{"clf__C":np.logspace(-5, 10, num=16, base=2),
                 "clf__solver":["liblinear", "lbfgs"],
                 "clf__penalty":["l1", "l2"],
-                },
-                {"clf__C":[0.001, 0.01, 0.1, 1, 10, 100, 1000],
-                "clf__solver":["lbfgs"],
-                "clf__penalty":["l2"],}]
+                }]
     ''', language="python")
+st.write("") #blank space
 st.write('''
     _SVC Tuning:_ We looked at each of the four kernels individually to avoid errors that would make us lose a lot of compute time. The range for C and gamma was taken from A Practical Guide to Support Vector Classification by Chih-Wei Hsu et al.[16], these were slightly more thorough in their tests than other information available.  
+    
     _Parameter dictionary used in our code (approximately)_
     ''')
 st.code('''
@@ -367,8 +370,10 @@ st.code('''
                 "clf__degree": [3, 4, 5], #only related to the polynomial kernel
                 'clf__gamma': np.logspace(-15, 3, num=19, base=2)}
     ''', language="python")
+st.write("") #blank space
 st.write('''
     _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and introducing subsamples for Stochastic Gradient Descent as per the recommendation of the Hastie et al. 2009 [CITATION NEEDED] paper explained in the scikit learn documentation.  
+    
     _Parameter dictionary used in our code_
     ''')
 st.code('''
@@ -577,18 +582,18 @@ st.header("Appendix: Statement of work")
 st.write('''
 The team worked across the entire project, but the below highlights the areas each team member either focussed, led or made a major contribution:  
 
-Antoine Wermenlinger led on the Supervised Learning aspect of the project from the long list of models, through to the down select and hyperparameter tuning. He initiated the feature Engineering work and was the originator of the project's core goal - to predict popularity of Reddit posts.  
+Antoine Wermenlinger led on the Supervised Learning aspect of the project from the long list of models, through to the down select and hyperparameter tuning. He also discovered the SBERT encoding and python module as appropriate for this task and ran the initial experiments on this. Antoine initiated the feature engineering work and was the originator of the project's core goal -- to predict popularity of Reddit posts.  
 
-Chris Lynch led on the instantiation of our AWS instance, account and functions, notably the Lambda Function, Event Bridge Scheduling and the creation of our RDS (a postgreSQL database).  In the early phases of the project Chris led on the Reinforcement Learning aspects of the project creating a Reddit Simulator environment and a Q learning model, which eventually we decided not to use. Chris initiated the draft for our team Blog post.  
+Chris Lynch led on the instantiation of our AWS instance, account and functions, notably the Lambda Function, Event Bridge Scheduling and the creation of our RDS (a postgreSQL database). In the early phases of the project Chris led on the Reinforcement Learning aspects of the project creating a Reddit Simulator environment and a Q learning model, which eventually we decided not to use. He worked on explainability of our models by exploring feature/permutation importances. Chris initiated the draft for our team Blog post.  
 
-Erik Lang led on the Social Media Scraping and analytics aspects of the project, creating the PRAW based code that scraped and cleaned the raw Reddit data that was written into our postgreSQL instance. He made major contributions to the feature engineering and team standups.   Finally Erik created our Streamlit instance, that is the host site for this Blog. 
+Erik Lang led on the Social Media scraping and analytics aspects of the project, creating the PRAW based code that scraped and cleaned the raw Reddit data that was written into our postgreSQL instance. He made major contributions to feature engineering, EDA, visualizations and team standups. Finally Erik created our Streamlit instance, that is the host site for this Blog. 
     ''')
 
 
 
 st.header("Appendix: References")
 
-st.header("!!! END OF BLOG POST !!!")
+
 
 
 
