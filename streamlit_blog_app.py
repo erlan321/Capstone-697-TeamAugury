@@ -458,6 +458,8 @@ st.markdown('''
 
     ''')
 
+st.markdown("** !! This is using the Logistic PKL file !! **")
+
 
 #st.markdown("Testing Reddit access...")
 # ### SECRETS TO DELETE ###
@@ -517,17 +519,19 @@ if st.button("Test creating PRAW df for our pipeline"):
     output_df = feature_df[['sr','post_id','post_text']].copy()
     st.write("df",output_df)
 
+    st.write("Number of posts we did collect:",len(output_df))
+
     st.subheader("") #blank space
     feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
     st.write("X_values for pkl'd model")
     st.table(feature_df)
-    st.write("len(feature_df.columns):",len(feature_df.columns))
+    #st.write("len(feature_df.columns):",len(feature_df.columns))
 
     predictions = clf.predict(feature_df)
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
     st.write("prediction probabilities...", prediction_probas)
-    st.write("prediction probabilities...", type(prediction_probas))
+    
     
     del feature_df
     output_df = pd.DataFrame({
@@ -536,7 +540,8 @@ if st.button("Test creating PRAW df for our pipeline"):
         'Post Title':  output_df['post_text'],
         'Popular Probability':  pd.Series(prediction_probas[:, 1]),
         })
-    st.write(output_df)
+    
+    st.write("output df", output_df)
     
     
 
