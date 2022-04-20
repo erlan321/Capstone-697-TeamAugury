@@ -535,7 +535,7 @@ if st.button("Predict Reddit Popularity!"):
         feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
         st.table(feature_df)
         output_df = feature_df[['sr','post_id','post_text']].copy()
-        st.write("df",output_df)
+        st.write("output_df",output_df)
 
         st.write("Number of posts we did collect:",len(output_df))
     except: 
@@ -544,7 +544,7 @@ if st.button("Predict Reddit Popularity!"):
     try:
         feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
         st.write("X_values for pkl'd model")
-        st.table(feature_df)
+        st.table(x  feature_df)
         #st.write("len(feature_df.columns):",len(feature_df.columns))
     except:
         st.error("A problem occurred when transforming the features into the model's desired format.")
@@ -567,7 +567,7 @@ if st.button("Predict Reddit Popularity!"):
             'Popular Probability':  pd.Series(prediction_probas[:, 1].round(2)),
             })
         
-        st.write("output df", output_df.sort_values(['Popular Probability'], ascending=False))
+        st.write("output df", output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
     except:
         st.error("A problem occurred in making the output dataframe.")
     
