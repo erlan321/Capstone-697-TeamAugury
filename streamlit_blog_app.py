@@ -544,7 +544,7 @@ if st.button("Predict Reddit Popularity!"):
     try:
         feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
         st.write("X_values for pkl'd model")
-        st.table(x  feature_df)
+        st.table(feature_df)
         #st.write("len(feature_df.columns):",len(feature_df.columns))
     except:
         st.error("A problem occurred when transforming the features into the model's desired format.")
