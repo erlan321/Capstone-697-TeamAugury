@@ -497,7 +497,7 @@ subreddit_scrape_list = subreddit_scrape_list
 
 #n_posts = 5
 n_posts = st.selectbox("Select the number of posts you'd like to scrape from each subreddit:", (1,3,5))
-st.write("Number of posts we'll try to collect:", n_posts*len(subreddit_scrape_list))
+
 n_posts = int(n_posts)
 n_comments = 5 
 hrs_to_track = 1 #number of hours to track a post/submission
@@ -507,11 +507,15 @@ char_limit = 256 #character limit for the text fields in the database
 
 
 if st.button("Test creating PRAW df for our pipeline"):
+    st.write("Number of posts we'll try to collect:", n_posts*len(subreddit_scrape_list))
+
     time_of_batch = datetime.utcnow().replace(microsecond=0)
     new_submission_list = Team_Augury_blog_praw_functions.blog_submission_list(reddit=reddit, time_of_batch=time_of_batch, hrs_to_track=hrs_to_track, n_posts=n_posts, subreddit_scrape_list=subreddit_scrape_list)
     post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
     feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
     st.table(feature_df)
+    df = feature_df[['sr','post_id','post_text']].copy()
+
     st.subheader("") #blank space
     feature_df = Team_Augury_blog_praw_functions.blog_X_values(feature_df)
     st.write("X_values for pkl'd model")
@@ -522,8 +526,11 @@ if st.button("Test creating PRAW df for our pipeline"):
     st.write("predictions...", predictions)
     prediction_probas = clf.predict_proba(feature_df)
     st.write("prediction probabilities...", prediction_probas)
+    df = pd.concat([ df, prediction_probas[[1]] ])
+    st.write("output df",df)
 
-    
+
+
 
 
 
