@@ -498,6 +498,9 @@ subreddit_selection_list = st.multiselect(
     ["r/investing","r/wallstreetbets","r/StockMarket","r/stocks"],
     ["r/investing","r/wallstreetbets","r/StockMarket","r/stocks"],
     )
+if len(subreddit_scrape_list)==0:
+    st.warning("You have not selected any subreddits!")
+
 for item in subreddit_selection_list:
     subreddit_scrape_list.append(item[2:]) #removes the r/
 subreddit_scrape_list = subreddit_scrape_list
