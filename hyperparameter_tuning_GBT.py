@@ -31,20 +31,9 @@ preprocessor = ColumnTransformer(
                 ('numerical', numeric_transformer, numeric_features),
                 ('categorical', categorical_transformer, categorical_features)], remainder='passthrough')
 
-# Moved to StratifiedKFold due to imbalanced dataset https://machinelearningmastery.com/cross-validation-for-imbalanced-classification/
 
 #Scoring metrics
 scoring = {'acc': 'accuracy', 'f1': 'f1'}
-
-""" gbc_params = {
-            "clf__learning_rate":stats.uniform(0.01, 0.15),
-            "clf__n_estimators":stats.randint(50, 200),
-            "clf__max_depth":stats.randint(2, 8),
-            "clf__min_samples_split":stats.uniform(0.01, 0.15),
-            "clf__min_samples_leaf":stats.randint(1, 10),
-            "clf__max_features":stats.uniform(0.1, 1)#,
-            #"clf__subsample":stats.uniform(0.1, 1)
-            } """
 
 gbc_params = {
             "clf__learning_rate":[0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
@@ -57,7 +46,6 @@ gbc_params = {
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", GradientBoostingClassifier(random_state=rnd_state))])
 
 print("Initiating randomized grid search on GBT...")
-#results = RandomizedSearchCV(estimator=pipe, param_distributions=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1, random_state=rnd_state, n_iter=200).fit(X, y)
 results = GridSearchCV(estimator=pipe, param_grid=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1).fit(X, y)   
 results = pd.DataFrame(results.cv_results_)
 results.columns = [col.replace('param_clf__', '') for col in results.columns]

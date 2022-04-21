@@ -35,7 +35,7 @@ preprocessor = ColumnTransformer(
 scoring = {'acc': 'accuracy', 'f1': 'f1'}
 
 
-pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", LogisticRegression(random_state = rnd_state, max_iter=100000, multi_class="ovr"))])
+pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", LogisticRegression(random_state = rnd_state, max_iter=100000, multi_class="ovr", class_weight="balanced"))])
 parameters = {"clf__C":np.logspace(-5, 10, num=16, base=2),
             "clf__solver":["liblinear", "lbfgs"],
             "clf__penalty":["l1", "l2"],
