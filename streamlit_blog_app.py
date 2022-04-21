@@ -125,7 +125,14 @@ st.subheader("") #create blank space
 st.header("Our Project Workflow")
 st.write("The below graphic illustrates our project Augury workflow.  Below we will provide more details on each component of the workflow.")
 project_pipeline_image = Image.open('blog_assets/project_pipeline3.png')
-st.image(project_pipeline_image, caption='Project Augury Workflow')
+col1, col2, col3 = st.columns([1,5,1]) #column trick to center on the webpage
+with col1:
+    st.write("")
+with col2:
+    st.image(project_pipeline_image, caption='Project Augury Workflow')
+with col3:
+    st.write("")
+
 
 st.subheader("") #create blank space
 st.subheader("Scraping Reddit Data") 
