@@ -464,7 +464,7 @@ st.markdown('''
 
     ''')
 
-st.markdown("** !! This is using the Logistic PKL file !! **")
+st.markdown("** !! This is using the the final SVC PKL file !! **")
 
 
 #st.markdown("Testing Reddit access...")
