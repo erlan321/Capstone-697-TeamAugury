@@ -45,3 +45,7 @@ print(pf.censor(t))
 # filter_profanity_func(nlp(t))
 # )
 
+# import pandas as pd
+# df = pd.DataFrame({'text': ['fuck','shit','ass','unicorn']})
+# print(df)
+

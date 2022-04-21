@@ -13,6 +13,7 @@ from functions import Team_Augury_feature_functions
 import spacy  #needed for language profanity filtering to work on streamlit
 import pickle
 import altair as alt
+#import spacy_streamlit
 
 # nlp = spacy.load('en_core_web_sm') #load spacy english language
 # pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
