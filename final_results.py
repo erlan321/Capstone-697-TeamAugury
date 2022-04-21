@@ -25,7 +25,7 @@ if choice == 'N':
   ### NEW SQL Variables
   sr_id = '(4, 31760, 31764, 31766)'   #[(4, '2qhhq', 'investing'), (16, 'mouw', 'science'), (130, '2qh1i', 'AskReddit'), (18162, '2qh3l', 'news'), (31760, '2qjuv', 'StockMarket'), (31764, '2qjfk', 'stocks'), (31766, '2th52', 'wallstreetbets')]
   lower_timestamp = '2022-04-18 11:00:00'
-  upper_timestamp = '2022-04-21 09:00:00' 
+  upper_timestamp = '2022-04-21 10:00:00' 
 
   #get data
   post_data, comments_data = Team_Augury_SQL_func.sql_by_timestamp(conn,sr_id,lower_timestamp,upper_timestamp)
@@ -64,7 +64,6 @@ GBT_loaded = pickle.load(open(filename, 'rb'))
 filename = "models/LogisticRegression_final_baseline_model.pkl"
 LR_loaded = pickle.load(open(filename, 'rb'))
 
-
 print("Results...")
 print("LR Baseline Accuracy: {}".format(accuracy_score(y, LR_loaded.predict(X))))
 print("LR Baseline F1: {}".format(f1_score(y, LR_loaded.predict(X))))
@@ -76,5 +75,3 @@ print("{}".format(confusion_matrix(y, SVC_loaded.predict(X))))
 print("...")
 print("GBDT double check Accuracy: {}".format(accuracy_score(y, GBT_loaded.predict(X))))
 print("GBDT double check F1: {}".format(f1_score(y, GBT_loaded.predict(X))))
-print("probability")
-

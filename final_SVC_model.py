@@ -27,7 +27,7 @@ if choice == 'N':
       connect_timeout=3)
 
   ### NEW SQL Variables
-  sr_id = '(4, 31760, 31764, 31766)'   #[(4, '2qhhq', 'investing'), (16, 'mouw', 'science'), (130, '2qh1i', 'AskReddit'), (18162, '2qh3l', 'news'), (31760, '2qjuv', 'StockMarket'), (31764, '2qjfk', 'stocks'), (31766, '2th52', 'wallstreetbets')]
+  sr_id = '(4, 31760, 31764, 31766)'   #[(4, '2qhhq', 'investing'), (31760, '2qjuv', 'StockMarket'), (31764, '2qjfk', 'stocks'), (31766, '2th52', 'wallstreetbets')
   lower_timestamp = '2022-03-01 14:30:00'
   upper_timestamp = '2022-04-18 10:00:00' 
 
@@ -62,7 +62,6 @@ preprocessor = ColumnTransformer(
                 ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
 
 
-
 classifier = SVC(kernel='rbf', probability=True, random_state=rnd_state, C=0.125, gamma=0.0078125, cache_size=2000, class_weight='balanced', max_iter=-1)
 
 clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
@@ -70,4 +69,3 @@ clf.fit(X,y)
 filename = "models/"+ classifier.__class__.__name__ + "_rbf_final_model.pkl"
 pickle.dump(clf, open(filename, 'wb'))
 print("Model saved to {}".format(filename))
-

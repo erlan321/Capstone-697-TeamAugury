@@ -66,7 +66,7 @@ preprocessor = ColumnTransformer(
                 ('categorical', categorical_transformer, categorical_features)], remainder="passthrough")
 
 
-classifier = LogisticRegression(random_state=rnd_state, solver="lbfgs", C=1.0, penalty="l2", max_iter=100000, multi_class="ovr", n_jobs=-1, class_weight="balanced")
+classifier = LogisticRegression(random_state=rnd_state, solver="liblinear", C=0.125, penalty="l1", max_iter=100000, multi_class="ovr", n_jobs=-1, class_weight="balanced")
 
 clf = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', classifier)])
 clf.fit(X,y)
