@@ -6,6 +6,8 @@ import altair as alt
 def hpt_lr_chart( metric):
     
     input_df = pd.read_csv("saved_work/hp_tuning_LogReg.csv")
+    input_df['type'].replace('test','validation', inplace=True)
+    input_df['type'].replace('train','training', inplace=True)
 
     ### C values
     df = input_df.copy()
@@ -134,6 +136,8 @@ def hpt_svc_chart( metric):
     input_df = pd.concat([input_df, pd.read_csv("saved_work/hp_tuning_SVC_linear.csv")])
     input_df = pd.concat([input_df, pd.read_csv("saved_work/hp_tuning_SVC_rbf.csv")])
     input_df = pd.concat([input_df, pd.read_csv("saved_work/hp_tuning_SVC_sigmoid.csv")])
+    input_df['type'].replace('test','validation', inplace=True)
+    input_df['type'].replace('train','training', inplace=True)
 
     ### C values
     df = input_df.copy()
@@ -259,7 +263,9 @@ def hpt_svc_chart( metric):
 def hpt_gbdt_chart( metric):
 
     input_df = pd.read_csv("saved_work/hp_tuning_GBT.csv")
-
+    input_df['type'].replace('test','validation', inplace=True)
+    input_df['type'].replace('train','training', inplace=True)
+    
     ### learning_rate values
     df = input_df.copy()
     df = df[df.Score==metric]

@@ -331,9 +331,9 @@ st.write('''
 
     ''')
 col1, col2, col3 = st.columns(3)
-col1.info("**Training**")
-col2.info("**Validation**")
-col3.info("**Testing**")
+col1.info("**Training Data**")
+col2.info("**Validation Data**")
+col3.info("**Testing Data**")
 col1.write("68% of data")
 col2.write("17% of data")
 col3.write("15% of data")
@@ -412,41 +412,121 @@ st.altair_chart(Team_Augury_blog_hpt_charts.hpt_gbdt_chart( score_metric), use_c
 st.write(''' 
     **Hyperparameter Decisions:**  
     The above process resulted in the following hyperparameter decisions:
-     > **LR** (_matches the default settings_):  
+     > **LR**:  
      >> Solver: lbfgs   
-     >> Penalty: L2  
-     >> C: 1.0  
+     >> Penalty: L1  
+     >> C: 0.0125 
+     > _Rationale:_ Our LR tuning charts give a very clear decision on the 'penalty' parameter and 'solver' parameter, as those options have the highest F1 scores on Validation Data.  However, the choice of C is more nuanced.  While the chart shows a linear trend of a higher F1 score for lower values of C, we stated above a subjective preference that we did not want to choose either minimum or maximum values of our parameter choices, therefore we settle on a 'C' value of 0.125 near the minimum.
+     >   
      > **SVC**:  
      >> Kernel: rbf    
      >> C: 0.125  
      >> Gamma: 0.0078125  
+     > _Rationale:_ Our SVC tuning charts gives a clear preference for the "rbf" kernel based on median F1 score on Validation Data, but the choice of the other two parameters is more nuanced.  For 'C', there seems to be a non-perfect linear relationship where lower values result in higher F1 scores on Validation Data, so again we choose a value of 0.125 which is close to, but not at, the minimum 'C' value (due to our subjective guidelines above).  For 'gamma', we see a drop-off in F1 score above values of 0.03, so we subjectively chose 0.0078125, which is close to that value.
+     >  
      > **GBDT**:  
      >> Learning_rate: 0.15  
      >> N_estimators: 150  
      >> Max_depth: 3  
      >> Max_features: sqrt  
      >> Subsample:  0.5  
+     > _Rationale:_ Our GBDT tuning charts give a clear preference for 'sqrt' for max_features and 3 for max_depth.  For the subsample parameter we subjectively chose 0.5 as the other options had Training Data scores that felt "too good".  For n_estimators, the chart exhibits slight curve where we could pick a "peak" F1 score on Validation Data at 150 estimators.  For learning_rate, while there is a linear relationship between F1 and parameter value, due to our "subjective" guidelines above we choose 0.15 which is near, but not at, the maximum value. 
 
     ''')
 
-st.write('''
-    Performance metrics of the above "tuned" models:
-    ''')
-hpt_df = pd.DataFrame(data={
-    'Tuned_Model': ['LR','SVC','GBDT'],
-    'F1_Score_Training': [0.76,0.73,0.94],
-    'F1_Score_Validation': [0.39,0.52,0.35],
-    'Accuracy_Training': [0.91,0.75,0.98],
-    'Accuracy_Validation': [0.77,0.73,0.79],
-    })
-st.table(hpt_df)
 
 
+
+st.write("") #blank space
 st.subheader("Model Choice")
+st.write('''
+    Using the hyperparameter choices above, we looked at the cross-validation performance results for each of the three "tuned" model options.  
+    
+    We are primarily looking at F1 Score results for our Validation Data, though we did maintain an awareness of both F1 and Accuracy across both the training and validation data sets. In the table below, we see that the model that had the highest F1 Score on the Validation data is our tuned SVC model, which was slightly ahead of the LR option.  The GBDT option had the worst F1 score on Validation Data, and also had suspiciously high values on Training Data, so we decided not to pursue GBDT any further.  
+    
+    Therefore, we choose the SVC model to be the "Project Augury" model, and we will use the more simple LR model as a "baseline" comparison for our Test Data.  
 
+     
+    ''')
+hpt_f1_df = pd.DataFrame(data={
+    'Tuned_Model': ['LR','SVC','GBDT'],
+    'F1_Score_Validation': [0.5168,0.5230,0.3509],
+    'F1_Score_Training': [0.5901,0.7271,0.9411],
+    })
+hpt_accuracy_df = pd.DataFrame(data={
+    'Tuned_Model': ['LR','SVC','GBDT'],
+    'Accuracy_Validation': [0.7350,0.7271,0.7948],
+    'Accuracy_Training': [0.7754,0.7531,0.9769],
+    })
+
+st.info("**Model Results on Validation Data:**")
+col1, col2, col3, col4 = st.columns([1,1,1,1])
+col1.info("**Score**")
+col2.info("**LR**")
+col3.info("**SVC**")
+col4.info("**GBDT**")
+col1.info("F1")
+col2.warning("0.5168")
+col3.success("0.5230")
+col4.error("0.3509")
+
+with st.expander("Click here to see the full table of F1 and Accuracy for both Validation and Training Data:"):
+    st.table(hpt_f1_df)
+    st.table(hpt_accuracy_df)
+
+st.write("") #blank space
 st.subheader("Feature Importance of the Model")
+st.write('''
+     The chart below illustrates the feature importances for our chosen SVC model:  
+      - The SBERT-based features for both posts and comments have the strongest importance in the model, with the encoding of Posts being stronger than that of the underlying comments.  This strong importance fits our original intuition and rationale for using SBERT that we described in the Features section above.  
+      - The upvotes that comments receive (avg_comment_upvotes_vs_hrs) and overall number of comments a post receives (number_comments_vs_hrs) are the third and fourth most important features, respectively.  This matches our expectation based on the high correlation to popularity we found in our EDA.
+      - The two temporal features of our model related to the hour and the weekday a post is created (time_hour and day_of_week) show some importance but not much, which is consistent with our intuition and our EDA findings.  
+      - The two features related to a post or comment author's karma also show some, but weak, importance.  This is consistent with the weak correlations we saw in our EDA.
+      - The _biggest surprise_ of our feature importance chart is that the sentiment of both the post and the underlying comments has almost no impact in our model.  This is very different from our intuition described in the Features section above that text with a very positive or very negative sentiment might drive the activity and popularity of an individual post.  
 
+    ''')
+feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v1.png')
+st.image(feature_importance_image, caption='Aggregated Feature Importance in our SVC Model')
+st.write('''
+    _Challenges to getting feature importance:_  We discovered two key challenges to creating this feature importance summary for our project, which might be instructive to the reader in their own work.  The first relates to feature choices and the second relates to model choices.  
+     1. Related to feature choices, four of our features summarize above are actually an aggregate importance of several items.  These are the SBERT and temporal features.  This is because in feature engineering, the temporal features required one-hot encoding (for instance, the 7 days of the week become 7 new columns) and the SBERT features generate many columns to represent the sentence encodings (see the above Features section for more details).  So, in looking at feature importances, we had to create additional methods beyond what was in the SciKit Learn libraries in order to aggregate the importances.  The key take-away for the reader is that the choice of features can require additional steps later in the project to ensure interpretability of the model.  
+     2. Related to model choices, the SVC model we chose did not have the standard 'model.feature_importance_' method ......... 
+
+     (stopping here to see how the team feels about this section...)
+    ''')
+
+
+st.write("") #blank space
 st.subheader("Model Performance (on unseen data)")
+st.write('''
+    Placeholder
+     
+    ''')
+test_f1_df = pd.DataFrame(data={
+    'Model': ['LR','SVC'],
+    'F1_Score_Test' : [0,0],
+    'F1_Score_Validation': [0.5168,0.5230],
+    'F1_Score_Training': [0.5901,0.7271],
+    })
+test_accuracy_df = pd.DataFrame(data={
+    'Model': ['LR','SVC'],
+    'Accuracy_Test': [0,0],
+    'Accuracy_Validation': [0.7350,0.7271],
+    'Accuracy_Training': [0.7754,0.7531],
+    })
+st.info("**Model Results on Test Data:**")
+col1, col2, col3 = st.columns([1,1,1])
+col1.info("**Score**")
+col2.info("**LR** (baseline)")
+col3.info("**SVC** (Augury)")
+col1.info("F1")
+col2.error("0.0000")
+col3.success("0.0000")
+
+with st.expander("Click here to see the full table of F1 and Accuracy on Test, Validation, and Training Data:"):
+    st.table(test_f1_df)
+    st.table(test_accuracy_df)
+
 
 st.subheader("Real-Time Model Prediction")
 
