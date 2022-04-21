@@ -543,21 +543,18 @@ with st.expander("Click here to see the full table of F1 and Accuracy on Test, V
     st.table(test_f1_df)
     st.table(test_accuracy_df)
 
-
+st.write("") #blank space
 st.subheader("Real-Time Model Prediction")
-
 #load pkl'd classifier (clf)
-st.markdown("** !! This is using the the final SVC PKL file !! **")
 filename = "models/SVC_rbf_final_model.pkl" 
 #filename = "models/LogisticRegression_final_baseline_model.pkl" 
 clf = pickle.load(open(filename, 'rb'))
-
 st.markdown('''
-    We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  
-     - Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  
-     - Below we give you an opportunity to choose either all or some of those four investing subreddits, and also the number of posts you want a recommendation for from each subreddit.  
-     - This process will only scrape posts from Reddit that have been created within the last hour, which is similar to the workflow of our project.  So, readers should be aware that _you may see less posts than you are attempting to scrape_.  
-     - The output of this "live" prediction process is the probability of a post becoming "popular", according to our model.  
+    We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  Please take a look at the instructions below, select your options, and take a look at our model's prediction!  
+     - The first selection to make is what subreddits you would like to scrape from.  Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  This scraping will be "live" directly to Reddit using similar code to that we built in AWS to scrape our project data.  
+     - The second selection is the number of the newest posts you want to try to scrape for each subreddit.  Note that we will only scrape posts created within the last hour, which mirrors the process of our project's scraping process in AWS.  So, readers should be aware that you may see less posts than you are attempting to scrape unless it is a particularly active day for the subreddit.  
+     - The posts that are available will have all the same data collected that we use for our featurization process in our project.  After we engineer the features using the same pipeline as our project, we will use our trained Classifier mode to make a prediction on each post.  
+     - The output of this "live" prediction process is a table showing some information about your post, as well as the probability of a post becoming "popular" according to our model.  The higher the probability, the greater the chance our model thinks that post will become "hot" on the subreddit.  
 
     ''')
 
@@ -677,35 +674,23 @@ if st.button("Predict Reddit Popularity!"):
         
         st.write("**Post Popularity Prediction** (_Sorted most likely to least likely_)", 
                 output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
+        st.write("Check out the subreddits you selected to see if you can find the post(s) you just predicted.  You can do this by clicking on the 'New' icon in the header (illustrated below).  If our model gave a high probability of becoming popular, that 'new' post should eventually be one of the top posts in the 'hot' category.  ")
+        reddit_image = Image.open('blog_assets/reddit_header.png')
+        st.image(reddit_image, caption='subreddit header')
+        st.write(''' 
+             - [r/investing](https://www.reddit.com/r/investing/)  
+             - [r/wallstreetbets](https://www.reddit.com/r/wallstreetbets/)  
+             - [r/StockMarket](https://www.reddit.com/r/StockMarket/)  
+             - [r/stocks](https://www.reddit.com/r/stocks/)  
+            ''')
     except:
         st.error("A problem occurred in making the output dataframe.")
     
     
 
     
-    # prediction_probas.rename({0:'Non_Popular_Probability', 1:'Popular_Probability'}, axis=1)
-    # st.write("prediction probabilities...", prediction_probas)
-    # st.write("temp", prediction_probas['Popular_Probability'])
-    # df = pd.concat([df, prediction_probas], axis=0)
-    # st.write("output df",df)
 
-
-
-
-
-
-
-# if st.button("Get new posts"):
-#     for submission in reddit.subreddit("investing").new(limit=5):
-#         if submission.author==None or submission.author=="Automoderator":
-#             continue
-#         else:
-#             # st.markdown("Post ID:")
-#             # st.text(submission.id)
-#             # st.markdown("Post Title:")
-#             # st.text(submission.title)
-#             st.markdown(f"__Post ID:__ {submission.id} __// Post Title:__ {submission.title} ")
-
+st.write("") #blank space
 st.header("Conclusions & Future Work")
 
 
