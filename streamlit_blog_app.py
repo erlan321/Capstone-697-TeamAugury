@@ -14,6 +14,17 @@ import spacy  #needed for language profanity filtering to work on streamlit
 import pickle
 import altair as alt
 
+# nlp = spacy.load('en_core_web_sm') #load spacy english language
+# pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
+# nlp.add_pipe(pf.spacy_component, last=True)
+
+def filter_profanity_func(text):
+    return pf.censor(text)
+pf = ProfanityFilter()
+t = "fuck"
+st.write(t)
+st.write(filter_profanity_func(t))
+
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
 st.caption(" **augury** _noun_; a sign of what will happen in the future     -- Cambridge Dictionary")
