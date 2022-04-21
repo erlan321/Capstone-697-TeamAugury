@@ -9,7 +9,7 @@ from sentence_transformers import SentenceTransformer
 from profanity_filter import ProfanityFilter
 from functions import Team_Augury_blog_praw_functions
 from functions import Team_Augury_blog_hpt_charts
-#from functions import Team_Augury_feature_functions
+from functions import Team_Augury_feature_functions
 import spacy  #needed for language profanity filtering to work on streamlit
 import pickle
 import altair as alt
