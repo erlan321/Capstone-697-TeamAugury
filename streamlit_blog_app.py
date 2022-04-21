@@ -451,8 +451,8 @@ st.subheader("Model Performance (on unseen data)")
 st.subheader("Real-Time Model Prediction")
 
 #load pkl'd classifier (clf)
-#filename = "models/SVC_final_model.pkl" 
-filename = "models/LogisticRegression_final_baseline_model.pkl" 
+filename = "models/SVC_rbf_final_model.pkl.pkl" 
+#filename = "models/LogisticRegression_final_baseline_model.pkl" 
 clf = pickle.load(open(filename, 'rb'))
 
 st.markdown('''
