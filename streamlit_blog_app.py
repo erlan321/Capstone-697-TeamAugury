@@ -18,12 +18,12 @@ import altair as alt
 # pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
 # nlp.add_pipe(pf.spacy_component, last=True)
 
-def filter_profanity_func(text):
-    return pf.censor(text)
-pf = ProfanityFilter()
-t = "fuck"
-st.write(t)
-st.write(filter_profanity_func(t))
+# def filter_profanity_func(text):
+#     return pf.censor(text)
+# pf = ProfanityFilter()
+# t = "fuck"
+# st.write(t)
+# st.write(filter_profanity_func(t))
 
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
