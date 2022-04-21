@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
-#import joblib
-#from sklearn.linear_model import LogisticRegression
 from PIL import Image
 import praw
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -11,9 +9,8 @@ from sentence_transformers import SentenceTransformer
 from profanity_filter import ProfanityFilter
 from functions import Team_Augury_blog_praw_functions
 from functions import Team_Augury_blog_hpt_charts
-from functions import Team_Augury_feature_functions
-import spacy  #needed for language profanity filtering?
-#spacy.load('en')
+#from functions import Team_Augury_feature_functions
+import spacy  #needed for language profanity filtering to work on streamlit
 import pickle
 import altair as alt
 
