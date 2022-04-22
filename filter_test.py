@@ -23,6 +23,10 @@ import spacy  #needed for language profanity filtering
 #     return output_df
 
 t = "fuck the world, butthole, and then take a shit"
+
+# pf = ProfanityFilter() # set the filter
+# print(pf.censor(t))
+
 #nlp = spacy.load("en_core_web_sm")
 # import en_core_web_sm
 # nlp = en_core_web_sm.load()
@@ -32,10 +36,10 @@ print(nlp)
 #spacy.load('en_core_web_sm')
 pf = ProfanityFilter(nlps={'en': nlp}) # set the filter
 nlp.add_pipe(pf.spacy_component, last=True)
-#print(nlp(t))
+print(nlp(t))
 #print(type(nlp(t)))
 
-print(pf.censor(t))
+#print(pf.censor(nlp(t)))
 
 
 # def filter_profanity_func(text):
