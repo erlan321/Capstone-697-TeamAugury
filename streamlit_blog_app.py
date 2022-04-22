@@ -271,7 +271,7 @@ with feature_table:
         st.markdown('''
             *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available), just as we did for Posts.  It provides a vectorial embedding of a sentence.  For the comments we created a centroid vector of all the comments by averaging each comments’ SBERT embedding.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)       
 
-            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[19] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.  
+            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[15] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.  
         ''')
 
 # st.subheader("") #create blank space
