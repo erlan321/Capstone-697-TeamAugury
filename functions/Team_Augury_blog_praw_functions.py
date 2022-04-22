@@ -148,10 +148,12 @@ def blog_scrape_dataframes(reddit, time_of_batch, n_comments, char_limit, new_su
 ### Featurization comes from stored functions imported from .py files above.  Comment out any part we don't want.
 
 def blog_feature_creation(post_data, comments_data):
+    ### This is using all of the same feature functions as in the project's modeling pipeline
+    
     ### Start by cleaning profanity from posts and comments
-    #post_data = Team_Augury_feature_functions.post_profanity_removal(post_data.copy())
+    post_data = Team_Augury_feature_functions.post_profanity_removal(post_data.copy())
     #display(post_data)
-    #comments_data = Team_Augury_feature_functions.comment_profanity_removal(comments_data.copy())
+    comments_data = Team_Augury_feature_functions.comment_profanity_removal(comments_data.copy())
     #display(comments_data)
 
     ### Basic feature addtions for post-only data
