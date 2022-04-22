@@ -15,22 +15,6 @@ import pickle
 import altair as alt
 
 
-nlp = spacy.load('en_core_web_sm') #load spacy english language
-st.write(type(nlp))
-pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
-st.write(type(pf))
-nlp.add_pipe(pf.spacy_component, last=True)
-st.write(type(nlp))
-
-def filter_profanity_func(text):
-    return pf.censor(text)
-
-t = "fuck all this stuff"
-st.write(t)
-st.write(pf.censor(t))
-
-
-
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
 st.caption(" **augury** _noun_; a sign of what will happen in the future     -- Cambridge Dictionary")
@@ -121,7 +105,7 @@ st.write('''
     
     Social Media is often thought of as an open and public forum of discussion.  But an important ethical consideration of any data science project related to social media is that saying something in “public” may not necessarily mean “consent” to using a person’s name or username in published research [14].  While we did not have any need for usernames in the analysis we were performing, we did gather usernames into our database in order to track certain features of each Reddit post, and we are aware that if we were to ever use those usernames in future work, our database would could provide us with an already anonymized id number to protect each individuals’ privacy.  
     
-    A different aspect of  the free and open nature of social media, and Reddit in particular, is that it can  lead to environments which become toxic in a number of ways.  To ameliorate this we did take some action in our post-processing of our database.  The subreddits which are looking at Investment are typically more professional in nature so the main way in which toxicity occurs in these fora is through the use of profane language. Thus, in our pipeline we have removed this language from our analysis using the python module profanity-filter 1.3.3 which replaces profane words with the character “*”.  
+    A different aspect of  the free and open nature of social media, and Reddit in particular, is that it can  lead to environments which become toxic in a number of ways.  To ameliorate this we did take some action in our post-processing of our database.  The subreddits which are looking at Investment are typically more professional in nature so the main way in which toxicity occurs in these fora is through the use of profane language. Thus, in our pipeline we have removed this language from our analysis using the python module profanity-filter which replaces profane words with the character “*”  [(docs)](https://pypi.org/project/profanity-filter/).  
 
     ''')
 
@@ -514,18 +498,7 @@ st.markdown('''
 
     ''')
 
-
-
-
-#st.markdown("Testing Reddit access...")
-# ### SECRETS TO DELETE ###
-# REDDIT_USERNAME= 'Qiopta'
-# REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
-# APP_ID= '8oUZoJ3VwfzceEInW3Vd1g'
-# APP_SECRET= 'pRg3qU2brsbsyPrPaNP26vxPgwAJbA'
-# APP_NAME= 'Capstone2'
-# ### SECRETS TO DELETE ###
-
+### credentials hidden by Streamlit for Reddit
 REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
 REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
 APP_ID= st.secrets['APP_ID']
@@ -591,8 +564,8 @@ if st.button("Predict Reddit Popularity!"):
     try:    
         st.write("Starting feature engineering...")
         post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
-        st.table(post_data)
-        st.table(comments_data)
+        #st.table(post_data)
+        #st.table(comments_data)
         feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
         #st.table(feature_df)
         output_df = feature_df[['sr','post_id','post_text']].copy() #need this to attach predict_proba to later...
@@ -600,7 +573,7 @@ if st.button("Predict Reddit Popularity!"):
         del post_data, comments_data
         st.write("Number of posts for which we engineered features:",len(output_df))
     except: 
-        st.error("A problem occurred when creating the features.")
+        st.error("A problem occurred when creating the features.  We suggest either modifying your selections or waiting a few minutes to try again.")
 
     try:
         st.write("Starting transformation of features into our model's format...")
@@ -641,9 +614,11 @@ if st.button("Predict Reddit Popularity!"):
              - [r/StockMarket](https://www.reddit.com/r/StockMarket/)  
              - [r/stocks](https://www.reddit.com/r/stocks/)  
             ''')
+        st.caption("Content Warning:  The above links will take you to Reddit's website, where there may be content that might be offensive.")
     except:
         st.error("A problem occurred in making the output dataframe.")
     
+st.caption("Content Warning:  While we apply a profanity filter to both the post and comment text, the output of this prediction process will show the text of individual Reddit posts and could show content that may be harmful to some readers.")
     
 
     
