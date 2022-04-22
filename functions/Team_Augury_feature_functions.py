@@ -161,10 +161,12 @@ def comment_sentence_transform_func(df):
 
 
 def post_profanity_removal(df):
-    #import spacy
-    #nlp = spacy.load('en')
-    #pf = ProfanityFilter(nlps={'en': nlp}) # set the filter
-    pf = ProfanityFilter() # set the filter
+
+    #pf = ProfanityFilter() # set the filter
+
+    nlp = spacy.load('en_core_web_sm') #load spacy english language
+    pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
+    nlp.add_pipe(pf.spacy_component, last=True) #add to nlp pipeline per the documentation example
     
     def filter_profanity_func(text):
         return pf.censor(text)
@@ -183,7 +185,11 @@ def post_profanity_removal(df):
 
 def comment_profanity_removal(df):
     
-    pf = ProfanityFilter() # set the filter
+    #pf = ProfanityFilter() # set the filter
+
+    nlp = spacy.load('en_core_web_sm') #load spacy english language
+    pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
+    nlp.add_pipe(pf.spacy_component, last=True) #add to nlp pipeline per the documentation example
     
     def profanity_filter(text):
         return pf.censor(text)

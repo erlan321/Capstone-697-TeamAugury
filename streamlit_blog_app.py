@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
-#import joblib
-#from sklearn.linear_model import LogisticRegression
 from PIL import Image
 import praw
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -12,10 +10,10 @@ from profanity_filter import ProfanityFilter
 from functions import Team_Augury_blog_praw_functions
 from functions import Team_Augury_blog_hpt_charts
 from functions import Team_Augury_feature_functions
-import spacy  #needed for language profanity filtering?
-#spacy.load('en')
+import spacy  #needed for language profanity filtering to work on streamlit
 import pickle
 import altair as alt
+
 
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
@@ -50,52 +48,52 @@ st.markdown('''
 related_work = st.container()
 with related_work:
     related_work.info('''
-        **Title:** Predicting the Popularity of Reddit Posts with AI.[3]  
+        **Title:** Predicting the Popularity of Reddit Posts with AI.[2]  
         **Topic:** Supervised Learning approaches to predict popularity    
         **Implication for our project:** This is a prediction task on similar data.  The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF (Term Frequency-Inverse Document Frequency), and LDA (Latent Dirichlet Allocation) trained on features extracted with Naive Bayes and SVM.  This work is based on regression, trying to predict the number of upvotes, whereas Augury aims to predict whether a post will be popular or not ( a classification problem) within a three hour window.   
         ''')
     related_work.info('''
-        **Title:** Data Stories. We analyzed 4 million data points to see what makes it to the front page of reddit. Here’s what we learned.[2]  
+        **Title:** Using Machine Learning to Predict the Popularity of Reddit Comments.[3]  
         **Topic:** Supervised Learning approaches to predicting Reddit comment Popularity    
         **Implication for our project:** Comparable aims, different NLP and looked only at Comments rather than posts.  Handling similar data, the author aimed to predict comment popularity.  Achieved relatively low accuracy scores ranging from 42% to 52.7% with a Decision Tree Classifier performing best. Cohen's Kappa statistic is applied to show results were, in fact, not much better than random.  In their conclusions they suggest research looks at temporal proximity of comments to posts, a key feature in Augury.
         ''')
     related_work.info('''
-        **Title:** Popularity prediction of reddit texts.[5]  
+        **Title:** Popularity prediction of reddit texts.[4]  
         **Topic:** Supervised learning approach to predict Reddit post popularity    
         **Implication for our project:** Comparable objectives, uses different NLP and features. Focuses on using Topics to determine predictive task.   Achieved 60-75% accuracy on the task, using Latent Dirichlet Allocation (LDA) and Term Frequency Inverse Document Frequency (TFIDF) to classify topics in posts to explore the relationship between topics and posts in order to predict using Naive Bayes and Support Vector Machine Classifiers what will become popular. Augury includes topic modeling as a feature, and our initial model suite included these classifiers.  
         ''')
     related_work.info('''
-        **Title:** Predicting the Popularity of Reddit Posts.[6]  
+        **Title:** Predicting the Popularity of Reddit Posts.[5]  
         **Topic:** Supervised learning approach to predict Reddit post popularity    
         **Implication for our project:** Conducted similar time of day, day of week features to Augury. Also performed sentiment analysis, with a different method. Finally treated the problem as a regression rather than classification one.  Our early experiments found classification to be better suited to our objective.
         ''')
     related_work.info('''
-        **Title:** Deepcas: An end-to-end predictor of information cascades.[7]  
+        **Title:** Deepcas: An end-to-end predictor of information cascades.[6]  
         **Topic:** Neural Network approach to predicting information cascades    
-        **Implication for our project:** The prediction task in DeepCas was quite different to Augury. The problem definition included a Markov Decision Process as a ‘deep walk path’ making the work potentially relevant when we explored Reinforcement Learning approaches.  Eventually we moved away from these methods as our actor ‘choices’ i.e. picking a post had very little effect on the State/Environment hence we reject RL methods, despite a thorough investigation of use cases and an investigation of relevant works such as those in [8] to [11] below. The RL approach is effectively too contrived for our objective.
+        **Implication for our project:** The prediction task in DeepCas was quite different to Augury. The problem definition included a Markov Decision Process as a ‘deep walk path’ making the work potentially relevant when we explored Reinforcement Learning approaches.  Eventually we moved away from these methods as our actor ‘choices’ i.e. picking a post had very little effect on the State/Environment hence we reject RL methods, despite a thorough investigation of use cases and an investigation of relevant works such as those in [7] to [10] below. The RL approach is effectively too contrived for our objective.
         ''')
     related_work.info('''
-        **Title:** Deep reinforcement learning with a combinatorial action space for predicting popular reddit threads.[8]  
+        **Title:** Deep reinforcement learning with a combinatorial action space for predicting popular reddit threads.[7]  
         **Topic:** Reinforcement Learning on Reddit data    
         **Implication for our project:** Similar domain space, different approaches.  Showed how a simulator might be used to reconstruct ‘Trees’ to set up and test sequential decision making. Related to our main task but not identical.
         ''')
     related_work.info('''
-        **Title:** Deep reinforcement learning with a natural language action space.[9]  
+        **Title:** Deep reinforcement learning with a natural language action space.[8]  
         **Topic:** Reinforcement Learning for NLP - Text based games    
         **Implication for our project:** Illustrated the large action space issue for deep Q-learning in NLP.  Helps understand why the Tree approach was taken in [8] in order to re-use approach from text based games when seeking to predict karma on reddit.  
         ''')
     related_work.info('''
-        **Title:** Deep reinforcement learning for NLP.[10]  
+        **Title:** Deep reinforcement learning for NLP.[9]  
         **Topic:** A primer on Reinforcement Learning for NLP    
         **Implication for our project:** Simple introduction and overview to papers in the domain.  
         ''')
     related_work.info('''
-        **Title:** SocialSift: Target Query Discovery on Online Social Media With Deep Reinforcement Learning.[11]  
+        **Title:** SocialSift: Target Query Discovery on Online Social Media With Deep Reinforcement Learning.[10]  
         **Topic:** Generation of SQL queries using Reinforcement Learning    
         **Implication for our project:**  Sets out an online method (via API) of testing created text (‘Queries’) where the returned results are classified to create a reward for the RL policy Pi. The text of the query is effectively keywords that are extracted from the corpus of the previous query history and returned results.
         ''')
     related_work.info('''
-        **Title:** Real-Time Predicting Bursting Hashtags on Twitter.[12]  
+        **Title:** Real-Time Predicting Bursting Hashtags on Twitter.[11]  
         **Topic:** Predicting hashtag bursts on Reddit    
         **Implication for our project:**  Similar data and has a temporal aspect to the prediction challenge. The definition of a ‘burst’ in this paper used a maximum function of hashtag counts over a 24 hour period to define a burst. Our early exploration of popularity as defined in Augury took inspiration from this, but was later adapted to our 3 hour target which better suited our objective. Augury also took some inspiration from the classification approach used in this paper.
         ''')
@@ -103,11 +101,11 @@ with related_work:
 st.subheader("") #create blank space
 st.subheader("Ethical Considerations")
 st.write('''
-    There are clearly ethical implications flowing from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’ described above. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work. To some extent this research has already been investigated by Muxi Xu  in 2021 [13] and also by Hu et al [14]. Therefore we have made no further mitigations in our project related to market ethics.  
+    There are clearly ethical implications flowing from broadcasting messages on social media and the related investments to which these messages refer, as highlighted by the ‘Reddit Rally’ described above. In project Augury we are only looking at the popularity of posts, and we have not correlated this to market activity, which could be an extension of this work. To some extent this research has already been investigated by Muxi Xu  in 2021 [12] and also by Hu et al [13]. Therefore we have made no further mitigations in our project related to market ethics.  
     
-    Social Media is often thought of as an open and public forum of discussion.  But an important ethical consideration of any data science project related to social media is that saying something in “public” may not necessarily mean “consent” to using a person’s name or username in published research [15].  While we did not have any need for usernames in the analysis we were performing, we did gather usernames into our database in order to track certain features of each Reddit post, and we are aware that if we were to ever use those usernames in future work, our database would could provide us with an already anonymized id number to protect each individuals’ privacy.  
+    Social Media is often thought of as an open and public forum of discussion.  But an important ethical consideration of any data science project related to social media is that saying something in “public” may not necessarily mean “consent” to using a person’s name or username in published research [14].  While we did not have any need for usernames in the analysis we were performing, we did gather usernames into our database in order to track certain features of each Reddit post, and we are aware that if we were to ever use those usernames in future work, our database would could provide us with an already anonymized id number to protect each individuals’ privacy.  
     
-    A different aspect of  the free and open nature of social media, and Reddit in particular, is that it can  lead to environments which become toxic in a number of ways.  To ameliorate this we did take some action in our post-processing of our database.  The subreddits which are looking at Investment are typically more professional in nature so the main way in which toxicity occurs in these fora is through the use of profane language. Thus, in our pipeline we have removed this language from our analysis using the python module profanity-filter 1.3.3 which replaces profane words with the character “*”.  
+    A different aspect of  the free and open nature of social media, and Reddit in particular, is that it can  lead to environments which become toxic in a number of ways.  To ameliorate this we did take some action in our post-processing of our database.  The subreddits which are looking at Investment are typically more professional in nature so the main way in which toxicity occurs in these fora is through the use of profane language. Thus, in our pipeline we have removed this language from our analysis using the python module profanity-filter which replaces profane words with the character “*”  [(docs)](https://pypi.org/project/profanity-filter/).  
 
     ''')
 
@@ -115,8 +113,15 @@ st.write('''
 st.subheader("") #create blank space
 st.header("Our Project Workflow")
 st.write("The below graphic illustrates our project Augury workflow.  Below we will provide more details on each component of the workflow.")
-project_pipeline_image = Image.open('blog_assets/project_pipeline2.png')
-st.image(project_pipeline_image, caption='Project Augury Workflow')
+project_pipeline_image = Image.open('blog_assets/project_pipeline3.png')
+col1, col2, col3 = st.columns([1,5,1]) #column trick to center on the webpage
+with col1:
+    st.write("")
+with col2:
+    st.image(project_pipeline_image, caption='Project Augury Workflow')
+with col3:
+    st.write("")
+
 
 st.subheader("") #create blank space
 st.subheader("Scraping Reddit Data") 
@@ -226,7 +231,7 @@ with feature_table:
         st.markdown('''
             *Description:*  We used the SBERT library to encode the text of both Posts and Comments.  The SBERT interface was simple to use and produced in effect 380+ features for our classifiers for each post.  It provides a vectorial embedding of a sentence.  For the posts, this provides a vectorial space representation of each sentence that can be compared.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)     
 
-            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[19] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.    
+            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[15] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.    
         ''')
     with feature_table.expander("Average Upvotes for the Top 5 Comments on the Post (per Hour)"):
         st.markdown('''
@@ -250,64 +255,16 @@ with feature_table:
         st.markdown('''
             *Description:*  We used the SBERT library to encode the text of of the top 5 comments for a post (if available), just as we did for Posts.  It provides a vectorial embedding of a sentence.  For the comments we created a centroid vector of all the comments by averaging each comments’ SBERT embedding.  [(docs)](https://www.sbert.net/docs/pretrained_models.html)       
 
-            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[19] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.  
+            *Rationale:*  BERT produces state of the art word embeddings for many NLP tasks.  However, it is computationally intensive to ‘fine tune’ for specific tasks like classification and this will be especially slow for sentence similarity tasks.  For this reason we selected SBERT[15] which uses the BERT weights as a base model and creates fixed length embeddings for more efficient sentence comparison tasks.  
         ''')
-
-# st.subheader("") #create blank space
-# st.subheader("Feature Engineering (Option 2)")
-# feature_table2 = st.container()
-# with feature_table2:
-#     st.write("After experimentation on our scraped dataset we decided upon the following features:")
-#     f_col1, f_col2 = st.columns([1,2])
-#     f_col1.info("Number of comments per hour")
-#     f_col2.write('''
-#             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
-#             *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
-#         ''')
-#     f_col1, f_col2 = st.columns([1,2])
-#     f_col1.info("Author Karma for the Post")
-#     f_col2.write('''
-#             *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
-#             *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
-#         ''')
-#     f_col1, f_col2 = st.columns([1,2])
-#     f_col1.info("Hour and Day the Post was created")
-#     f_col2.write('''
-#             *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
-#             *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
-#         ''')
-
-# st.subheader("") #create blank space
-# st.subheader("Feature Engineering (Option 3)")
-# feature_table3 = st.container()
-# with feature_table3:
-#     st.write("After experimentation on our scraped dataset we decided upon the following features:")
-#     f_col1, f_col2 = st.columns([1,2])
-#     f_col1.info("Number of comments per hour")
-#     f_col2.info('''
-#             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
-#             *Rationale:*  Our research and intuition told us that the number of people commenting on a post is an indicator of likely popularity.
-#         ''')
-#     f_col1, f_col2 = st.columns([1,2])
-#     f_col1.info("Author Karma for the Post")
-#     f_col2.info('''
-#             *Description:*  We tracked the karma  of both comment and post authors at the time of making either a post or a comment.  
-#             *Rationale:*  Whilst people who have high Karma scores aren't necessarily ‘influencers’ in the normal social media sense of the word, their karma scores are a good proxy for this.  Our EDA looked to see if posts that were posted by ‘high karma’ authors were more likely to become popular as a result and whilst the correlation was surprisingly low we took this feature forward to the modeling stage to test if this contained any ‘signal’ for our predictive task.
-#         ''')
-#     f_col1, f_col2 = st.columns([1,2])
-#     f_col1.info("Hour and Day the Post was created")
-#     f_col2.info('''
-#             *Description:*  We recorded the hour that a post was made (UTC) to see the correlation with post popularity.  In our pipeline we ‘one hot’ encoded these features before passing them to our training/inference models.  
-#             *Rationale:*  These features have shown predictive power in other social media analytics tasks [2]. 
-#         ''')
 
 st.subheader("") #create blank space
 st.header("Modeling Inferences & Evaluation")
 st.subheader("Model Candidates")
 st.markdown('''
 	We selected three Supervised Learning models on which to attempt our Reddit post popularity prediction.  We kept our model exploration within the popular Scikit-Learn python library for the reason of more efficient and consistent modeling pipeline management.
-	 - Logistic Regression (LR):  LR was chosen as it also appeared in some of the related work that we reviewed, and this simple classifier is often used as a “baseline” prediction model.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)  
-	 - Support Vector Classification (SVC): SVC was chosen as it also appeared in the related papers that were pursuing similar goals to our Augury project.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html)  
+	 - Logistic Regression (LR):  LR was chosen as it also appeared in some of the related work that we reviewed, and this simple classifier is often used as a “baseline” prediction model.  In this way, Logistic Regression is used for classification tasks in the same way Linear Regression is used for regression tasks.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)  
+	 - Support Vector Classification (SVC): SVC was chosen as it also appeared in the related papers that were pursuing similar goals to our Augury project.  This makes sense, as Support Vector Machines are very effective in a high dimensional space, this type of project makes use of NLP-based features making a vectorial space representation of text data (in our case, Reddit posts and comments).  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html)  
 	 - Gradient Boosting Classifier (GBDT):  GBDT was chosen based on our intuition and also that Gradient Boosted classifiers are popular in business and do well in data science competitions.  [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html)
 	''')
 
@@ -331,9 +288,9 @@ st.write('''
 
     ''')
 col1, col2, col3 = st.columns(3)
-col1.info("**Training**")
-col2.info("**Validation**")
-col3.info("**Testing**")
+col1.info("**Training Data**")
+col2.info("**Validation Data**")
+col3.info("**Testing Data**")
 col1.write("68% of data")
 col2.write("17% of data")
 col3.write("15% of data")
@@ -348,7 +305,7 @@ st.write('''
     We iterated through over 1,000 combinations of parameters across LR, SVC, and GBDT models, for which we needed to develop both objective and subjective methods of making parameter choices.  
     ''')
 st.write('''
-    _LR Tuning:_ For LR we flipped between the _solver_ parameter, the types of penalty, and a range of values of C we've seen before in our course work.  
+    _LR Tuning:_ For LR we flipped between the solver parameter, the penalty type, and a range of values of C we've seen before in our course work.  
     
     _Parameter dictionary used in our code_
     ''')
@@ -372,7 +329,7 @@ st.code('''
     ''', language="python")
 st.write("") #blank space
 st.write('''
-    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and  introducing subsamples for Stochastic Gradient Boosting as per the recommendation of the Friedman 1999/2002 paper[18] that is explained in the Sci-Kit Learn documentation.  
+    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following five parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and  introducing subsamples for Stochastic Gradient Boosting as per the recommendation of the Friedman 1999/2002 paper[18] that is explained in the Sci-Kit Learn documentation.  
     
     _Parameter dictionary used in our code_
     ''')
@@ -389,7 +346,7 @@ st.write('''
     **Hyperparameter Decision Process:**  
     With over 1,000 different options produced from our hyperparameter tuning process, we used both objective and subjective methods of coming to a decision about which hyperparameters were most appropriate, and thus which of the three styles of model to ultimate use for our prediction task.  
     
-    For each iteration, we output the F1 Score calculation for each model, both on the training data and validation data.  F1 Score felt most appropriate as it has a better ability to account for imbalanced classification data such as ours, where only a small percentage of posts would become "popular.  Also, the F1 Score was the metric (and sometimes sole metric) used similar projects we saw in related works.  Using this information, we went through these steps in each notebook:
+    For each iteration, we output the F1 Score calculation for each model, both on the training data and validation data.  F1 Score felt most appropriate as it has a better ability to account for imbalanced classification data such as ours, where only a small percentage of posts would become "popular.  Also, the F1 Score was the metric (and sometimes sole metric) used in similar projects we saw in related works.  Using this information, we went through these steps in each notebook:
      - We used Jupyter Notebooks to visualize the results, which we felt was the most appropriate tool for this process.
      - We began by viewing all of the F1 calculations for each model, as messy as it was, and noted any observable patterns.
      - We then created charts that looked at each hyperparameter, looking for levels of the hyperparameter that gave higher performance "all else equal".  By this we mean we took the median performance metric for each level of an individual hyperparameter.  From this method we were able to see general trends in the individual hyperparameters that resulted in higher or lower model performance.
@@ -412,70 +369,136 @@ st.altair_chart(Team_Augury_blog_hpt_charts.hpt_gbdt_chart( score_metric), use_c
 st.write(''' 
     **Hyperparameter Decisions:**  
     The above process resulted in the following hyperparameter decisions:
-     > **LR** (_matches the default settings_):  
+     > **LR**:  
      >> Solver: lbfgs   
-     >> Penalty: L2  
-     >> C: 1.0  
+     >> Penalty: L1  
+     >> C: 0.0125 
+     > _Rationale:_ Our LR tuning charts give a very clear decision on the 'penalty' parameter and 'solver' parameter, as those options have the highest F1 scores on Validation Data.  However, the choice of C is more nuanced.  While the chart shows a linear trend of a higher F1 score for lower values of C, we stated above a subjective preference that we did not want to choose either minimum or maximum values of our parameter choices, therefore we settle on a 'C' value of 0.125 near the minimum.
+     >   
      > **SVC**:  
      >> Kernel: rbf    
      >> C: 0.125  
      >> Gamma: 0.0078125  
+     > _Rationale:_ Our SVC tuning charts gives a clear preference for the "rbf" kernel based on median F1 score on Validation Data, but the choice of the other two parameters is more nuanced.  For 'C', there seems to be a non-perfect linear relationship where lower values result in higher F1 scores on Validation Data, so again we choose a value of 0.125 which is close to, but not at, the minimum 'C' value (due to our subjective guidelines above).  For 'gamma', we see a drop-off in F1 score above values of 0.03, so we subjectively chose 0.0078125, which is close to that value.
+     >  
      > **GBDT**:  
      >> Learning_rate: 0.15  
      >> N_estimators: 150  
      >> Max_depth: 3  
      >> Max_features: sqrt  
      >> Subsample:  0.5  
+     > _Rationale:_ Our GBDT tuning charts give a clear preference for 'sqrt' for max_features and 3 for max_depth.  For the subsample parameter we subjectively chose 0.5 as the other options had Training Data scores that felt "too good".  For n_estimators, the chart exhibits slight curve where we could pick a "peak" F1 score on Validation Data at 150 estimators.  For learning_rate, while there is a linear relationship between F1 and parameter value, due to our "subjective" guidelines above we choose 0.15 which is near, but not at, the maximum value. 
 
     ''')
 
-st.write('''
-    Performance metrics of the above "tuned" models:
-    ''')
-hpt_df = pd.DataFrame(data={
-    'Tuned_Model': ['LR','SVC','GBDT'],
-    'F1_Score_Training': [0.76,0.73,0.94],
-    'F1_Score_Validation': [0.39,0.52,0.35],
-    'Accuracy_Training': [0.91,0.75,0.98],
-    'Accuracy_Validation': [0.77,0.73,0.79],
-    })
-st.table(hpt_df)
 
 
+
+st.write("") #blank space
 st.subheader("Model Choice")
+st.write('''
+    Using the hyperparameter choices above, we looked at the cross-validation performance results for each of the three "tuned" model options.  
+    
+    We are primarily looking at F1 Score results for our Validation Data, though we did maintain an awareness of both F1 and Accuracy across both the training and validation data sets. In the table below, we see that the model that had the highest F1 Score on the Validation data is our tuned SVC model, which was slightly ahead of the LR option.  The GBDT option had the worst F1 score on Validation Data, and also had suspiciously high values on Training Data, so we decided not to pursue GBDT any further.  
+    
+    Therefore, we choose the SVC model to be the "Project Augury" model, and we will use the more simple LR model as a "baseline" comparison for our Test Data.  
 
+     
+    ''')
+hpt_f1_df = pd.DataFrame(data={
+    'Tuned_Model': ['LR','SVC','GBDT'],
+    'F1_Score_Validation': [0.5168,0.5230,0.3509],
+    'F1_Score_Training': [0.5901,0.7271,0.9411],
+    })
+hpt_accuracy_df = pd.DataFrame(data={
+    'Tuned_Model': ['LR','SVC','GBDT'],
+    'Accuracy_Validation': [0.7350,0.7271,0.7948],
+    'Accuracy_Training': [0.7754,0.7531,0.9769],
+    })
+
+st.info("**Model Results on Validation Data:**")
+col1, col2, col3, col4 = st.columns([1,1,1,1])
+col1.info("**Score**")
+col2.info("**LR**")
+col3.info("**SVC**")
+col4.info("**GBDT**")
+col1.info("F1")
+col2.warning("0.5168")
+col3.success("0.5230")
+col4.error("0.3509")
+
+with st.expander("Click here to see the full table of F1 and Accuracy for both Validation and Training Data:"):
+    st.table(hpt_f1_df)
+    st.table(hpt_accuracy_df)
+
+st.write("") #blank space
 st.subheader("Feature Importance of the Model")
+st.write('''
+     The chart below illustrates the feature importances for our chosen SVC model:  
+      - The SBERT-based features for both posts and comments have the strongest importance in the model, with the encoding of Posts being stronger than that of the underlying comments.  This strong importance fits our original intuition and rationale for using SBERT that we described in the Features section above.  
+      - The upvotes that comments receive (avg_comment_upvotes_vs_hrs) and overall number of comments a post receives (number_comments_vs_hrs) are the third and fourth most important features, respectively.  This matches our expectation based on the high correlation to popularity we found in our EDA.
+      - The two temporal features of our model related to the hour and the weekday a post is created (time_hour and day_of_week) show some importance but not much, which is consistent with our intuition and our EDA findings.  
+      - The two features related to a post or comment author's karma also show some, but weak, importance.  This is consistent with the weak correlations we saw in our EDA.
+      - The _biggest surprise_ of our feature importance chart is that the sentiment of both the post and the underlying comments has almost no impact in our model.  This is very different from our intuition described in the Features section above that text with a very positive or very negative sentiment might drive the activity and popularity of an individual post.  
 
-st.subheader("Model Performance (on unseen data)")
-
-st.subheader("Real-Time Model Prediction")
-
-#load pkl'd classifier (clf)
-#filename = "models/SVC_final_model.pkl" 
-filename = "models/LogisticRegression_final_baseline_model.pkl" 
-clf = pickle.load(open(filename, 'rb'))
-
-st.markdown('''
-    We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  
-     - Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  
-     - Below we give you an opportunity to choose either all or some of those four investing subreddits, and also the number of posts you want a recommendation for from each subreddit.  
-     - This process will only scrape posts from Reddit that have been created within the last hour, which is similar to the workflow of our project.  So, readers should be aware that _you may see less posts than you are attempting to scrape_.  
-     - The output of this "live" prediction process is the probability of a post becoming "popular", according to our model.  
+    ''')
+feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v1.png')
+st.image(feature_importance_image, caption='Aggregated Feature Importance in our SVC Model')
+st.write('''
+    _Challenges to getting feature importance:_  We discovered two key challenges to creating this feature importance summary for our project, which might be instructive to the reader in their own work.  The first relates to feature choices and the second relates to model choices.  
+     1. Related to feature choices, four of our features summarize above are actually an aggregate importance of several items.  These are the SBERT and temporal features.  This is because in feature engineering, the temporal features required one-hot encoding (for instance, the 7 days of the week become 7 new columns) and the SBERT features generate many columns to represent the sentence encodings (see the above Features section for more details).  So, in looking at feature importances, we had to create additional methods beyond what was in the SciKit Learn libraries in order to aggregate the importances.  The key take-away for the reader is that the choice of features can require additional steps later in the project to ensure interpretability of the model.  
+     2. Related to model choices, the SVC model we chose did not have a straightforward 'model.feature_importance_' method like GBDT in SciKit Learn. Instead we had to run a very computationally expensive process called ‘get feature permutations’, essentially this runs a type of cross validation process by shuffling the features to see their relative importance to the model. It produces a ‘bunch object’ from which the importances for each feature can be derived as shown in the chart above.  The key take-away for the reader is that model choices can lead to different 'forks' in your pipeline of work to analyze your results.  
 
     ''')
 
-st.markdown("** !! This is using the Logistic PKL file !! **")
 
+st.write("") #blank space
+st.subheader("Model Performance (on unseen data)")
+st.write('''
+    Placeholder
+     
+    ''')
+test_f1_df = pd.DataFrame(data={
+    'Model': ['LR','SVC'],
+    'F1_Score_Test' : [0,0],
+    'F1_Score_Validation': [0.5168,0.5230],
+    'F1_Score_Training': [0.5901,0.7271],
+    })
+test_accuracy_df = pd.DataFrame(data={
+    'Model': ['LR','SVC'],
+    'Accuracy_Test': [0,0],
+    'Accuracy_Validation': [0.7350,0.7271],
+    'Accuracy_Training': [0.7754,0.7531],
+    })
+st.info("**Model Results on Test Data:**")
+col1, col2, col3 = st.columns([1,1,1])
+col1.info("**Score**")
+col2.info("**LR** (baseline)")
+col3.info("**SVC** (Augury)")
+col1.info("F1")
+col2.error("0.0000")
+col3.success("0.0000")
 
-#st.markdown("Testing Reddit access...")
-# ### SECRETS TO DELETE ###
-# REDDIT_USERNAME= 'Qiopta'
-# REDDIT_PASSWORD= 'd3.xr@ANTED#2-L'
-# APP_ID= '8oUZoJ3VwfzceEInW3Vd1g'
-# APP_SECRET= 'pRg3qU2brsbsyPrPaNP26vxPgwAJbA'
-# APP_NAME= 'Capstone2'
-# ### SECRETS TO DELETE ###
+with st.expander("Click here to see the full table of F1 and Accuracy on Test, Validation, and Training Data:"):
+    st.table(test_f1_df)
+    st.table(test_accuracy_df)
 
+st.write("") #blank space
+st.subheader("Real-Time Model Prediction")
+#load pkl'd classifier (clf)
+filename = "models/SVC_rbf_final_model.pkl" 
+#filename = "models/LogisticRegression_final_baseline_model.pkl" 
+clf = pickle.load(open(filename, 'rb'))
+st.markdown('''
+    We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  Please take a look at the instructions below, select your options, and take a look at our model's prediction!  
+     - The first selection to make is what subreddits you would like to scrape from.  Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  This scraping will be "live" directly to Reddit using similar code to that we built in AWS to scrape our project data.  
+     - The second selection is the number of the newest posts you want to try to scrape for each subreddit.  Note that we will only scrape posts created within the last hour, which mirrors the process of our project's scraping process in AWS.  So, readers should be aware that you may see less posts than you are attempting to scrape unless it is a particularly active day for the subreddit.  
+     - The posts that are available will have all the same data collected that we use for our featurization process in our project.  After we engineer the features using the same pipeline as our project, we will use our trained Classifier mode to make a prediction on each post.  
+     - The output of this "live" prediction process is a table showing some information about your post, as well as the probability of a post becoming "popular" according to our model.  The higher the probability, the greater the chance our model thinks that post will become "hot" on the subreddit.  
+
+    ''')
+
+### credentials hidden by Streamlit for Reddit
 REDDIT_USERNAME= st.secrets['REDDIT_USERNAME']
 REDDIT_PASSWORD= st.secrets['REDDIT_PASSWORD']
 APP_ID= st.secrets['APP_ID']
@@ -541,6 +564,8 @@ if st.button("Predict Reddit Popularity!"):
     try:    
         st.write("Starting feature engineering...")
         post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
+        #st.table(post_data)
+        #st.table(comments_data)
         feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
         #st.table(feature_df)
         output_df = feature_df[['sr','post_id','post_text']].copy() #need this to attach predict_proba to later...
@@ -548,7 +573,7 @@ if st.button("Predict Reddit Popularity!"):
         del post_data, comments_data
         st.write("Number of posts for which we engineered features:",len(output_df))
     except: 
-        st.error("A problem occurred when creating the features.")
+        st.error("A problem occurred when creating the features.  We suggest either modifying your selections or waiting a few minutes to try again.")
 
     try:
         st.write("Starting transformation of features into our model's format...")
@@ -580,39 +605,29 @@ if st.button("Predict Reddit Popularity!"):
         
         st.write("**Post Popularity Prediction** (_Sorted most likely to least likely_)", 
                 output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
+        st.write("Check out the subreddits you selected to see if you can find the post(s) you just predicted.  You can do this by clicking on the 'New' icon in the header (illustrated below).  If our model gave a high probability of becoming popular, that 'new' post should eventually be one of the top posts in the 'hot' category.  ")
+        reddit_image = Image.open('blog_assets/reddit_header.png')
+        st.image(reddit_image, caption='subreddit header')
+        st.write(''' 
+             - [r/investing](https://www.reddit.com/r/investing/)  
+             - [r/wallstreetbets](https://www.reddit.com/r/wallstreetbets/)  
+             - [r/StockMarket](https://www.reddit.com/r/StockMarket/)  
+             - [r/stocks](https://www.reddit.com/r/stocks/)  
+            ''')
+        st.caption("Content Warning:  The above links will take you to Reddit's website, where there may be content that might be offensive.")
     except:
         st.error("A problem occurred in making the output dataframe.")
     
+st.caption("Content Warning:  While we apply a profanity filter to both the post and comment text, the output of this prediction process will show the text of individual Reddit posts and could show content that may be harmful to some readers.")
     
 
     
-    # prediction_probas.rename({0:'Non_Popular_Probability', 1:'Popular_Probability'}, axis=1)
-    # st.write("prediction probabilities...", prediction_probas)
-    # st.write("temp", prediction_probas['Popular_Probability'])
-    # df = pd.concat([df, prediction_probas], axis=0)
-    # st.write("output df",df)
 
-
-
-
-
-
-
-# if st.button("Get new posts"):
-#     for submission in reddit.subreddit("investing").new(limit=5):
-#         if submission.author==None or submission.author=="Automoderator":
-#             continue
-#         else:
-#             # st.markdown("Post ID:")
-#             # st.text(submission.id)
-#             # st.markdown("Post Title:")
-#             # st.text(submission.title)
-#             st.markdown(f"__Post ID:__ {submission.id} __// Post Title:__ {submission.title} ")
-
+st.write("") #blank space
 st.header("Conclusions & Future Work")
 
 
-
+st.write("") #blank space
 st.header("Appendix: Statement of work")
 st.write('''
 The team worked across the entire project, but the below highlights the areas each team member either focussed, led or made a major contribution:  
@@ -625,153 +640,28 @@ Erik Lang led on the Social Media scraping and analytics aspects of the project,
     ''')
 
 
-
+st.write("") #blank space
 st.header("Appendix: References")
+st.write('''
+[1] Š. Lyócsa, E. Baumöhl, and T. Vyrost, “YOLO trading: Riding with the herd during the GameStop episode,” ˆ EconStor, 2021. [Online]. Available: https://www.econstor.eu/handle/10419/230679  [Accessed: 06-Apr-2022].  
+[2] Kim, Juno. "Predicting the Popularity of Reddit Posts with AI." arXiv preprint arXiv:2106.07380 (2021).  
+[3] S. Deaton, S. Hutchison, and S. J. Matthews, “Using Machine Learning to Predict the Popularity of Reddit Comments,” seandeaton.com, 2017. [Online]. Available: https://seandeaton.com/publications/reddit-paper.pdf  [Accessed: 06-Apr-2021]  
+[4] Rohlin, Tracy M. Popularity prediction of Reddit texts. San José State University, 2016.  
+[5] A. Shuaibi. Learning, General Machine. "Predicting the Popularity of Reddit Posts." Spring 2019  
+[6] Li, Cheng, et al. "Deepcas: An end-to-end predictor of information cascades." Proceedings of the 26th international conference on World Wide Web. 2017.  
+[7] Ji He, Mari Ostendorf, Xiaodong He, Jianshu Chen, Jianfeng Gao, Lihong Li, and Li Deng. 2016b. Deep reinforcement learning with a combinatorial action space for predicting popular reddit threads. EMNLP.  
+[8] Ji He, Jianshu Chen, Xiaodong He, Jianfeng Gao, Li-hong Li, Li Deng, and Mari Ostendorf. 2016a. Deep reinforcement learning with a natural language action space. ACL.  
+[9] Wang, William Yang, Jiwei Li, and Xiaodong He. "Deep reinforcement learning for NLP." Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics: Tutorial Abstracts. 2018.  
+[10] Wang, Changyu, et al. "SocialSift: Target Query Discovery on Online Social Media With Deep Reinforcement Learning." IEEE Transactions on Neural Networks and Learning Systems (2021).  
+[11] Kong, Shoubin, et al. "Real-time predicting bursting hashtags on twitter." International Conference on Web-Age Information Management. Springer, Cham, 2014.  
+[12] Xu M. NLP for Stock Market Prediction with Reddit Data 2021. Stanford.  
+[13] Hu, Kevin, Daniella Grimberg, and Eziz Durdyev. "Twitter Sentiment Analysis for Predicting Stock Price Movements."  
+[14] Zimmer, Michael T.  “OkCupid Study Reveals the Perils of Big-Data Science”, Wired, 2020.Available:https://www.wired.com/2016/05/okcupid-study-reveals-perils-big-data-science  [Accessed: 15-Apr-2022].  
+[15] Reimers, Nils, and Iryna Gurevych. "Sentence-bert: Sentence embeddings using siamese bert-networks." arXiv preprint arXiv:1908.10084 (2019).  
+[16] Chih-Wei Hsu, et al. A Practical Guide to Support Vector Classification. 2016.  National Taiwan University.  
+[17] Brownlee, Jason.  “How to Configure the Gradient Boosting Algorithm”, Machine Learning Mastery, 2016. Available: https://machinelearningmastery.com/configure-gradient-boosting-algorithm/  [Accessed: 7-Apr-2022]  
+[18] Friedman, Jerome H. “Stochastic Gradient Boosting”, Computational Statistics & Data Analysis, 2002. Available: https://www.researchgate.net/publication/222573328_Stochastic_Gradient_Boosting [Accessed: 20-Apr-2022]  
+    ''')
 
 
-
-
-
-
-
-
-
-
-
-
-
-# st.subheader("Related Work")
-# st.write('''
-#     placeholder text introducing the following tables of work we reviewed
-#     ''')
-# c = st.container()
-# st.write("this will show last")
-# c.write("paper 1")
-# c.write("paper 2")
-
-# col1, col2, col3 = st.columns(3)
-# col1.write("**Paper Title**")
-# col2.write("**Topic**")
-# col3.write("**Relevance to project**")
-# col1.write("[3] Reddit predictions")
-# col2.write("Supervised Learning approaches to predict popularity")
-# col3.write("This is a prediction task on similar data.")
-# c.write("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
-
-# st.header("") #create blank space
-# st.subheader("Related Work v2")
-# st.write('''
-#     placeholder text introducing the following tables of work we reviewed
-#     ''')
-# c = st.container()
-# col1, col2, col3 = c.columns(3)
-# col1.write("**Paper Title**")
-# col2.write("**Topic**")
-# col3.write("**Relevance to project**")
-# col1.write("[3] Reddit predictions")
-# col2.write("Supervised Learning approaches to predict popularity")
-# col3.write("This is a prediction task on similar data.")
-# col1.write("[3] Reddit predictions")
-# col2.write("Supervised Learning approaches to predict popularity")
-# col3.write("This is a prediction task on similar data.")
-# c.write("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
-# st.write("placeholder for text at the end of the literature review")
-# st.header("") #create blank space
-# st.write('''
-#     placeholder text introducing the following tables of work we reviewed
-#     ''')
-# c = st.container()
-# col1, col2, col3 = c.columns(3)
-# with c:
-#     col1.info("**Paper Title**")
-#     col2.info("**Topic**")
-#     col3.info("**Relevance to project**")
-
-#     col1.info("[3] Reddit predictions")
-#     col2.info("Supervised Learning approaches to predict popularity")
-#     col3.info("This is a prediction task on similar data.")
-#     col1.info("[3] Reddit predictions")
-#     col2.info("Supervised Learning approaches to predict popularity")
-#     col3.info("This is a prediction task on similar data.")
-#     c.info("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse) ")
-#     with c.expander("See implications for our project"):
-#         st.warning("Implications: The author uses Linear Regression, Random Forest Regression and a Neural Network to predict the number of upvotes. It ignores the temporal elements of Augury’s study and has a different approach to NLP using Bag of Words, TF-IDF(Term Frequency-Inverse ")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# st.header("Testing Interactivity")
-# st.markdown("> Just for fun, enter a number and choose a team member to see what happens...")
-
-
-
-
-
-
-
-
-# #  This is equivalent to <input type = "number"> in HTML.
-# # Input bar 1
-# a = st.number_input("Enter a Number")
-
-# # # Input bar 2
-# # b = st.number_input("Input another Number")
-
-# # This is equivalent to the <select> tag for the dropdown and the <option> tag for the options in HTML.
-# # Dropdown input
-# names = st.selectbox("Select Team Member", ("Erik", "Chris","Antoine"))
-
-# # put it in an if statement because it simply returns True if pressed. This is equivalent to the <button> tag in HTML.
-# # If button is pressed
-# if st.button("Submit"):
-    
-#     # # Unpickle classifier
-#     # clf = joblib.load("clf.pkl")
-    
-#     # # Store inputs into dataframe
-#     # X = pd.DataFrame([[height, weight, eyes]], 
-#     #                  columns = ["Height", "Weight", "Eyes"])
-#     # X = X.replace(["Brown", "Blue"], [1, 0])
-    
-#     # # Get prediction
-#     # prediction = clf.predict(X)[0]
-    
-#     # Output prediction
-#     st.text(f"{names} just won {a} dollars!!!")
-#     # Note that print() will not appear on a Streamlit app.
-#     st.markdown(f"{names} just won {a} dollars!!!")
-
-
-#st.markdown renders any string written using Github-flavored Markdown. It also supports HTML but Streamlit advises against allowing it due to potential user security concerns.
-
-# st.header("Project Start")
-# st.subheader("In Introduction to our Project")
-# st.markdown("But seriously, we're here to talke about our blog.  This might be how text will appear in our blog.")
-
-
-
-
-
-# st.subheader("A Code Block")
-# # st.code renders single-line as well as multi-line code blocks. There is also an option to specify the programming language.
-# st.code("""
-# def Team_Augury_feature_functions(df):
-#     df = df.copy
-#     df['column'] = df['old_column'].apply(lambda x: 1 if True else 0, axis1)
-#     return None
-# """, language="python")
-
-
+### End
