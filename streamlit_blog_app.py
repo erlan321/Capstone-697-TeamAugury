@@ -13,41 +13,22 @@ from functions import Team_Augury_feature_functions
 import spacy  #needed for language profanity filtering to work on streamlit
 import pickle
 import altair as alt
-#import spacy_streamlit
 
-nlp = spacy.load('en_core_web_sm') #load spacy english language
-st.write(type(nlp))
-pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
-st.write(type(pf))
-nlp.add_pipe(pf.spacy_component, last=True)
-st.write(type(nlp))
 
-def filter_profanity_func(text):
-    return pf.censor(text)
-# pf = ProfanityFilter()
+# nlp = spacy.load('en_core_web_sm') #load spacy english language
+# st.write(type(nlp))
+# pf = ProfanityFilter(nlps={'en':nlp}) # set the filter
 # st.write(type(pf))
-# pf = ProfanityFilter(languages=['en_core_web_sm'])
-# st.write(type(pf))
-t = "fuck all this stuff"
-st.write(t)
-st.write(pf.censor(t))
-#st.write(nlp(t))
-#st.write(filter_profanity_func(nlp(t)))
-#st.write(pf.censor(nlp(t)))
-#st.write(nlp(t).censor)
-#st.write(pf.censor(t))
-
-#print(type(nlp(t)))
-
-#print(pf.censor(nlp(t)))
-
+# nlp.add_pipe(pf.spacy_component, last=True)
+# st.write(type(nlp))
 
 # def filter_profanity_func(text):
 #     return pf.censor(text)
 
-# print(
-# filter_profanity_func(nlp(t))
-# )
+# t = "fuck all this stuff"
+# st.write(t)
+# st.write(pf.censor(t))
+
 
 
 # Title

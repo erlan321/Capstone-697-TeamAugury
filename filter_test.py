@@ -36,7 +36,7 @@ print(nlp)
 #spacy.load('en_core_web_sm')
 pf = ProfanityFilter(nlps={'en': nlp}) # set the filter
 nlp.add_pipe(pf.spacy_component, last=True)
-print(nlp(t))
+#print(nlp(t))
 #print(type(nlp(t)))
 
 print(pf.censor(nlp(t)))
