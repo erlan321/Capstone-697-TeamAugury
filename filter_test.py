@@ -39,7 +39,7 @@ nlp.add_pipe(pf.spacy_component, last=True)
 print(nlp(t))
 #print(type(nlp(t)))
 
-#print(pf.censor(nlp(t)))
+print(pf.censor(nlp(t)))
 
 
 # def filter_profanity_func(text):

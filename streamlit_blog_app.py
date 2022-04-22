@@ -22,8 +22,6 @@ st.write(type(pf))
 nlp.add_pipe(pf.spacy_component, last=True)
 st.write(type(nlp))
 
-
-
 def filter_profanity_func(text):
     return pf.censor(text)
 # pf = ProfanityFilter()
