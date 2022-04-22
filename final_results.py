@@ -25,7 +25,7 @@ if choice == 'N':
   ### NEW SQL Variables
   sr_id = '(4, 31760, 31764, 31766)'   #[(4, '2qhhq', 'investing'), (16, 'mouw', 'science'), (130, '2qh1i', 'AskReddit'), (18162, '2qh3l', 'news'), (31760, '2qjuv', 'StockMarket'), (31764, '2qjfk', 'stocks'), (31766, '2th52', 'wallstreetbets')]
   lower_timestamp = '2022-04-18 11:00:00'
-  upper_timestamp = '2022-04-21 10:00:00' 
+  upper_timestamp = '2022-04-22 11:00:00' 
 
   #get data
   post_data, comments_data = Team_Augury_SQL_func.sql_by_timestamp(conn,sr_id,lower_timestamp,upper_timestamp)

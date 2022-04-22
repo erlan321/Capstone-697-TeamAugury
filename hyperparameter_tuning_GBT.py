@@ -41,7 +41,12 @@ gbc_params = {
             "clf__max_depth":[3,5,8],
             "clf__max_features":["log2","sqrt"],
             "clf__subsample":[0.5,0.75,1.0],
+            "clf__min_samples_split":[2,3,4],
+            "clf__min_samples_leaf":[1,2,3],
             }
+
+
+
 
 pipe = Pipeline(steps=[('preprocessor', preprocessor), ("clf", GradientBoostingClassifier(random_state=rnd_state))])
 
@@ -49,17 +54,17 @@ print("Initiating randomized grid search on GBT...")
 results = GridSearchCV(estimator=pipe, param_grid=gbc_params, cv=5, scoring=scoring, refit="f1", n_jobs=-1, return_train_score=True, verbose=1).fit(X, y)   
 results = pd.DataFrame(results.cv_results_)
 results.columns = [col.replace('param_clf__', '') for col in results.columns]
-results.to_csv("saved_work/hp_tuning_RAW_GBT.csv", index=False)
+results.to_csv("saved_work/hp_tuning_RAW_GBT_2.csv", index=False)
 # clean up
-it_params = ["learning_rate", "n_estimators", "max_depth", "max_features", "subsample"]
-it_params_noC = ["n_estimators", "max_depth", "max_features", "subsample"]
+it_params = ["learning_rate", "n_estimators", "max_depth", "max_features", "subsample", "min_samples_split", "min_samples_leaf"]
+it_params_noC = ["n_estimators", "max_depth", "max_features", "subsample", "min_samples_split", "min_samples_leaf"]
 tot_params = it_params + ["mean_train_acc", "mean_test_acc", "mean_train_f1", "mean_test_f1"]
 results = results[tot_params]
 results = results.melt(id_vars=it_params, var_name= "Score", value_name='Result')
-results["model_param"] =results["learning_rate"].astype(str) + " / " + results["n_estimators"].astype(str) + " / " + results["max_depth"].astype(str) + " / " + results["max_features"].astype(str) + " / " + results["subsample"].astype(str)
+results["model_param"] =results["learning_rate"].astype(str) + " / " + results["n_estimators"].astype(str) + " / " + results["max_depth"].astype(str) + " / " + results["max_features"].astype(str) + " / " + results["subsample"].astype(str) + " / " + results["min_samples_split"].astype(str) + " / " + results["min_samples_leaf"].astype(str)
 results['type'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_train_f1')), "train", "test")
 results['Score'] = np.where(((results['Score']== 'mean_train_acc') | (results['Score']== 'mean_test_acc')), "Accuracy", "F1")
-results = results[["Result", "model_param", "Score", "type", "learning_rate", "n_estimators", "max_depth", "max_features", "subsample"]]
+results = results[["Result", "model_param", "Score", "type", "learning_rate", "n_estimators", "max_depth", "max_features", "subsample", "min_samples_split", "min_samples_leaf"]]
 #remove overfitting
 ovr_fit = results[(results["Result"]>=0.99) & (results["type"]=="train")] #with small dataset, better err on the side of caution
 ovr_fit = list(set(ovr_fit['model_param']))
@@ -69,4 +74,4 @@ undr_fit = list(set(undr_fit['model_param']))
 remove_params = list(undr_fit + ovr_fit)
 results = results.drop(results[results.model_param.isin(remove_params)].index)
 #save
-results.to_csv("saved_work/hp_tuning_GBT.csv", index=False)
+results.to_csv("saved_work/hp_tuning_GBT.csv_2", index=False)
