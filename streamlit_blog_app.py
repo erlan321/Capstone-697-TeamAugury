@@ -22,9 +22,13 @@ st.markdown(">Resources:  \n>> Git Repository: [Github Link](https://github.com/
 
 st.header("Summary")
 st.write('''
-    Placeholder text
-    ''')
+     - Project Augury aims to predict what posts are likely to become popular on the social media platform Reddit. It does this specifically by looking at four subreddits that are themed around investing.  
+     - This project defines a new measure of popularity to include a temporal element: “Which post titles are likely to be popular within three hours of being posted?”  This temporal aspect is more specific and nuanced compared to previous related work.  
+     - We found that using Natural Language Processing (NLP) based Sentence Bert (SBERT) encodings of post titles and underlying comments on the post gave the strongest predictive power, and trained a support vector machine classifier model to beat a baseline classifier in predicting what will become “popular”, and posts impressive performance relative to related work in the domain.  
+     - This blog describes the background work of this project, the workflow we created for our analyses, and gives the reader a chance to experiment with live data from Reddit to see our model’s prediction on current posts on a subreddit.  
 
+    ''')
+st.markdown('''---''')
 st.header("Background")
 st.subheader("Motivation")
 st.markdown('''
@@ -155,54 +159,11 @@ with col2:
 with col3:
     st.write("")
 
-
-st.subheader("") #create blank space
-st.subheader("Exploratory Data Analysis (EDA)")
-st.write('''
-    As mentioned above, we were successfully scraping Reddit consistently starting on March 1st of 2022.  We began performing EDA with the data we had gathered so far on March 28th of 2022, which represented roughly 1,200 posts tracked over a 24 hour period.  
-    
-    Our objective is to predict whether or not a post will become “popular”.  A “popular” post is one that would be near the top of the subreddit when a user goes to the webpage or opens the app (in Reddit’s vocabulary, the post is “Hot”).  From perusing Reddit’s own message boards, we understand that a rough approximation for this measure of “popularity” is:
-    ''')
-st.latex(r"popularity = \frac{upvotes}{hours}")
-st.write('''
-    We illustrate our exploration of “popularity” in the below chart on a sample of our data, where the faint blue lines are the popularity of individual posts scraped hourly for 24 hours.  Overlaid on this chart are three lines representing the 50th percentile (half the data), 80th percentile (the top quintile), and 90th percentile (the top decile).  
-    ''')
-popularity_image = Image.open('blog_assets/EDA_popularity.png')
-st.image(popularity_image, caption='Proxy for Post Popularity')
-st.write('''
-    From this chart, we make two decisions about our prediction task.  First, that popularity can peak at different times, but using a post’s popularity at hour 3  seems to be appropriate for our prediction variable.  Second, we see a lot of the subsample achieves very low popularity, so we feel comfortable using a threshold for “popular” close to the top Quintile (the red line), or a “popularity” value of 10.  Thus, the determination of “popular” versus “not popular” in our prediction task is determined by if a post has a “popularity proxy” of over or under 10 by hour 3.  
-    ''')
-st.write('''
-    In order to get a sense of how some of the basic information we have collected about the posts (and the comments related to each post) might be influencing popularity on Reddit, we looked at a correlation analysis against our proxy measure of popularity.  We see that both the total number of comments (normalized for how old the post is) as well as the number of upvotes those comments receive have a strong positive correlation to popularity.  On the other hand, data related to a posts' author karma and commenters' karma seems to have a very weak relationship to popularity.    
-
-    ''')
-corr_image = Image.open('blog_assets/eda_basic_corr.png')
-col1, col2, col3 = st.columns([1,5,1]) #column trick to center on the webpage
-with col1:
-    st.write("")
-with col2:
-    st.image(corr_image, caption='Correlation of Basic Data to Popularity')
-with col3:
-    st.write("")
-
-st.write('''
-    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we looked at what the maximum popularity each post in the sample achieved during a 24 hour period and calculated the median for each hour of the day and the day of the week that the post was created.  We should note first that we scraped and stored this data in UTC time, and made no adjustment to a different time zone in the visualization.    
-    
-    Given the global nature of online communities such as Reddit and the fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
-
-    ''')
-temporal_image = Image.open('blog_assets/eda_temporal_chart.png')
-st.image(temporal_image, caption='Analysis the median maximum popularity achieved based on the day or time a post is created')
-st.write('''
-    In summary, the above EDA was very helpful in determining our classification of "popular" versus "not popular", and also gave us some initial expectations about the feature choices for our model, for which we provide our full rationale in the next section below.
-    ''')
-    
-
 st.subheader("") #create blank space
 st.subheader("Feature Engineering")
 feature_table = st.container()
 with feature_table:
-    st.write("Through a combination of our EDA, our review of Related Works, our intuition, and our understanding of Reddit, we chose to engineer the following features for use in our prediction task.  (*Click on a feature for description & rationale*)")
+    st.write("Based on our review of Related Works, our intuition, our understanding of Reddit, and some of our initial Exploratory Data Analysis (described in the next section), we chose to engineer the following features for use in our prediction task.  (*Click on a feature for description & rationale*)")
     with feature_table.expander("Number of comments per hour"):
         st.markdown('''
             *Description:*  This is a count of the comments each post has received, divided by the number of hours that have elapsed since the post was created.  
@@ -259,6 +220,65 @@ with feature_table:
         ''')
 
 st.subheader("") #create blank space
+st.subheader("Exploratory Data Analysis (EDA)")
+st.write('''
+    As mentioned above, we were successfully scraping Reddit consistently starting on March 1st of 2022.  We began performing EDA with the data we had gathered so far on March 28th of 2022, which represented roughly 1,200 posts tracked over a 24 hour period.  
+    
+    _Exploring our target y-variable for our use case:_  
+
+    Our objective is to predict whether or not a post will become “popular”.  A “popular” post is one that would be near the top of the subreddit when a user goes to the webpage or opens the app (in Reddit’s vocabulary, the post is “Hot”).  From perusing Reddit’s own message boards, we understand that a rough approximation for this measure of “popularity” is:
+    ''')
+st.latex(r"popularity = \frac{upvotes}{hours}")
+st.write('''
+    We illustrate our exploration of “popularity” in the below chart on a sample of our data, where the faint blue lines are the popularity of individual posts scraped hourly for 24 hours.  Overlaid on this chart are three lines representing the 50th percentile (half the data), 80th percentile (the top quintile), and 90th percentile (the top decile).  
+    ''')
+popularity_image = Image.open('blog_assets/EDA_popularity.png')
+st.image(popularity_image, caption='Proxy for Post Popularity')
+st.write('''
+    From this chart, we make two decisions about our prediction task.  First, that popularity can peak at different times, but using a post’s popularity at hour 3  seems to be appropriate for our prediction variable.  Second, we see a lot of the subsample achieves very low popularity, so we feel comfortable using a threshold for “popular” close to the top Quintile (the red line), or a “popularity” value of 10.  Thus, the determination of “popular” versus “not popular” in our prediction task is determined by if a post has a “popularity proxy” of over or under 10 by hour 3.  
+    ''')
+st.write('''
+    _Exploring basic feature data about the posts:_  
+
+    In order to get a sense of how some of the basic information we have collected about the posts (and the comments related to each post) might be influencing popularity on Reddit, we looked at a correlation analysis against our proxy measure of popularity.  We see that both the total number of comments (normalized for how old the post is) as well as the number of upvotes those comments receive have a strong positive correlation to popularity.  On the other hand, data related to a posts' author karma and commenters' karma seems to have a very weak relationship to popularity.    
+
+    ''')
+corr_image = Image.open('blog_assets/eda_basic_corr.png')
+col1, col2, col3 = st.columns([1,5,1]) #column trick to center on the webpage
+with col1:
+    st.write("")
+with col2:
+    st.image(corr_image, caption='Correlation of Basic Data to Popularity')
+with col3:
+    st.write("")
+
+st.write('''
+    We also looked at what relationships might exist between post popularity and the _time_ and _day_ that post was created.  To look at this, we looked at what the maximum popularity each post in the sample achieved during a 24 hour period and calculated the median for each hour of the day and the day of the week that the post was created.  We should note first that we scraped and stored this data in UTC time, and made no adjustment to a different time zone in the visualization.    
+    
+    Given the global nature of online communities such as Reddit and the fact that the data show was scraped and stored in UTC time, we don't want to read much into these relationships, but we do notice some interesting differences in popularity based on when the post is created.  For instance, in our sample we see a higher median maximum popularity for posts created on the weekend (Friday, Saturday, Sunday).  This makes some intuitive sense.  In regard to what hour of the day the post was created, we would not say there is any strong or consistent trend within our sample about what hour the post is created, though in future research it could be interesting to dig into some of the spikes we see in the chart.  
+
+    ''')
+temporal_image = Image.open('blog_assets/eda_temporal_chart.png')
+st.image(temporal_image, caption='Analysis the median maximum popularity achieved based on the day or time a post is created')
+st.write('''
+    _Exploring initial feature importance with a basic classification model:_  
+
+    Using the conclusion derived at the beginning of this section, that our project would focus on predicting “popularity” within 3 hours, we were able to do some initial exploration of how both the basic features and more advanced Natural Language Processing (NLP) features might influence our eventual model.  In order to do this, we used a basic “plain vanilla” Logistic Regression (LR) model on our sample data set, using the set of engineered features we had been considering. The below chart summarizes the feature importances of that initial look:  
+     - NLP-based SBERT based features look by far the most important.  
+     - We are surprised to see the other NLP-based features, measuring Sentiment of the text, as almost irrelevant.  We will be interested to see if this same trend persists after our hyperparameter tuning process.  
+     - The other basic features and the one-hot-encoded hours of the day (x0_0 … x0_23) and days of the week (x1_0 … x1_6) also appear almost irrelevant.  
+
+    This initial look at a basic model gives us a strong indication from this work that NLP-based SBERT features will be very important to our project.
+
+    ''')
+eda_feature_importance_image = Image.open('blog_assets/lr_feat_imp_short.png')
+st.image(eda_feature_importance_image, caption='EDA Feature Importance in a plain vanilla Logistic Regression')
+st.write('''
+    In summary, the above EDA was very helpful in determining our classification of "popular" versus "not popular", and also gave us some initial expectations about how relevant our features may be.
+    ''')
+    
+
+st.subheader("") #create blank space
 st.header("Modeling Inferences & Evaluation")
 st.subheader("Model Candidates")
 st.markdown('''
@@ -269,7 +289,7 @@ st.markdown('''
 	''')
 
 
-st.subheader("Hyperparameter Tuning")
+st.subheader("Hyperparameter Tuning Pipeline")
 st.write('''
     In order to perform hyperparameter tuning for these three models, we explored a few different options to perform cross-validation.  We ultimately decided on Scikit-Learn's GridSearchCV method [(docs)](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html).  
     We also explored RandomizedSearchCV and Nested Cross-Validation.  Since our dataset was relatively small the efficiency of RandomizedSearchCV was not required, and this also would have made the Nested Cross-Validation difficult due to too small samples.  
@@ -301,11 +321,19 @@ st.write("!! UPDATE NUMBERS ABOVE BEFORE SUBMISSION !!")
 
 st.write("") #blank space
 st.write('''
+    **Tuning Pipeline:**  
+    Our full modeling pipeline can be reviewed in our GitHub repository linked at the top of this page, and below we will be describing many of its components, but there are a couple important comments to make the creation of this process.  
+     - We felt it was important to ensure we didn’t accidentally create “data leakage” in our results, and so as a part of our pipeline we use tools that would not allow Validation Data to influence some of our feature transformations.  
+     - We found it useful to break up our pipeline iterations by model (sometimes by different sub-type of model) and save the results.  This made it easier to better understand compute time and find where the “pain points” are in the process.  It is important to test these large processes in steps before launching the whole thing as small mistakes can really have a large impact and require full recalculation.  
+    The successful creation of our hyperparameter tuning pipeline allowed us to create the many different model options we review in the next section.  
+    
+    ''')
+st.write('''
     **Tuning Iterations:**  
     We iterated through over 1,000 combinations of parameters across LR, SVC, and GBDT models, for which we needed to develop both objective and subjective methods of making parameter choices.  
     ''')
 st.write('''
-    _LR Tuning:_ For LR we flipped between the solver parameter, the penalty type, and a range of values of C we've seen before in our course work.  
+    _LR Parameter Options:_ For LR we flipped between the solver parameter, the penalty type, and a range of values of C we've seen before in our course work.  
     
     _Parameter dictionary used in our code_
     ''')
@@ -317,7 +345,7 @@ st.code('''
     ''', language="python")
 st.write("") #blank space
 st.write('''
-    _SVC Tuning:_ We looked at each of the four kernels individually to avoid errors that would make us lose a lot of compute time. The range for C and gamma was taken from A Practical Guide to Support Vector Classification by Chih-Wei Hsu et al.[16], these were slightly more thorough in their tests than other information available.  
+    _SVC Parameter Options:_ We looked at each of the four kernels individually to avoid errors that would make us lose a lot of compute time. The range for C and gamma was taken from A Practical Guide to Support Vector Classification by Chih-Wei Hsu et al.[16], these were slightly more thorough in their tests than other information available.  
     
     _Parameter dictionary used in our code (approximately)_
     ''')
@@ -329,7 +357,7 @@ st.code('''
     ''', language="python")
 st.write("") #blank space
 st.write('''
-    _GBDT Tuning:_ We tuned the GradiantBoostingClassifier on the following five parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and  introducing subsamples for Stochastic Gradient Boosting as per the recommendation of the Friedman 1999/2002 paper[18] that is explained in the Sci-Kit Learn documentation.  
+    _GBDT Parameter Options:_ We tuned the GradiantBoostingClassifier on the following five parameters. These were picked from great recommendations from MachineLearningMastery [17] as well as some adjustments for speed (reducing the number of total folds) and  introducing subsamples for Stochastic Gradient Boosting as per the recommendation of the Friedman 1999/2002 paper[18] that is explained in the Sci-Kit Learn documentation.  
     
     _Parameter dictionary used in our code_
     ''')
@@ -340,6 +368,15 @@ st.code('''
                 "clf__max_features":["log2","sqrt"],
                 "clf__subsample":[0.5,0.75,1.0],}
     ''', language="python")
+st.write("") #blank space
+st.write('''
+    _Other notable parameter decisions prior to the tuning iterations:_ The following decisions were needed for reasons other than finding the best performing model, which we are sharing along with our rationale in case the reader finds it instructive in their own projects.  
+     - For all three GridSearchCV pipelines we set refit="F1" because we were passing a scoring directory, and F1 is our most important score.  
+     - In both LR and SVC models, we set class_weight="balanced". Since our classes are imbalanced, this options ensures it will adjust the loss function by weighting the loss of each sample by its class weight (making the smaller class weigh more).       
+     - In both LR and SVC models, we set max_iter=100000.  Since our vectorial space was very large (caused by NLP-based features) the default value of 100 did not converge.
+     - In the LR model, we set multi_class="ovr" because our problem was binary (0 or 1 classification) and not multinomial.
+     - In the GBDT model, we reviewed and decided to keep the default parameters min_samples_split=2 and min_samples_leaf=1 since our dataset is not large enough to warrant bigger splits.  
+    ''')
     
 st.write("") #blank space
 st.write(''' 
@@ -367,7 +404,7 @@ st.altair_chart(Team_Augury_blog_hpt_charts.hpt_svc_chart( score_metric), use_co
 st.altair_chart(Team_Augury_blog_hpt_charts.hpt_gbdt_chart( score_metric), use_container_width=False)
 ##############################################################
 st.write(''' 
-    **Hyperparameter Decisions:**  
+    **Chosen Hyperparameters:**  
     The above process resulted in the following hyperparameter decisions:
      > **LR**:  
      >> Solver: lbfgs   
@@ -432,14 +469,14 @@ with st.expander("Click here to see the full table of F1 and Accuracy for both V
     st.table(hpt_accuracy_df)
 
 st.write("") #blank space
-st.subheader("Feature Importance of the Model")
+st.subheader("Model Feature Importance")
 st.write('''
      The chart below illustrates the feature importances for our chosen SVC model:  
-      - The SBERT-based features for both posts and comments have the strongest importance in the model, with the encoding of Posts being stronger than that of the underlying comments.  This strong importance fits our original intuition and rationale for using SBERT that we described in the Features section above.  
-      - The upvotes that comments receive (avg_comment_upvotes_vs_hrs) and overall number of comments a post receives (number_comments_vs_hrs) are the third and fourth most important features, respectively.  This matches our expectation based on the high correlation to popularity we found in our EDA.
+      - The SBERT-based features for both posts and comments have the strongest importance in the model, with the encoding of Posts being stronger than that of the underlying comments. This strong importance fits our original intuition and rationale for using SBERT that we described in the Features section above, as well as the initial “basic” model importance that we performed in our EDA.  
+      - The upvotes that comments receive (avg_comment_upvotes_vs_hrs) and overall number of comments a post receives (number_comments_vs_hrs) are the third and fourth most important features, respectively. This matches our expectation based on the high correlation to popularity we found in our EDA.
       - The two temporal features of our model related to the hour and the weekday a post is created (time_hour and day_of_week) show some importance but not much, which is consistent with our intuition and our EDA findings.  
-      - The two features related to a post or comment author's karma also show some, but weak, importance.  This is consistent with the weak correlations we saw in our EDA.
-      - The _biggest surprise_ of our feature importance chart is that the sentiment of both the post and the underlying comments has almost no impact in our model.  This is very different from our intuition described in the Features section above that text with a very positive or very negative sentiment might drive the activity and popularity of an individual post.  
+      - The two features related to a post or comment author's karma also show some, but weak, importance. This is consistent with the weak correlations we saw in our EDA.
+      - The _biggest surprise_ of both our model’s feature importance and the prior analysis in our EDA is that the sentiment of both the post and the underlying comments has almost no impact in our model.  This is very different from our intuition described in the Features section above that text with a very positive or very negative sentiment might drive the activity and popularity of an individual post.  
 
     ''')
 feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v1.png')
@@ -453,7 +490,7 @@ st.write('''
 
 
 st.write("") #blank space
-st.subheader("Model Performance (on unseen data)")
+st.subheader("Model Performance")
 st.write('''
     Placeholder
      
@@ -605,16 +642,16 @@ if st.button("Predict Reddit Popularity!"):
         
         st.write("**Post Popularity Prediction** (_Sorted most likely to least likely_)", 
                 output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
-        st.write("Check out the subreddits you selected to see if you can find the post(s) you just predicted.  You can do this by clicking on the 'New' icon in the header (illustrated below).  If our model gave a high probability of becoming popular, that 'new' post should eventually be one of the top posts in the 'hot' category.  ")
+        st.write("Check out the subreddits you selected to see if you can find the post(s) you just predicted.  You can do this by clicking on the 'New' icon in the header (illustrated below).  A high probability means that our model thinks 'new' post should be 'popular' in 3 hours and be listed towards the top of the subreddit for its 'hot' category.  ")
         reddit_image = Image.open('blog_assets/reddit_header.png')
         st.image(reddit_image, caption='subreddit header')
+        st.caption("Content Warning:  The below links will take you to Reddit's website, where there may be content that might be offensive.")
         st.write(''' 
              - [r/investing](https://www.reddit.com/r/investing/)  
              - [r/wallstreetbets](https://www.reddit.com/r/wallstreetbets/)  
              - [r/StockMarket](https://www.reddit.com/r/StockMarket/)  
              - [r/stocks](https://www.reddit.com/r/stocks/)  
             ''')
-        st.caption("Content Warning:  The above links will take you to Reddit's website, where there may be content that might be offensive.")
     except:
         st.error("A problem occurred in making the output dataframe.")
     
@@ -625,9 +662,30 @@ st.caption("Content Warning:  While we apply a profanity filter to both the post
 
 st.write("") #blank space
 st.header("Conclusions & Future Work")
+st.write('''
+    We were able to define a temporal measure of Reddit post popularity when considering similarly themed subreddits, with an aim of predicting what will become popular within three hours of being posted.  Our tuned SVC model attained an F1 classification performance higher than that of a baseline LR model, and also impressive compared to what we have seen in related work.  In creating this model, we witnessed very strong importance of the NLP-based SBERT encodings of text, both the text of the posts and of the underlying comments.  
+ 
+    Given more time we would like to continue the work, growing our data set in the same way our pipeline was designed for a longer period of time.  We acknowledge that our data set was smaller than we initially hoped for, related to technical difficulties, so it would be only natural to want to revisit our current analysis and possibly expand on some areas of  curiosity that came up during our project:  
+     - Test our trained classifier with more data captured over a longer period of time.  
+     - Run our same pipeline with more data to see if we reach a different model choice, possibly using RandomizedSearchCV instead of GridSearchCV as our choice of cross-validation.  The former uses modules that could make our pipeline work with more data much faster.  
+     - Set a higher threshold for achieving “popularity” for a post, and see if we can still generate classification performance that is as impressive.  
+     - Further exploration of existing features.  For instance, our feature importances work gave a surprising result in that VADER sentiment was relatively unimportant, we would like to explore this and the inter-dependencies between features.  Also, it would be interesting to explore more of the small patterns we saw in our EDA of the weekday or hour a post was created.  
+     - Further experimentation with new features.  For instance, we began to explore the networks that are created among Reddit users for both posts and comments and think this is worthy of further work for example.  
+     - Explore methods of creating a more “balanced” data set (between popular / unpopular) in order to improve the accuracy of predicting popularity.  
+ 
+    There is potential to use the database and process we have developed for other projects.  Ideas that we entertained either at the start of this project or as we progressed through it include:  
+     - Financial market / stock prediction. We have observed related work in that domain that, on face value, seemed overly optimistic in its ability to predict trends. For our work to be developed in that direction we may consider scraping additional items from Reddit about the posts or comments, but that is not an insurmountable hurdle.  
+     - “Influencer” analysis.  Using the information we have about the Reddit users, we could conduct a network analysis study to identify the most influential users in the “investing” themed subreddits and see if their influence is limited to just one or more subreddits.  However, for this kind of work we would naturally consider the ethical pitfalls of working with user data with a goal of identification, and take necessary ethical precautions to prevent harm.  
+      
+    >That concludes the Team Augury project to predict what Reddit posts about investing are likely to become popular.  We thank you for reading!  
+    > --- Antoine, Chris, & Erik
 
+    ''')
 
 st.write("") #blank space
+st.write("") #blank space
+st.write("") #blank space
+st.markdown('''---''')
 st.header("Appendix: Statement of work")
 st.write('''
 The team worked across the entire project, but the below highlights the areas each team member either focussed, led or made a major contribution:  
