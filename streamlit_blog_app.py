@@ -591,6 +591,8 @@ if st.button("Predict Reddit Popularity!"):
     try:    
         st.write("Starting feature engineering...")
         post_data, comments_data = Team_Augury_blog_praw_functions.blog_scrape_dataframes(reddit=reddit, time_of_batch=time_of_batch, n_comments=n_comments, char_limit=char_limit, new_submission_list=new_submission_list)
+        st.table(post_data)
+        st.table(comments_data)
         feature_df = Team_Augury_blog_praw_functions.blog_feature_creation(post_data, comments_data)
         #st.table(feature_df)
         output_df = feature_df[['sr','post_id','post_text']].copy() #need this to attach predict_proba to later...
