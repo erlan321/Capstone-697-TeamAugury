@@ -86,7 +86,7 @@ with related_work:
     related_work.info('''
         **Title:** Deepcas: An end-to-end predictor of information cascades.[6]  
         **Topic:** Neural Network approach to predicting information cascades    
-        **Implication for our project:** The prediction task in DeepCas was quite different to Augury. The problem definition included a Markov Decision Process as a ‘deep walk path’ making the work potentially relevant when we explored Reinforcement Learning approaches.  Eventually we moved away from these methods as our actor ‘choices’ i.e. picking a post had very little effect on the State/Environment hence we reject RL methods, despite a thorough investigation of use cases and an investigation of relevant works such as those in [8] to [11] below. The RL approach is effectively too contrived for our objective.
+        **Implication for our project:** The prediction task in DeepCas was quite different to Augury. The problem definition included a Markov Decision Process as a ‘deep walk path’ making the work potentially relevant when we explored Reinforcement Learning approaches.  Eventually we moved away from these methods as our actor ‘choices’ i.e. picking a post had very little effect on the State/Environment hence we reject RL methods, despite a thorough investigation of use cases and an investigation of relevant works such as those in [7] to [10] below. The RL approach is effectively too contrived for our objective.
         ''')
     related_work.info('''
         **Title:** Deep reinforcement learning with a combinatorial action space for predicting popular reddit threads.[7]  
