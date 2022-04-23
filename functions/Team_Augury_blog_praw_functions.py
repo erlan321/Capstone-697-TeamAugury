@@ -177,7 +177,10 @@ def blog_feature_creation(post_data, comments_data):
 
 
 ### module for getting the raw PRAW data into the X_value column order we need
+### adapted from a part of our pipeline
 def blog_X_values(feature_df):#, apply_transformer = False ):
+
+
     # '''Loads a stored version of pre-processed data and returns an output identical to what is fed to clf
     # Takes one argument apply_transfomer, default = False resulting in 776 features, if True it applies pipeline including 
     # one hot which results in 805 features '''
@@ -189,15 +192,7 @@ def blog_X_values(feature_df):#, apply_transformer = False ):
 
     df = feature_df.copy()  #so code can be reused more easily
 
-    # # set target variable and calculate in df
-    # y_column = ["popular_hr_3"]
-    # popular_hr_3_threshold = 10
 
-    # df['hot_proxy_hr_3'] = df.apply(lambda x: x['upvotes_vs_hours'] if x['hours_since_created'] in [3,6,9,12,15,18,21,24] else np.nan, axis=1)
-    # df['hot_proxy_hr_3'] = df.groupby(['post_id'])['hot_proxy_hr_3'].fillna( method='backfill').fillna(value=0)
-    # df['hot_proxy_hr_3'] = df.apply(lambda x: np.nan if x['hours_since_created'] in [3,6,9,12,15,18,21,24] else x['hot_proxy_hr_3'], axis=1)
-    # df['hot_proxy_hr_3'] = df.groupby(['post_id'])['hot_proxy_hr_3'].fillna( method='backfill') .fillna(value=0) 
-    # df['popular_hr_3'] = df.apply( lambda x: 1 if x['hot_proxy_hr_3']>=popular_hr_3_threshold else 0, axis=1)
 
     ### X - value decisions  ###
 
@@ -231,23 +226,5 @@ def blog_X_values(feature_df):#, apply_transformer = False ):
     ### Create table
     df = df.copy()[X_columns]# + y_column]
     X = df[X_columns]
-    # y = df[y_column].values.ravel()
 
-    # numeric_transformer = Pipeline(
-    #     steps=[("scaler", StandardScaler())])
-
-    # categorical_transformer = Pipeline(steps=[
-    #         ('onehot', OneHotEncoder(handle_unknown='ignore', categories='auto'))])
-
-    # preprocessor = ColumnTransformer(
-    #             transformers=[
-    #                 ('numerical', numeric_transformer, numeric_features),
-    #                 ('categorical', categorical_transformer, categorical_features)],
-    #                 remainder='passthrough')
-    
-    # if apply_transformer:
-    #     X = preprocessor.fit_transform(X)
-    
-    # print ('data loaded and pre_processed')
-
-    return X#, y
+    return X
