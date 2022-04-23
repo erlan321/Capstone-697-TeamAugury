@@ -10,6 +10,7 @@ Authors:
  * Chris Lynch (cdlynch@umich.edu)
  * Erik Lang (eriklang@umich.edu)
 
+The code has credentials for an AWS database that is not public. The schema is in the blog above if you want to replicate it. 
 
 **File Descriptions in the Main Folder:**
 
@@ -22,16 +23,21 @@ Exploratory Data Analysis (EDA)
 Supervised Learning Pipeline
 * baseline_models.py : calculates the baseline models results (both train/validate) for model selection in the Hyperparameter tuning phase
 * hyperparameter_tuning_* : python files to generate the csv results of the gridsearched cross-validation per model
+* hyperparameter_viz_*: Vizualisations of our outputs from the hyperparameter tuning.
+
 
 Final model selection
-* final_model.py : generates the final model as a pickled file based on the hyperparameter tuning
+* final_model.py : generates the final model as a pickled file based on the hyperparameter 
+tuning
+* final_LR_baseline.py: generates the LR HPT model
+* final_GBT_doublecheck.py: generates the GBDT HPT model
 * final_results.py : featurizes the unseen data and predicts wit the final model reporting accuracy and f1 scores
 
 Blog and Production Prediction Model
  * streamlit_blog_app.py : the main script for our blog to function
 
 Miscellaneous files
-* vanilla_models_pkl.py: creates pickled files of the vanilla (non-hpt) models
+* vanilla_models_pkl.py: creates pickled files of the vanilla (non-hpt) models to create the feature importances analysis
 * requirements.txt : contains the requirements for both our analysis and for our blog. *Note that our blog is dependent on this file and should not be altered*
 
 **File Folder Descriptions:**
