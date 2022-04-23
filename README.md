@@ -58,3 +58,4 @@ Other Folders
 * blog_assets: files for the streamlit blog post, mainly visuals
 * models: saved trained models
 * saved_work: storage for csv files or other saved work
+* sample_csv_data: small csv files (only 10 records each) to illustrate the raw data from our database and the feature-transformed data that flows into our analysis.
