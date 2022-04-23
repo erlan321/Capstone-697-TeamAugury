@@ -302,7 +302,7 @@ st.write("") #blank space
 st.write('''
     **Project train / validation / test split:**  
     Related to the above illustration of how we are cross-validating our model choices we want to highlight what this implies for our project's split between training, validation, and test data sets.  
-    We have been successfully scraping from Reddit since March 1st of 2022, and we are going to be training and validating our model choices on data up until April 18th of 2022, or 48 days of hourly scraping.  Therefore, our "unseen" test set of data will be from April 18th to XXXXXXX of 2022, or XXXXXXX days.  
+    We have been successfully scraping from Reddit since March 1st of 2022, and we are going to be training and validating our model choices on data up until April 18th of 2022, or 48 days of hourly scraping.  Therefore, our "unseen" test set of data will be from April 18th to April 23rd of 2022, or 5 days of hourly scraping.  
     
     _Here is how these splits translate into the percentages of our overall data and number of individual posts:_  
 
@@ -311,13 +311,16 @@ col1, col2, col3 = st.columns(3)
 col1.info("**Training Data**")
 col2.info("**Validation Data**")
 col3.info("**Testing Data**")
-col1.write("68% of data")
-col2.write("17% of data")
-col3.write("15% of data")
-col1.write("~2,200 posts")
-col2.write("~560 posts")
-col3.write("~500 posts")
-st.write("!! UPDATE NUMBERS ABOVE BEFORE SUBMISSION !!")
+col1.write("71% of data")
+col2.write("18% of data")
+col3.write("11% of data")
+col1.write("2,140 posts")
+col2.write("535 posts")
+col3.write("346 posts")
+col1.write("~17,000 underlying comments")
+col2.write("~3,000 underlying comments")
+col3.write("~2,000 underlying comments")
+
 
 st.write("") #blank space
 st.write('''
@@ -479,7 +482,11 @@ st.write('''
       - The _biggest surprise_ of both our model’s feature importance and the prior analysis in our EDA is that the sentiment of both the post and the underlying comments has almost no impact in our model.  This is very different from our intuition described in the Features section above that text with a very positive or very negative sentiment might drive the activity and popularity of an individual post.  
 
     ''')
-feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v1.png')
+#feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v1.png')
+#feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v2.png')
+#feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v3.jpg')
+#feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v4.png')
+feature_importance_image = Image.open('blog_assets/SVC_feature_importance_v5.png')
 st.image(feature_importance_image, caption='Aggregated Feature Importance in our SVC Model')
 st.write('''
     _Challenges to getting feature importance:_  We discovered two key challenges to creating this feature importance summary for our project, which might be instructive to the reader in their own work.  The first relates to feature choices and the second relates to model choices.  
@@ -492,18 +499,20 @@ st.write('''
 st.write("") #blank space
 st.subheader("Model Performance")
 st.write('''
-    Placeholder
+    With our tuned SVC model and our "baseline" LR model chosen in the prior section, we measure the ultimate success of these models on previously unseen Test Data that was set aside when we began our hyperparameter tuning process (_see the "Project train / validation / test split" section above for details_).  
+    
+    The below table illustrates that on our primary scoring metric, F1, our SVC model performs better than the baseline model.  We can also see in the expanded table that our SVC model also performs better than the baseline on Accuracy.  Therefore, we continue to use our tuned SVC model in the next section where we put this model into a production environment before concluding our project.  
      
     ''')
 test_f1_df = pd.DataFrame(data={
     'Model': ['LR','SVC'],
-    'F1_Score_Test' : [0,0],
+    'F1_Score_Test' : [0.4577,0.500],
     'F1_Score_Validation': [0.5168,0.5230],
     'F1_Score_Training': [0.5901,0.7271],
     })
 test_accuracy_df = pd.DataFrame(data={
     'Model': ['LR','SVC'],
-    'Accuracy_Test': [0,0],
+    'Accuracy_Test': [0.6850,0.7110],
     'Accuracy_Validation': [0.7350,0.7271],
     'Accuracy_Training': [0.7754,0.7531],
     })
@@ -513,8 +522,8 @@ col1.info("**Score**")
 col2.info("**LR** (baseline)")
 col3.info("**SVC** (Augury)")
 col1.info("F1")
-col2.error("0.0000")
-col3.success("0.0000")
+col2.error("0.4577")
+col3.success("0.500")
 
 with st.expander("Click here to see the full table of F1 and Accuracy on Test, Validation, and Training Data:"):
     st.table(test_f1_df)
