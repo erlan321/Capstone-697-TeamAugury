@@ -534,7 +534,15 @@ st.subheader("Real-Time Model Prediction")
 #load pkl'd classifier (clf)
 filename = "models/SVC_rbf_final_model.pkl" 
 #filename = "models/LogisticRegression_final_baseline_model.pkl" 
-clf = pickle.load(open(filename, 'rb'))
+
+### cached model for blog efficiency
+@st.cache
+def load_model():
+	return pickle.load(open(filename, 'rb'))
+
+clf = load_model()
+#clf = pickle.load(open(filename, 'rb'))
+
 st.markdown('''
     We wanted to give the readers of this blog the opportunity to see our model's predictions on the current data in Reddit!  Please take a look at the instructions below, select your options, and take a look at our model's prediction!  
      - The first selection to make is what subreddits you would like to scrape from.  Because our model was generalized around only a single theme of "investing", we will limit you to the four subreddits we used in our study described above.  This scraping will be "live" directly to Reddit using similar code to that we built in AWS to scrape our project data.  
