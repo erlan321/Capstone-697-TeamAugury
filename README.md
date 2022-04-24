@@ -10,7 +10,9 @@ Authors:
  * Chris Lynch (cdlynch@umich.edu)
  * Erik Lang (eriklang@umich.edu)
 
-The code has credentials for an AWS database that is not public. The schema is in the blog above if you want to replicate it. 
+Note about our database: The code has credentials for an AWS database that is not public. The schema is in the blog above if you want to replicate it. 
+
+Note about the blog: in the event that you cannot access the blog on the web, you will be able to view a version of it on your local machine by cloning this Git repository to your machine, and in a terminal go to the main folder and run "streamlit run streamlit_blog_app.py".  This should open a browswer window locally that contains our blog post.
 
 **File Descriptions in the Main Folder:**
 
