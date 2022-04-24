@@ -632,7 +632,7 @@ if st.button("Predict Reddit Popularity!"):
 
     try: 
         st.write("Starting prediction process with our model...")
-        predictions = clf.predict(feature_df)
+        #predictions = clf.predict(feature_df)
         #st.write("predictions...", predictions)
         prediction_probas = clf.predict_proba(feature_df)
         #st.write("prediction probabilities...", prediction_probas)
@@ -648,7 +648,7 @@ if st.button("Predict Reddit Popularity!"):
             'Post Title':  output_df['post_text'],
             'Popular Probability':  pd.Series(prediction_probas[:, 1].round(2)),
             })
-        
+        del prediction_probas #no longer need this item
         st.write("**Post Popularity Prediction** (_Sorted most likely to least likely_)", 
                 output_df.sort_values(['Popular Probability'], ascending=False).reset_index(drop=True))
         st.write("Check out the subreddits you selected to see if you can find the post(s) you just predicted.  You can do this by clicking on the 'New' icon in the header (illustrated below).  A high probability means that our model thinks 'new' post should be 'popular' in 3 hours and be listed towards the top of the subreddit for its 'hot' category.  ")
