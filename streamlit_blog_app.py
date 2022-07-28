@@ -18,7 +18,7 @@ import altair as alt
 # Title
 st.title("Project Augury: Predicting which Investing posts on Reddit are likely to become popular")
 st.caption(" **augury** _noun_; a sign of what will happen in the future     -- Cambridge Dictionary")
-st.markdown(">Resources:  \n>> Git Repository: [Github Link](https://github.com/rosecorn24601/Capstone-697-TeamAugury)  \n>> Blog Post: [Streamlit Link](https://share.streamlit.io/rosecorn24601/capstone-697-teamaugury/main/streamlit_blog_app.py)  \n>Authors:  \n>> Antoine Wermenlinger (awerm@umich.edu)  \n>> Chris Lynch (cdlynch@umich.edu)  \n>> Erik Lang (eriklang@umich.edu)")
+st.markdown(">Resources:  \n>> Git Repository: [Github Link](https://github.com/erlan321/Capstone-697-TeamAugury)  \n>> Blog Post: [Streamlit Link](https://share.streamlit.io/erlan321/capstone-697-teamaugury/main/streamlit_blog_app.py)  \n>Authors:  \n>> Antoine Wermenlinger (awerm@umich.edu)  \n>> Chris Lynch (cdlynch@umich.edu)  \n>> Erik Lang (eriklang@umich.edu)")
 
 st.header("Summary")
 st.write('''
