@@ -19,11 +19,11 @@ if choice == 'N':
   # connect to database
   print("Connecting to database and loading posts/comments...")
   conn = psycopg2.connect(
-      host = 'capstone697.czsaza7am68b.us-east-1.rds.amazonaws.com' ,
-      port = '5432',
-      database = 'Capstone697', 
-      user = 'read_o',  
-      password = 'EAC697Reddit' , 
+      host = 'AWS_website' ,
+      port = 'port_number',
+      database = 'database_name', 
+      user = 'user_name',  
+      password = 'password' , 
       connect_timeout=3)
 
   ### NEW SQL Variables
