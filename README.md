@@ -2,8 +2,8 @@
 Capstone Project for SIADS 697-698
 
 Project Augury: Predicting which Investing posts on Reddit are likely to become popular
- * GitHub Repository: https://github.com/rosecorn24601/Capstone-697-TeamAugury
- * Blog Post: https://share.streamlit.io/rosecorn24601/capstone-697-teamaugury/main/streamlit_blog_app.py
+ * GitHub Repository: https://github.com/erlan321/Capstone-697-TeamAugury
+ * Blog Post: [https://share.streamlit.io/erlan321/capstone-697-teamaugury/main/streamlit_blog_app.py](https://erlan321-capstone-697-teamaugury-spring22.streamlit.app)
 
 Authors:
  * Antoine Wermenlinger (awerm@umich.edu)
